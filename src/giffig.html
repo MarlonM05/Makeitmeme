@@ -1,0 +1,1000 @@
+<title>Giffig</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bowlby+One&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap">
+<style>
+/* Layout: a single sticker-board column on a halftone cobalt ground; every panel is a die-cut sticker with a hard ink shadow. */
+:root {
+  --ground: #2a3ed0;
+  --ground-dot: #3a50e4;
+  --ink: #15120f;
+  --paper: #fffaf0;
+  --sun: #ffd23f;
+  --pink: #ff6ba8;
+  --mint: #3ddc97;
+  --muted: #6b6359;
+  --font-display: "Bowlby One", "Arial Black", Impact, sans-serif;
+  --font-body: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-meme: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  --shadow: 4px 4px 0 var(--ink);
+  --shadow-lg: 7px 7px 0 var(--ink);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  background-color: var(--ground);
+  background-image: radial-gradient(var(--ground-dot) 1.6px, transparent 1.7px);
+  background-size: 14px 14px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; margin: 0; line-height: 1.05; text-wrap: balance; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+
+.sticker { background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; box-shadow: var(--shadow-lg); padding: 20px; min-width: 0; }
+.label { font-size: 12px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+
+/* brand */
+.brand { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.logo { font-family: var(--font-display); font-size: clamp(54px, 13vw, 112px); color: var(--sun); line-height: .85; letter-spacing: -.01em;
+  -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; text-shadow: 6px 6px 0 var(--ink); transform: rotate(-3deg); transform-origin: left bottom; margin: 0; }
+.logo span { color: var(--pink); }
+.tag { color: var(--paper); font-weight: 600; max-width: 34ch; font-size: 17px; }
+.tag b { color: var(--sun); }
+
+/* buttons */
+.btn { border: 3px solid var(--ink); border-radius: 12px; background: var(--paper); box-shadow: var(--shadow); padding: 10px 18px; font-weight: 800; font-size: 16px;
+  transition: transform .08s, box-shadow .08s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; }
+.btn:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+.btn:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; box-shadow: var(--shadow); }
+.btn.sun { background: var(--sun); }
+.btn.pink { background: var(--pink); }
+.btn.mint { background: var(--mint); }
+.btn.big { font-family: var(--font-display); font-weight: 400; font-size: 22px; padding: 12px 24px; min-height: 58px; }
+.btn.small { min-height: 38px; padding: 6px 12px; font-size: 14px; }
+.linkish { background: none; border: 0; padding: 4px 0; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+
+input[type=text] { border: 3px solid var(--ink); border-radius: 12px; background: #fff; padding: 10px 14px; min-height: 48px; width: 100%; font-size: 17px; font-weight: 600; }
+input[type=text]::placeholder { color: #9a9187; font-weight: 400; }
+
+/* home */
+.home-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 22px; align-items: start; }
+@media (max-width: 760px) { .home-grid { grid-template-columns: 1fr; } }
+.who { display: flex; gap: 12px; align-items: center; }
+.avatar-btn { width: 58px; height: 58px; flex: none; font-size: 32px; border: 3px solid var(--ink); border-radius: 50%; background: var(--sun); box-shadow: var(--shadow); line-height: 1; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.row > input { flex: 1 1 140px; width: auto; }
+.code-input { text-transform: uppercase; letter-spacing: .3em; font-family: var(--font-display) !important; font-weight: 400 !important; max-width: 190px; }
+.err { color: #c0213b; font-weight: 700; font-size: 14px; min-height: 1.2em; margin: 0; }
+.open-list { display: flex; flex-direction: column; gap: 8px; }
+.open-game { display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 2px dashed var(--ink); border-radius: 12px; padding: 8px 8px 8px 14px; }
+.open-game b { font-family: var(--font-display); font-weight: 400; letter-spacing: .12em; }
+.empty { color: var(--muted); font-size: 14px; margin: 0; }
+.steps { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; gap: 10px; align-items: start; }
+.steps li::before { content: counter(s); font-family: var(--font-display); width: 32px; height: 32px; border: 2.5px solid var(--ink); border-radius: 50%; display: grid; place-items: center; background: var(--pink); font-size: 15px; }
+
+.fame-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+.fame-card { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fame-meta { font-size: 13px; display: flex; justify-content: space-between; gap: 6px; }
+
+/* meme render */
+.meme { margin: 0; border: 3px solid var(--ink); border-radius: 10px; overflow: hidden; background: var(--ink); box-shadow: var(--shadow); min-width: 0; max-width: 100%; }
+.meme .post { background: #fff; color: #111; font-family: var(--font-body); font-weight: 600; padding: 8px 10px; font-size: clamp(13px, 2.2vw, 19px); line-height: 1.25; overflow-wrap: anywhere; }
+.meme .post:empty { display: none; }
+.frame { position: relative; container-type: inline-size; line-height: 0; }
+.frame img { width: 100%; height: auto; display: block; aspect-ratio: auto; }
+.mt { position: absolute; left: 4%; right: 4%; text-align: center; line-height: 1.02; font-family: var(--font-meme); text-transform: uppercase; color: #fff;
+  -webkit-text-stroke: .7cqw #000; paint-order: stroke fill; text-shadow: 0 0 .6cqw #000; font-size: 10cqw; overflow-wrap: anywhere; letter-spacing: .01em; }
+.mt.top { top: 3%; } .mt.bot { bottom: 3%; }
+.mt.l2 { font-size: 8cqw; } .mt.l3 { font-size: 6.4cqw; } .mt.l4 { font-size: 5.2cqw; }
+.meme.s-u .mt { text-transform: none; font-family: var(--font-body); font-weight: 800; color: var(--sun); -webkit-text-stroke: 0; text-shadow: 0 .3cqw 0 #000, 0 0 1cqw #000, 0 0 .4cqw #000; font-size: 7cqw; }
+.meme.s-u .mt.l3, .meme.s-u .mt.l4 { font-size: 5.4cqw; }
+.meme.s-p .mt { display: none; }
+
+/* room */
+.topbar { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.codechip { background: var(--sun); border: 3px solid var(--ink); border-radius: 12px; box-shadow: var(--shadow); padding: 6px 12px; display: flex; align-items: center; gap: 10px; }
+.codechip b { font-family: var(--font-display); font-size: 26px; font-weight: 400; letter-spacing: .14em; }
+.timer { font-family: var(--font-display); font-size: 30px; background: var(--paper); border: 3px solid var(--ink); border-radius: 50%; width: 70px; height: 70px; display: grid; place-items: center; box-shadow: var(--shadow); font-variant-numeric: tabular-nums; }
+.timer.hot { background: var(--pink); animation: pulse .6s infinite alternate; }
+@keyframes pulse { to { transform: scale(1.08); } }
+.phase-title { color: var(--paper); font-size: clamp(26px, 5vw, 40px); -webkit-text-stroke: 1.5px var(--ink); paint-order: stroke fill; text-shadow: 4px 4px 0 var(--ink); }
+.players { display: flex; gap: 10px; flex-wrap: wrap; }
+.pl { display: flex; align-items: center; gap: 8px; background: var(--paper); border: 2.5px solid var(--ink); border-radius: 999px; padding: 4px 12px 4px 4px; box-shadow: 3px 3px 0 var(--ink); font-weight: 700; font-size: 15px; }
+.pl .av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--sun); border: 2px solid var(--ink); font-size: 19px; line-height: 1; }
+.pl.me { background: var(--sun); } .pl.me .av { background: var(--paper); }
+.pl .pts { font-family: var(--font-display); font-weight: 400; font-size: 14px; font-variant-numeric: tabular-nums; }
+.pl .ok { color: #0f8a55; font-weight: 800; }
+.pl .crown { font-size: 14px; }
+
+.settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.seg { display: flex; border: 3px solid var(--ink); border-radius: 12px; overflow: hidden; background: #fff; }
+.seg button { flex: 1; border: 0; background: transparent; padding: 9px 6px; font-weight: 800; min-height: 44px; border-left: 2px solid var(--ink); font-size: 15px; }
+.seg button:first-child { border-left: 0; }
+.seg button[aria-pressed=true] { background: var(--pink); }
+.seg button[disabled] { cursor: default; }
+.hint { font-size: 14px; color: var(--muted); margin: 0; }
+
+.make { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 760px) { .make { grid-template-columns: 1fr; } }
+.opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.opt { padding: 0; border: 3px solid var(--ink); border-radius: 10px; overflow: hidden; background: var(--ink); aspect-ratio: 4 / 3; box-shadow: 3px 3px 0 var(--ink); max-width: 100%; }
+.opt img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.opt[aria-pressed=true] { outline: 4px solid var(--pink); outline-offset: 2px; }
+.preview { max-width: 460px; width: 100%; }
+.count { font-size: 12px; color: var(--muted); text-align: right; margin-top: -8px; font-variant-numeric: tabular-nums; }
+
+.vote-stage { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.vote-stage .meme { width: min(560px, 100%); box-shadow: var(--shadow-lg); }
+.ratings { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.rate { width: 78px; padding: 8px 4px 6px; border: 3px solid var(--ink); border-radius: 14px; background: var(--paper); box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; font-weight: 800; }
+.rate span { font-size: 32px; line-height: 1.1; }
+.rate[aria-pressed=true] { background: var(--sun); transform: translate(2px,2px) rotate(-4deg); box-shadow: 2px 2px 0 var(--ink); }
+.rate[disabled] { opacity: .45; cursor: not-allowed; }
+.vote-note { background: var(--paper); border: 2.5px solid var(--ink); border-radius: 999px; padding: 6px 14px; font-weight: 700; }
+
+.results { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; }
+.res-card { display: flex; flex-direction: column; gap: 8px; min-width: 0; position: relative; }
+.res-card .who-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 800; color: var(--paper); text-shadow: 1px 1px 0 var(--ink); }
+.res-card .pts-badge { background: var(--sun); color: var(--ink); text-shadow: none; border: 2.5px solid var(--ink); border-radius: 999px; padding: 2px 10px; font-family: var(--font-display); font-weight: 400; font-variant-numeric: tabular-nums; }
+.res-card.win .meme { outline: 5px solid var(--sun); outline-offset: 3px; }
+.winner-flag { position: absolute; top: -14px; left: -10px; z-index: 2; background: var(--pink); border: 2.5px solid var(--ink); border-radius: 8px; padding: 2px 10px; font-family: var(--font-display); font-size: 14px; transform: rotate(-6deg); box-shadow: 3px 3px 0 var(--ink); }
+
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: 12px; }
+.pod { display: flex; flex-direction: column; align-items: center; gap: 6px; width: min(150px, 30%); text-align: center; min-width: 0; }
+.pod .av { font-size: 44px; line-height: 1; }
+.pod .nm { font-weight: 800; overflow-wrap: anywhere; color: var(--paper); text-shadow: 1px 1px 0 var(--ink); }
+.pod .block { width: 100%; border: 3px solid var(--ink); border-bottom: 0; border-radius: 12px 12px 0 0; display: grid; place-items: center; font-family: var(--font-display); font-size: 30px; box-shadow: var(--shadow); }
+.pod.p1 .block { height: 150px; background: var(--sun); } .pod.p2 .block { height: 110px; background: var(--paper); } .pod.p3 .block { height: 80px; background: var(--pink); }
+.pod .score { font-family: var(--font-body); font-size: 15px; font-weight: 800; }
+.best-wrap { display: grid; grid-template-columns: minmax(0, 340px) 1fr; gap: 22px; align-items: center; }
+@media (max-width: 680px) { .best-wrap { grid-template-columns: 1fr; } }
+
+.float-emoji { position: fixed; bottom: 12vh; font-size: 40px; pointer-events: none; z-index: 50; animation: floatUp 2.2s ease-out forwards; }
+@keyframes floatUp { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: 1; transform: translateY(-30px) scale(1.15); } 100% { transform: translateY(-60vh) scale(1) rotate(20deg); opacity: 0; } }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 18px; border-radius: 999px; font-weight: 700; z-index: 60; max-width: calc(100% - 32px); }
+
+footer { color: var(--paper); font-size: 13px; text-align: center; opacity: .9; }
+footer a { color: var(--sun); }
+.credit { font-size: 11px; color: var(--muted); }
+.credit a { color: inherit; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="brand">
+    <h1 class="logo">Gif<span>fig</span></h1>
+    <p class="tag">Das Meme-Partyspiel mit den <b>besten GIFs von GIPHY</b>, international und deutsch. Schreib die lustigste Caption, deine Freunde stimmen ab.</p>
+  </header>
+
+  <!-- HOME -->
+  <main id="home" class="stack">
+    <div class="home-grid">
+      <section class="sticker stack" aria-labelledby="h-play">
+        <h2 id="h-play" style="font-size:28px">Los geht's</h2>
+        <div class="who">
+          <button class="avatar-btn" id="avatarBtn" type="button" title="Avatar wechseln" aria-label="Avatar wechseln">🐸</button>
+          <input type="text" id="nameInput" maxlength="16" placeholder="Dein Spitzname" autocomplete="off">
+        </div>
+        <div class="row">
+          <button class="btn big sun" id="createBtn" type="button">Neues Spiel</button>
+          <input type="text" id="codeInput" class="code-input" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Raumcode">
+          <button class="btn big" id="joinBtn" type="button">Beitreten</button>
+        </div>
+        <p class="err" id="homeErr" role="alert"></p>
+        <div class="stack" style="gap:8px" id="openWrap">
+          <div class="label">Offene Spiele</div>
+          <div class="open-list" id="openList"><p class="empty">Gerade hostet niemand. Starte ein Spiel und schick deinen Freunden den Code.</p></div>
+        </div>
+        <p class="hint" id="roomStatus"></p>
+      </section>
+
+      <section class="sticker stack" aria-labelledby="h-how">
+        <h2 id="h-how" style="font-size:24px">So spielt ihr</h2>
+        <ol class="steps">
+          <li><span>Einer startet ein Spiel und teilt den <b>4-stelligen Code</b>. Bis zu 8 Leute spielen mit.</span></li>
+          <li><span>Jede Runde bekommst du <b>3 GIFs zur Auswahl</b> und 2 Neu-Würfe. Schreib oben und unten deine Caption, wähle einen Stil.</span></li>
+          <li><span>Alle Memes laufen anonym durch. Ihr bewertet von 😐 bis 💀. Die Punkte zählen fürs Podium.</span></li>
+          <li><span>Das beste Meme des Spiels landet in der <b>Ruhmeshalle</b>.</span></li>
+        </ol>
+        <p class="hint">Modi: <b>Klassisch</b> (jeder eigenes GIF), <b>Duell</b> (alle dasselbe GIF), <b>Mix</b> (abwechselnd). GIFs: alle, nur deutsche Memes (Bernd das Brot, Heinz, Dittsche, Tagesschau …) oder nur internationale. Kein Plan? Drück auf 💡 Idee.</p>
+        <button class="linkish" id="soloBtn" type="button">Alleine üben →</button>
+      </section>
+    </div>
+
+    <section class="sticker stack" aria-labelledby="h-fame" id="fameSection">
+      <div class="row" style="justify-content:space-between">
+        <h2 id="h-fame" style="font-size:24px">Ruhmeshalle</h2>
+        <span class="label" id="fameCount"></span>
+      </div>
+      <div class="fame-grid" id="fameGrid"><p class="empty">Noch leer. Das Sieger-Meme jedes Spiels kann hier verewigt werden.</p></div>
+    </section>
+  </main>
+
+  <!-- ROOM -->
+  <main id="room" class="stack" hidden>
+    <div class="topbar">
+      <div class="row">
+        <div class="codechip"><span class="label" style="color:var(--ink)">Code</span><b id="codeText">----</b>
+          <button class="btn small" id="copyBtn" type="button">Kopieren</button></div>
+        <button class="btn small" id="leaveBtn" type="button">Verlassen</button>
+      </div>
+      <div class="timer" id="timer" hidden>60</div>
+    </div>
+    <h2 class="phase-title" id="phaseTitle">Lobby</h2>
+    <div class="players" id="players"></div>
+
+    <section id="pLobby" class="sticker stack" hidden>
+      <div class="settings">
+        <div class="stack" style="gap:6px"><span class="label">Runden</span><div class="seg" id="segRounds"></div></div>
+        <div class="stack" style="gap:6px"><span class="label">Zeit pro Meme</span><div class="seg" id="segTime"></div></div>
+        <div class="stack" style="gap:6px"><span class="label">Modus</span><div class="seg" id="segMode"></div></div>
+        <div class="stack" style="gap:6px"><span class="label">GIFs</span><div class="seg" id="segPool"></div></div>
+      </div>
+      <p class="hint" id="modeHint"></p>
+      <div class="row">
+        <button class="btn big pink" id="startBtn" type="button">Spiel starten</button>
+        <span class="hint" id="lobbyHint"></span>
+      </div>
+    </section>
+
+    <section id="pMake" class="make" hidden>
+      <div class="sticker stack">
+        <div class="row" style="justify-content:space-between">
+          <span class="label" id="makeLabel">Wähle dein GIF</span>
+          <button class="btn small" id="rerollBtn" type="button">🎲 Neu würfeln (2)</button>
+        </div>
+        <div class="opts" id="opts"></div>
+        <div class="row" style="justify-content:space-between"><label class="label" for="topInput">Oben</label>
+          <button class="btn small" id="ideaBtn" type="button">💡 Idee</button></div>
+        <input type="text" id="topInput" maxlength="60" placeholder="Wenn der Lehrer sagt …" autocomplete="off">
+        <div class="count" id="topCount">0/60</div>
+        <label class="label" for="botInput">Unten</label>
+        <input type="text" id="botInput" maxlength="60" placeholder="… und keiner hat die Hausaufgaben" autocomplete="off">
+        <div class="count" id="botCount">0/60</div>
+        <div class="stack" style="gap:6px"><span class="label">Stil</span>
+          <div class="seg" id="segStyle">
+            <button type="button" data-s="k" aria-pressed="true">Klassik</button>
+            <button type="button" data-s="u" aria-pressed="false">Untertitel</button>
+            <button type="button" data-s="p" aria-pressed="false">Post</button>
+          </div>
+        </div>
+        <button class="btn big mint" id="readyBtn" type="button">Fertig!</button>
+      </div>
+      <div class="stack" style="align-items:center">
+        <div class="preview" id="preview"></div>
+        <p class="hint" style="color:var(--paper)" id="makeStatus"></p>
+      </div>
+    </section>
+
+    <section id="pVote" class="vote-stage" hidden>
+      <div class="vote-note" id="voteNote">Meme 1 von 3</div>
+      <div id="voteMeme" style="width:min(560px,100%)"></div>
+      <div class="ratings" id="ratings"></div>
+      <div class="vote-note" id="voteProgress"></div>
+    </section>
+
+    <section id="pRes" class="stack" hidden>
+      <div class="results" id="results"></div>
+    </section>
+
+    <section id="pEnd" class="stack" hidden>
+      <div class="podium" id="podium"></div>
+      <div class="sticker best-wrap">
+        <div id="bestMeme"></div>
+        <div class="stack">
+          <span class="label">Meme des Spiels</span>
+          <h3 id="bestBy" style="font-size:26px"></h3>
+          <div class="row">
+            <button class="btn sun" id="fameBtn" type="button" hidden>In die Ruhmeshalle</button>
+            <button class="btn pink big" id="againBtn" type="button" hidden>Nochmal spielen</button>
+          </div>
+          <p class="hint" id="endHint"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- SOLO -->
+  <main id="solo" class="stack" hidden>
+    <div class="row" style="justify-content:space-between">
+      <h2 class="phase-title">Übungsmodus</h2>
+      <button class="btn small" id="soloBack" type="button">Zurück</button>
+    </div>
+    <div class="make">
+      <div class="sticker stack">
+        <div class="row" style="justify-content:space-between">
+          <span class="label">Wähle ein GIF</span>
+          <button class="btn small" id="soloReroll" type="button">🎲 Neue GIFs</button>
+        </div>
+        <div class="opts" id="soloOpts"></div>
+        <div class="row" style="justify-content:space-between"><label class="label" for="soloTop">Oben</label>
+          <button class="btn small" id="soloIdea" type="button">💡 Idee</button></div>
+        <input type="text" id="soloTop" maxlength="60" autocomplete="off" placeholder="Ich, um 3 Uhr nachts">
+        <label class="label" for="soloBot">Unten</label>
+        <input type="text" id="soloBot" maxlength="60" autocomplete="off" placeholder="wenn der Kühlschrank brummt">
+        <div class="stack" style="gap:6px"><span class="label">Stil</span>
+          <div class="seg" id="soloStyle">
+            <button type="button" data-s="k" aria-pressed="true">Klassik</button>
+            <button type="button" data-s="u" aria-pressed="false">Untertitel</button>
+            <button type="button" data-s="p" aria-pressed="false">Post</button>
+          </div>
+        </div>
+      </div>
+      <div class="stack" style="align-items:center"><div class="preview" id="soloPreview"></div></div>
+    </div>
+  </main>
+
+  <footer>GIFs von <a href="https://giphy.com" target="_blank" rel="noopener">GIPHY</a>. <span id="footNote">Alle Mitspieler brauchen Zugriff auf diese Seite. Teile sie über „Teilen“ in Claude.</span></footer>
+</div>
+
+<script>
+"use strict";
+// ---------- GIF catalogue (GIPHY ids, files served from g/<id>.webp) ----------
+const GIFS = [
+["gz8JHkRnbUromYpuNc","Brain Dead SpongeBob"],["l4Jz3a8jO92crUlWM","Salt Bae"],["BIZkwFtu2xDlS","Justin Timberlake Judging"],["RddAJiGxTPQFa","Faultier"],
+["XIqCQx02E1U9W","Kermit arbeitet"],["jir4LEGA68A9y","Elijah Wood"],["BmmfETghGOPrW","Zach rechnet"],["QBeF29gyGVp8IHAEr1","Rauchende Ente"],
+["Bzcz1DLSiOx5nJC0KL","Katze wirft"],["QAotDKfRHu5upD535x","Mind Blown Katze"],["HK1UCJLWpHnTwT47yc","Tell Me More Katze"],["uTeMhhsHLNCs43lkQC","Baby schockiert"],
+["AuIvUrZpzBl04","Mädchen skeptisch"],["RDf0ZdTtbPEmDxCOUj","Simpsons Sturz"],["mUrBX1TF0kCRi","Schimpansen-Shimmy"],["PfPgPP9VX3m5O05sba","Kätzchen"],
+["as521kub4b68hW2JhK","Flauschhund"],["oVONo0vndpc4UMTK9L","Who me?"],["oYIfRmGWWlpIMjJEB5","Katze im Gang"],["l1KVboXQeiaX7FHgI","Affenbaby"],
+["aFTt8wvDtqKCQ","Doge"],["1nfwnYf5Uz7hzhYof8","Augenrollen"],["2gqfSgPWPudl4d6dT7","Freudentränen"],["okfvUCpgArv3y","Tanzendes Skelett"],
+["e5EcjjJx3dCFi","Kopfschütteln"],["KsMT02cXvy0AN7j4Md","Angewiderte Katze"],["A2C5IXRkMRm2zPSJzg","Schreiendes Murmeltier"],["iHp6V8DDTt7Lq","Wütende Eule"],
+["cKPPybGmzLZB4m9HfD","Roomba-Fahrt"],["bvhOTQTJr9BNpHaHUT","Strauß"],["vLq5FWMjfN47S","Will Smith"],["fp3h1wpfp7kFa","Jim Carrey checkt es"],
+["3og0INyCmHlNylks9O","Picard Facepalm"],["l3q2K5jinAlChoCLS","Blinzelnder Typ"],["t9ctG5MZhyyU8","Oh Damn"],["qiDb8McXyj6Eg","Daumen runter"],
+["FEikw3bXVHdMk","Tracy Morgan"],["vgUFOWBwBkziE","Stanley nickt"],["3OSo3PPaXdw0U","Dr. Steve Brule"],["l0NwHXQy3kUSfFF60","Mind Blown"],
+["jIRPOnUASNsQw","Oh mein Gott"],["26ufgSwMRqauQWqL6","SNL Jubel"],["dEdmW17JnZhiU","Stanley Augenrollen"],["S8LWP0CotPAQw","Gerichtsdiener nickt"],
+["h2OLfcSKKthRK","Kenan überrascht"],["oFvXciCA8px11faKJS","Erschrockene Katze"],["O5NyCibf93upy","Michael Jordan lacht"],["6Q3M4BIK0lX44","Lachen, dann Weinen"],
+["KiaU2EUyxjQB2","Joey lacht"],["gjaDUH3UfNnZn2stvY","Tom Cruise lacht"],["3o72F8t9TDi2xVnxOE","Schockierter Affe"],["5YF9dwGZ29rVe","Jordan zuckt"],
+["xL7PDV9frcudO","Verwirrter Nick Young"],["GGiPk0tzXhDKR5rgjS","Hasbulla"],["RLcQGYmQU36d3FceiP","Mr. Bean tanzt"],["NtxYZwjMr0HOYbbfeG","Oma tanzt"],
+["gjgWQA5QBuBmUZahOP","Peinlicher Tanz"],["XBcWgQZJpYTCac3o61","Teletubbie tanzt"],["Ns9RtP5D5cW0gXjA40","Tanzender Affe"],["3ogmaPGsQOruw","Kind-Fail"],
+["26tP3M3i03hoIYL6M","Planschbecken-Fail"],["26FPLsoMq5cPEVgg8","Trampolin-Fail"],["l4Ki4oD7OfUMZMGHu","Wasserrutsche"],["KOS39Lrl3c4iA","Fahrradsturz"],
+["WjldrOwZZ3EpW","Schaufel-Fail"],["1hqYk0leUMddBBkAM7","Wochenende zu Montag"],["JIX9t2j0ZTN9S","Tippende Katze"],["mlvseq9yvZhba","Salem feilt Nägel"],
+["WXB88TeARFVvi","Tanzende Katze"],["pY8jLmZw0ElqvVeRH4","Lass mich nachdenken"],["xun2qNfnK1cV5r07GM","Misstrauische Katze"],["g2JO6qWbQhiV7m4AKM","Kung Paw Katze"],
+["C7grnU4M3o5on6ALso","Katze miaut"],["5r5UevTRi3U2hUS0rO","Y U NO"],["3o7TKwUAFEHorFo8sE","Trollface"],
+// deutsche Memes (drittes Feld = 1)
+["1BeoNid3q0fVx4ff05","Bernd das Brot verwirrt",1],["2cedB4Qub1AIQzgY88","Bernd: Ach komm",1],["3ov9k6peQFE0ocXHyM","Bernd unter der Dusche",1],["3ov9kc493g7ioz5NKg","Bernd ganz nah",1],
+["QdeXeNkGVkkJ8xJ3NH","Bernd: Mist",1],["xUPGcmz5xaxnQbhuvu","Bernd sagt Nein",1],["3osxYjPTc4507tiofu","Sehr gut, sehr gut!",1],["43dOLsrab71tfigK4T","Bam Bam Bam Baaam",1],
+["juL3OAXtYNfmzqJbkb","Weiter so, Germany",1],["mdmEgT1VVOHfKmlcTB","Haaaalel",1],["3ohzdPzP6FKTtBPuvK","Dittsche im Imbiss",1],["Lr3vXQDrKZ8Aeef8fY","Dittsche jubelt",1],
+["xUPGcorwlGlpK88E4E","Dittsche trinkt",1],["f7vXDGeQ2diZKn9uJf","Oh mein Gott",1],["sEXJjw3F0SVAztnU7Q","OHO",1],["SjRMvghuBV6lRg3uHx","Welke feiert",1],
+["qz0LOvY7s4NPzOMEDW","Welke lacht",1],["HmgoqIQntkuGnEbYCT","Welke staunt",1],["71DGQPBz6WDdPT9WnJ","Scheiße",1],["CAZTRomzqA51e","Tagesschau-Lachanfall",1],
+["l4EoZeOktaRwZdFQs","Susanne Daubner wartet",1],["6zmnjvkuOFlogGxdBN","Ich hab gefragt",1],["8LDAFhc0YTzc6dpe9w","Rüdiger will die Scheidung",1],["CiGp1Uy2nRb7t2IGDQ","Das muss ich unbedingt verpassen",1],
+["GTdAn0b0PnGXGsSQsq","Depressiver Stuhl",1],["GgJWHeG5tnIhC6dr8Y","Absolute Lüge",1],["rDKEooBBiB3uIO9XbI","Käsesoßencowboy",1],["wNnbuAu0y7WLkPvJlC","Absoluter Heinz",1],
+["zx2ZGizuNO0JDeArjr","Unproduktiver Husten",1],["Pc7O1E77aPaJkGigtu","Mach ich gerne",1],["byvhhfpHobUabfgb5G","Jawohl",1],["qMFo7PQzikMxhp0zuH","Gut gemacht",1],
+["W6dYsT3p4xJxgIy75D","Mein Mantel ist geperlt",1],["k6MGpqbd46ptcDWNuV","Da kann nichts schiefgehen",1],["gkzvo4Dv2iYebc60YF","Pünktlichkeit ist Fiktion",1],["xT0xeqAUMNESci8GuQ","Horst Lichter: Dein Ernst?",1],
+["5BP9oKenBueceelwF4","Polizei notiert",1],["l0HlDpz2iIlItNoiY","Bierkrug",1],["RFI36OCHgq0HxOVCuv","Ich kann das alles nicht mehr",1],["2FHaRWnW8a0c9JngzN","Kein Salitos mehr",1],
+["VSjyZSiaClPk8yEZoS","Klopp: Yes!",1],["qmU61BkHHwSTRuiGZW","Klopp zuckt",1]
+];
+const N = GIFS.length;
+const ONLINE_URL = "https://marlonm05.github.io/Makeitmeme/";
+const ALL_IDX = [...Array(N).keys()];
+const POOLS = { all: ALL_IDX, de: ALL_IDX.filter((i) => GIFS[i][2]), int: ALL_IDX.filter((i) => !GIFS[i][2]) };
+const POOL_NAMES = { all: "Alle", de: "🇩🇪 Deutsch", int: "International" };
+const IDEAS = [
+  "Wenn die Deutsche Bahn mal pünktlich ist", "Ich nach 5 Minuten Sport", "Mama: Wir haben Essen zu Hause", "Lehrer: Das kommt in der Arbeit dran",
+  "Montagmorgen, 6 Uhr", "Wenn das WLAN weg ist", "Ich beim Pfandflaschen-Abgeben", "Wenn jemand Döner ohne Soße bestellt",
+  "Oma: Hast du schon gegessen?", "Wenn der Lieferando-Fahrer klingelt", "Sonntags hat alles zu", "Wenn der Akku bei 1 % ist",
+  "Ich nach dem dritten Kaffee", "Mama: Wir müssen reden", "Ich in der Gruppenarbeit", "Kumpel: Bin in 5 Minuten da",
+  "Brief vom Finanzamt im Briefkasten", "Wenn das Handy im Unterricht klingelt", "Die Ferien sind vorbei", "Papa am Grill",
+  "Wenn jemand meine Pommes klaut", "Wenn der Bus vor deiner Nase wegfährt", "Freitag, 15 Uhr", "Ich beim Elternabend",
+  "Wenn die Pizza endlich kommt", "Ich bei der Steuererklärung", "Wenn du Tschüss sagst und in dieselbe Richtung gehst", "Der Schulgong in der letzten Stunde",
+  "Wenn jemand im Zug laut telefoniert", "Ich, wenn es Freibier gibt", "Die Mülltrennung in meiner WG", "Wenn der Chef sagt: Kurze Frage"
+];
+const AVATARS = ["🐸","🦆","🐱","🐶","🦉","🐵","🦙","🐧","🦖","🐙","👽","🤖","🦊","🐼","🍕","🌵"];
+const RATINGS = [[1,"😐","Meh"],[2,"🙂","Okay"],[3,"😂","Lustig"],[4,"🤣","Stark"],[5,"💀","Bin tot"]];
+const MODES = { own: "Klassisch", same: "Duell", mix: "Mix" };
+const MODE_HINTS = {
+  own: "Klassisch: Jeder bekommt eigene GIFs zur Auswahl.",
+  same: "Duell: Alle bekommen dasselbe GIF. Nur die Caption entscheidet.",
+  mix: "Mix: Abwechselnd Klassisch und Duell."
+};
+const MAX_PLAYERS = 8, VOTE_MS = 15000, VOTE_MIN_MS = 3500, RES_MS = 11000, GRACE_MS = 9000, HOST_WAIT_MS = 2600;
+
+// ---------- helpers ----------
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const safe = (fn) => { try { return fn(); } catch { return null; } };
+const ls = { get: (k) => safe(() => localStorage.getItem(k)), set: (k, v) => safe(() => localStorage.setItem(k, v)) };
+const ss = { get: (k) => safe(() => sessionStorage.getItem(k)), set: (k, v) => safe(() => sessionStorage.setItem(k, v)) };
+const rid = (n) => Array.from({ length: n }, () => "abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 32)]).join("");
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const gifIdx = (v) => (Number.isInteger(v) && v >= 0 && v < N ? v : 0);
+const clampStr = (v, n) => (typeof v === "string" ? v.slice(0, n) : "");
+const styleOf = (v) => (v === "u" || v === "p" ? v : "k");
+const clone = (o) => JSON.parse(JSON.stringify(o));
+function seeded(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
+function shuffle(arr, rnd = Math.random) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function toast(msg) { const t = el("div", "toast", msg); document.body.append(t); setTimeout(() => t.remove(), 2400); }
+
+// ---------- meme rendering ----------
+function sizeClass(t) { const n = t.length; return n > 46 ? " l4" : n > 32 ? " l3" : n > 18 ? " l2" : ""; }
+function renderMeme(m, opts = {}) {
+  const s = styleOf(m.s), g = GIFS[gifIdx(m.g)];
+  const fig = el("figure", "meme s-" + s);
+  const t = clampStr(m.t, 60), b = clampStr(m.b, 60);
+  if (s === "p") fig.append(el("div", "post", [t, b].filter(Boolean).join(" ")));
+  const fr = el("div", "frame");
+  const img = el("img"); img.src = "g/" + g[0] + ".webp"; img.alt = g[1]; img.loading = opts.lazy ? "lazy" : "eager"; img.decoding = "async";
+  fr.append(img);
+  if (s !== "p") {
+    if (t) fr.append(el("span", "mt top" + sizeClass(t), t));
+    if (b) fr.append(el("span", "mt bot" + sizeClass(b), b));
+  }
+  fig.append(fr);
+  if (opts.credit) {
+    const c = el("div", "credit"); c.style.cssText = "background:var(--paper);padding:3px 8px;line-height:1.4";
+    const a = el("a", null, "GIPHY: " + g[1]); a.href = "https://giphy.com/gifs/" + g[0]; a.target = "_blank"; a.rel = "noopener";
+    c.append(a); fig.append(c);
+  }
+  return fig;
+}
+
+// ---------- identity ----------
+let myPid = ss.get("giffig-pid"); if (!myPid) { myPid = rid(8); ss.set("giffig-pid", myPid); }
+const me = { name: ls.get("giffig-name") || "", av: ls.get("giffig-av") || pick(AVATARS) };
+const nameInput = $("#nameInput"), avatarBtn = $("#avatarBtn");
+nameInput.value = me.name; avatarBtn.textContent = me.av;
+avatarBtn.onclick = () => { me.av = AVATARS[(AVATARS.indexOf(me.av) + 1) % AVATARS.length]; avatarBtn.textContent = me.av; ls.set("giffig-av", me.av); pushLobbyPresence(); };
+nameInput.oninput = () => { me.name = nameInput.value.trim().slice(0, 16); ls.set("giffig-name", me.name); $("#homeErr").textContent = ""; pushLobbyPresenceSoon(); };
+
+function show(view) { for (const v of ["home", "room", "solo"]) $("#" + v).hidden = v !== view; window.scrollTo(0, 0); }
+
+// ---------- platform capabilities ----------
+let lobby = null, db = null, user = null, canWriteFame = null, canModerate = false;
+const statusEl = $("#roomStatus");
+statusEl.textContent = "Verbinde mit dem Spielserver …";
+
+async function boot() {
+  const c = window.claude;
+  if (!c || typeof c.use !== "function") { statusEl.textContent = "Mehrspieler läuft nur in der veröffentlichten Seite. Du kannst alleine üben."; return; }
+  const [r, d, u] = await Promise.all([c.use("room").catch(() => null), c.use("db").catch(() => null), c.use("user").catch(() => null)]);
+  lobby = r; db = d; user = u;
+  if (user) {
+    canModerate = !!safe(() => user.canEdit());
+    try { canWriteFame = await user.can("data.write"); } catch { canWriteFame = null; }
+  }
+  if (lobby && lobby.local) {
+    $("#openWrap").hidden = true;
+    $("#footNote").textContent = "Schick deinen Freunden den Link zu dieser Seite und den Spielcode. Lass das Fenster offen, solange du Host bist.";
+    $("#h-fame").textContent = "Deine Ruhmeshalle";
+  }
+  if (lobby) {
+    lobby.onPeers(renderOpenGames, () => { statusEl.textContent = "Mehrspieler ist hier gerade nicht verfügbar. Du kannst alleine üben."; });
+    lobby.onConnection((ok) => { statusEl.textContent = ok ? "" : "Verbinde …"; }, () => {});
+    pushLobbyPresence();
+  } else {
+    statusEl.textContent = "Mehrspieler geht hier nur für eingeladene Claude-Nutzer. Ohne Konto spielen: ";
+    const a = el("a", null, "Giffig online öffnen"); a.href = ONLINE_URL; a.target = "_blank"; a.rel = "noopener"; a.style.fontWeight = "800";
+    statusEl.append(a);
+  }
+  if (db) subscribeFame();
+}
+boot();
+
+// ---------- lobby presence & open games ----------
+let lobbyTimer = 0;
+function pushLobbyPresenceSoon() { clearTimeout(lobbyTimer); lobbyTimer = setTimeout(pushLobbyPresence, 500); }
+function pushLobbyPresence() {
+  if (!lobby) return;
+  const hosting = amHost && code && G && G.ph === "lobby" ? { c: code, n: players().length } : null;
+  lobby.presence({ name: me.name || "Jemand", av: me.av, hosting }).catch(() => {});
+}
+function renderOpenGames() {
+  if (!lobby) return;
+  const list = $("#openList"); list.textContent = "";
+  const seen = new Set();
+  for (const p of lobby.peers()) {
+    const h = p.presence && p.presence.hosting;
+    if (p.isMe || !h || typeof h.c !== "string" || !/^[A-Z]{4}$/.test(h.c) || seen.has(h.c)) continue;
+    seen.add(h.c);
+    const row = el("div", "open-game");
+    const info = el("div");
+    info.append(el("b", null, h.c), document.createTextNode("  " + clampStr(p.presence.av, 4) + " " + clampStr(p.presence.name, 16) + " · " + Math.min(Number(h.n) || 1, MAX_PLAYERS) + " Spieler"));
+    const btn = el("button", "btn small sun", "Mitmachen"); btn.type = "button"; btn.onclick = () => enterRoom(h.c, false);
+    row.append(info, btn); list.append(row);
+  }
+  if (!seen.size) list.append(el("p", "empty", "Gerade hostet niemand. Starte ein Spiel und schick deinen Freunden den Code."));
+}
+
+// ---------- hall of fame ----------
+let fameUnsub = null;
+function subscribeFame() {
+  const timer = setTimeout(() => { $("#fameCount").textContent = "Lädt noch …"; }, 10000);
+  fameUnsub = db.collection("fame").orderBy("at", "desc").limit(24).onSnapshot((snap) => {
+    if (!snap.metadata.fromCache) { clearTimeout(timer); $("#fameCount").textContent = snap.size ? snap.size + " Memes" : ""; }
+    const grid = $("#fameGrid"); grid.textContent = "";
+    if (snap.empty) { grid.append(el("p", "empty", "Noch leer. Das Sieger-Meme jedes Spiels kann hier verewigt werden.")); return; }
+    for (const d of snap.docs) {
+      const m = d.data(); if (!m) continue;
+      const idx = GIFS.findIndex((x) => x[0] === m.g); if (idx < 0) continue;
+      const card = el("div", "fame-card");
+      card.append(renderMeme({ g: idx, t: m.t, b: m.b, s: m.s }, { lazy: true, credit: true }));
+      const meta = el("div", "fame-meta");
+      meta.append(el("span", null, clampStr(m.av, 4) + " " + clampStr(m.n, 16)), el("b", null, (Number(m.pts) || 0) + " Pkt"));
+      card.append(meta);
+      if (canModerate) {
+        const del = el("button", "linkish", "Entfernen"); del.type = "button"; del.style.fontSize = "12px";
+        del.onclick = () => db.collection("fame").doc(d.id).delete().catch(() => toast("Konnte nicht entfernt werden."));
+        card.append(del);
+      }
+      grid.append(card);
+    }
+  }, () => { clearTimeout(timer); $("#fameCount").textContent = ""; });
+}
+
+// ---------- game room state ----------
+let game = null, code = null, joinedAt = 0, myJa = 0;
+let G = null, lastG = null, amHost = false, hostDeadline = 0, hostMin = 0;
+let seenSeq = -1, localDeadline = 0, builtKey = "";
+
+function defaultG() { return { ph: "lobby", seq: 1, rem: 0, R: 5, T: 60, mode: "own", pool: "all", r: 0, seed: 0, ord: [], gi: -1, subs: [], sp: [], vi: 0, sc: {}, nm: {}, best: null }; }
+
+function rawPlayers() {
+  if (!game) return [];
+  const byPid = new Map();
+  for (const p of game.peers()) {
+    const pr = p.presence || {};
+    if (typeof pr.pid !== "string" || !/^[a-z0-9]{8}$/.test(pr.pid)) continue;
+    const cur = byPid.get(pr.pid);
+    if (!cur || p.updatedAt > cur.updatedAt) byPid.set(pr.pid, { ...pr, peer: p.peer, isMe: p.isMe && pr.pid === myPid, updatedAt: p.updatedAt });
+  }
+  return [...byPid.values()].sort((a, b) => (Number(a.ja) || 0) - (Number(b.ja) || 0));
+}
+function players() { return rawPlayers().slice(0, MAX_PLAYERS).map((p) => ({ pid: p.pid, name: clampStr(p.name, 16) || "Jemand", av: clampStr(p.av, 4) || "🙂", ja: p.ja, sub: p.sub, ready: !!p.ready, vote: p.vote, react: p.react, g: p.g, isMe: p.pid === myPid })); }
+
+async function enterRoom(c, create) {
+  if (!me.name) { $("#homeErr").textContent = "Gib zuerst einen Spitznamen ein."; nameInput.focus(); return "error"; }
+  if (!lobby) { $("#homeErr").textContent = "Mehrspieler ist hier nicht verfügbar. Spiel ohne Konto auf " + ONLINE_URL + " oder probier den Übungsmodus."; return "error"; }
+  c = c.toUpperCase();
+  if (!/^[A-Z]{4}$/.test(c)) { $("#homeErr").textContent = "Der Code hat 4 Buchstaben."; return "error"; }
+  $("#homeErr").textContent = lobby.local ? (create ? "Erstelle Spiel …" : "Verbinde mit " + c + " …") : "";
+  try { game = await lobby.join("giffig-" + c.toLowerCase(), { create }); }
+  catch (e) {
+    const msg = lobby.local && e && typeof e.message === "string" ? e.message : "";
+    if (msg === "taken") { $("#homeErr").textContent = ""; return "taken"; }
+    $("#homeErr").textContent = msg || "Beitreten hat nicht geklappt. Versuch es gleich nochmal.";
+    return "error";
+  }
+  $("#homeErr").textContent = "";
+  code = c; joinedAt = Date.now(); myJa = joinedAt; G = null; lastG = null; amHost = false; seenSeq = -1; builtKey = "";
+  resetMake();
+  $("#codeText").textContent = code;
+  const pres = { pid: myPid, name: me.name, av: me.av, ja: myJa, sub: null, ready: false, vote: null, react: null, g: null };
+  if (create) { const g = defaultG(); g.seq = Math.floor(Math.random() * 1e6); pres.g = g; amHost = true; G = g; lastG = g; }
+  await game.presence(pres).catch(() => {});
+  game.onPeers(onGamePeers, () => { toast("Verbindung zum Raum verloren."); leaveRoom(); });
+  show("room");
+  render();
+  pushLobbyPresence();
+}
+
+async function leaveRoom() {
+  const g = game; game = null; code = null; G = null; amHost = false;
+  if (g) await g.leave().catch(() => {});
+  show("home"); pushLobbyPresence(); renderOpenGames();
+}
+
+// ---------- host election ----------
+function resolveHost() {
+  if (!game) return;
+  const all = rawPlayers();
+  const hosts = all.filter((p) => p.g && typeof p.g === "object");
+  if (hosts.length) {
+    const h = hosts[0];
+    if (h.pid !== myPid && amHost) { amHost = false; game.presence({ g: null }).catch(() => {}); }
+    if (h.pid === myPid) amHost = true;
+    if (!amHost) { G = sanitizeG(h.g); lastG = G; }
+    return;
+  }
+  if (Date.now() - joinedAt < HOST_WAIT_MS) return;
+  const first = all[0];
+  if (first && first.pid === myPid && !amHost) becomeHost();
+}
+function becomeHost() {
+  amHost = true;
+  const g = lastG ? clone(lastG) : defaultG();
+  if (g.ph === "make" || g.ph === "vote" || g.ph === "res") { setPhase(g, GRACE_MS); toast("Du bist jetzt Host."); }
+  else pushG(g);
+}
+function sanitizeG(g) {
+  // trust nothing: coerce shape for rendering
+  const o = defaultG();
+  o.ph = ["lobby", "make", "vote", "res", "end"].includes(g.ph) ? g.ph : "lobby";
+  o.seq = Number(g.seq) || 0; o.rem = Math.max(0, Math.min(Number(g.rem) || 0, 200000));
+  o.R = [3, 5, 7].includes(g.R) ? g.R : 5; o.T = [45, 60, 90].includes(g.T) ? g.T : 60;
+  o.mode = MODES[g.mode] ? g.mode : "own"; o.pool = POOLS[g.pool] ? g.pool : "all"; o.r = Number(g.r) || 0; o.seed = Number(g.seed) || 0;
+  o.ord = Array.isArray(g.ord) ? g.ord.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : [];
+  o.gi = Number.isInteger(g.gi) ? g.gi : -1;
+  o.subs = Array.isArray(g.subs) ? g.subs.slice(0, MAX_PLAYERS).map((s) => ({ p: clampStr(s && s.p, 8), g: gifIdx(s && s.g), t: clampStr(s && s.t, 60), b: clampStr(s && s.b, 60), s: styleOf(s && s.s) })) : [];
+  o.sp = Array.isArray(g.sp) ? g.sp.map((x) => Number(x) || 0) : [];
+  o.vi = Math.max(0, Math.min(Number(g.vi) || 0, Math.max(0, o.subs.length - 1)));
+  o.sc = g.sc && typeof g.sc === "object" ? g.sc : {};
+  o.nm = g.nm && typeof g.nm === "object" ? g.nm : {};
+  o.best = g.best && typeof g.best === "object" ? { p: clampStr(g.best.p, 8), g: gifIdx(g.best.g), t: clampStr(g.best.t, 60), b: clampStr(g.best.b, 60), s: styleOf(g.best.s), v: Number(g.best.v) || 0 } : null;
+  return o;
+}
+
+// ---------- host engine ----------
+function fit(g) {
+  const enc = new TextEncoder();
+  let size = enc.encode(JSON.stringify(g)).length, cut = 60;
+  while (size > 3600 && cut > 10) { cut -= 10; for (const s of g.subs) { s.t = s.t.slice(0, cut); s.b = s.b.slice(0, cut); } size = enc.encode(JSON.stringify(g)).length; }
+  return g;
+}
+function pushG(g) {
+  G = fit(g); lastG = G;
+  if (game) game.presence({ g: G }).catch(() => {});
+  render(); pushLobbyPresence();
+}
+function setPhase(g, ms) {
+  g.seq = (g.seq || 0) + 1; g.rem = ms;
+  hostDeadline = Date.now() + ms; hostMin = Date.now() + VOTE_MIN_MS;
+  pushG(g);
+}
+function isDuel(g) { return g.mode === "same" || (g.mode === "mix" && g.r % 2 === 0); }
+function nextRound(g) {
+  g.r += 1; g.ph = "make"; g.seed = 1 + Math.floor(Math.random() * 2e9);
+  g.ord = players().map((p) => p.pid); g.gi = isDuel(g) ? pick(POOLS[g.pool] || ALL_IDX) : -1;
+  g.subs = []; g.sp = []; g.vi = 0;
+  setPhase(g, g.T * 1000);
+}
+function hostStart() {
+  if (!amHost || !G) return;
+  const g = clone(G); g.r = 0; g.sc = {}; g.best = null; g.nm = {};
+  for (const p of players()) g.nm[p.pid] = [p.name, p.av];
+  nextRound(g);
+}
+function hostTick() {
+  if (!amHost || !G || !game) return;
+  const now = Date.now(), g = clone(G), pl = players();
+  let changed = false;
+  for (const p of pl) { const cur = g.nm[p.pid]; if (!cur || cur[0] !== p.name || cur[1] !== p.av) { g.nm[p.pid] = [p.name, p.av]; changed = true; } }
+  if (g.ph === "make") {
+    const mine = (p) => p.sub && typeof p.sub === "object" && p.sub.k === g.seed;
+    const allReady = pl.length > 0 && pl.every((p) => mine(p) && p.ready);
+    if (now >= hostDeadline || allReady) {
+      const subs = pl.filter((p) => mine(p) && (clampStr(p.sub.t, 60).trim() || clampStr(p.sub.b, 60).trim()))
+        .map((p) => ({ p: p.pid, g: g.gi >= 0 ? g.gi : gifIdx(p.sub.g), t: clampStr(p.sub.t, 60).trim(), b: clampStr(p.sub.b, 60).trim(), s: styleOf(p.sub.s) }));
+      g.subs = shuffle(subs); g.sp = g.subs.map(() => 0); g.vi = 0;
+      g.ph = g.subs.length ? "vote" : "res";
+      setPhase(g, g.subs.length ? VOTE_MS : 5000);
+      return;
+    }
+  } else if (g.ph === "vote") {
+    const s = g.subs[g.vi];
+    if (!s) { g.ph = "res"; setPhase(g, RES_MS); return; }
+    const voters = pl.filter((p) => p.pid !== s.p);
+    const voted = voters.filter((p) => p.vote && p.vote.k === g.seq);
+    const done = now >= hostMin && voted.length === voters.length;
+    if (now >= hostDeadline || done) {
+      const pts = voted.reduce((a, p) => a + Math.max(1, Math.min(5, Math.round(Number(p.vote.v) || 1))), 0);
+      g.sp[g.vi] = pts; g.sc[s.p] = (Number(g.sc[s.p]) || 0) + pts;
+      if (!g.best || pts > g.best.v) g.best = { ...s, v: pts };
+      if (g.vi < g.subs.length - 1) { g.vi += 1; setPhase(g, VOTE_MS); }
+      else { g.ph = "res"; setPhase(g, RES_MS); }
+      return;
+    }
+  } else if (g.ph === "res") {
+    if (now >= hostDeadline) {
+      if (g.r < g.R) nextRound(g); else { g.ph = "end"; setPhase(g, 0); }
+      return;
+    }
+  }
+  if (changed) pushG(g);
+}
+function hostSetting(key, val) {
+  if (!amHost || !G || G.ph !== "lobby") return;
+  const g = clone(G); g[key] = val; pushG(g);
+}
+function hostAgain() { if (!amHost || !G) return; const g = clone(G); g.ph = "lobby"; g.r = 0; g.subs = []; g.sp = []; g.sc = {}; g.best = null; setPhase(g, 0); }
+
+// ---------- client: peers & reactions ----------
+const lastReact = new Map(); let reactBaseline = false;
+function onGamePeers() {
+  resolveHost();
+  // flying reactions from others
+  for (const p of rawPlayers()) {
+    const r = p.react; if (!r || typeof r !== "object") continue;
+    const n = Number(r.n) || 0, prev = lastReact.get(p.pid);
+    lastReact.set(p.pid, n);
+    if (reactBaseline && prev !== undefined && n > prev && !p.isMe) floatEmoji(RATINGS.find((x) => x[1] === r.e) ? r.e : "😂");
+  }
+  reactBaseline = true;
+  render();
+}
+function floatEmoji(e) {
+  if (document.querySelectorAll(".float-emoji").length > 24) return;
+  const f = el("div", "float-emoji", e); f.style.left = (8 + Math.random() * 80) + "vw";
+  document.body.append(f); setTimeout(() => f.remove(), 2300);
+}
+
+// ---------- client: make phase state ----------
+let mk = null, presTimer = 0, reactN = 0;
+function resetMake() { mk = { key: -1, opts: [], g: 0, t: "", b: "", s: "k", ready: false, rr: 2 }; $("#topInput").value = ""; $("#botInput").value = ""; }
+function setupMake() {
+  if (mk.key === G.seed) return;
+  mk = { key: G.seed, opts: [], g: 0, t: "", b: "", s: mk.s || "k", ready: false, rr: 2 };
+  if (G.gi >= 0) { mk.opts = [G.gi]; mk.g = G.gi; }
+  else {
+    const pool = POOLS[G.pool] || ALL_IDX;
+    const deck = shuffle(pool, seeded(G.seed));
+    const k = G.ord.indexOf(myPid);
+    mk.opts = k >= 0 ? [0, 1, 2].map((j) => deck[(k * 3 + j) % deck.length]) : shuffle(pool).slice(0, 3);
+    mk.g = mk.opts[0];
+  }
+  $("#topInput").value = ""; $("#botInput").value = "";
+  builtKey = "";
+  pushSub(true);
+}
+function pushSub(now) {
+  clearTimeout(presTimer);
+  const send = () => { if (game && G) game.presence({ sub: { k: G.seed, g: mk.g, t: mk.t, b: mk.b, s: mk.s }, ready: mk.ready }).catch(() => {}); };
+  if (now) send(); else presTimer = setTimeout(send, 350);
+}
+function wireEditor(prefix, state, onChange) {
+  const top = $(prefix.top), bot = $(prefix.bot), seg = $(prefix.style);
+  top.addEventListener("input", () => { state().t = top.value; onChange(); });
+  bot.addEventListener("input", () => { state().b = bot.value; onChange(); });
+  seg.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-s]"); if (!b) return;
+    state().s = b.dataset.s;
+    for (const x of seg.querySelectorAll("button")) x.setAttribute("aria-pressed", String(x === b));
+    onChange();
+  });
+}
+wireEditor({ top: "#topInput", bot: "#botInput", style: "#segStyle" }, () => mk, () => {
+  if (mk.ready) return;
+  $("#topCount").textContent = mk.t.length + "/60"; $("#botCount").textContent = mk.b.length + "/60";
+  drawPreview(); pushSub(false);
+});
+$("#rerollBtn").onclick = () => {
+  if (!mk || mk.rr <= 0 || mk.ready || G.gi >= 0) return;
+  mk.rr -= 1;
+  const pool = shuffle((POOLS[G.pool] || ALL_IDX).filter((i) => !mk.opts.includes(i)));
+  mk.opts = pool.slice(0, 3); mk.g = mk.opts[0];
+  builtKey = ""; render(); pushSub(true);
+};
+$("#readyBtn").onclick = () => {
+  if (!mk.ready && !mk.t.trim() && !mk.b.trim()) { toast("Schreib erst eine Caption."); $("#topInput").focus(); return; }
+  mk.ready = !mk.ready; pushSub(true); render();
+};
+function drawOpts(container, state, onPick) {
+  container.textContent = "";
+  for (const i of state.opts) {
+    const b = el("button", "opt"); b.type = "button"; b.setAttribute("aria-pressed", String(i === state.g)); b.setAttribute("aria-label", GIFS[i][1]);
+    const img = el("img"); img.src = "g/" + GIFS[i][0] + ".webp"; img.alt = ""; b.append(img);
+    b.onclick = () => { state.g = i; for (const x of container.children) x.setAttribute("aria-pressed", String(x === b)); onPick(); };
+    container.append(b);
+  }
+}
+function drawPreview() { const p = $("#preview"); p.textContent = ""; p.append(renderMeme({ g: mk.g, t: mk.t, b: mk.b, s: mk.s }, { credit: true })); }
+
+// ---------- client: voting ----------
+let myVoteSeq = -1, myVote = 0;
+function castVote(v, e) {
+  if (!G || G.ph !== "vote") return;
+  const s = G.subs[G.vi]; if (!s || s.p === myPid) return;
+  myVoteSeq = G.seq; myVote = v; reactN += 1;
+  game.presence({ vote: { k: G.seq, v }, react: { e, n: reactN } }).catch(() => {});
+  floatEmoji(e); render();
+}
+
+// ---------- rendering ----------
+const PHASE_TITLE = { lobby: "Lobby", make: "Bau dein Meme", vote: "Abstimmung", res: "Rundenergebnis", end: "Endstand" };
+function nameOf(pid) { const n = G && G.nm[pid]; return Array.isArray(n) ? [clampStr(n[0], 16) || "Jemand", clampStr(n[1], 4) || "🙂"] : ["Jemand", "🙂"]; }
+
+function render() {
+  if (!game) return;
+  const pl = players();
+  if (!G) {
+    $("#phaseTitle").textContent = "Suche Host …";
+    for (const id of ["pLobby", "pMake", "pVote", "pRes", "pEnd"]) $("#" + id).hidden = true;
+    renderPlayers(pl); $("#timer").hidden = true; return;
+  }
+  if (G.seq !== seenSeq) { seenSeq = G.seq; localDeadline = Date.now() + G.rem; builtKey = ""; }
+  const spectator = !pl.some((p) => p.pid === myPid);
+  $("#phaseTitle").textContent = (PHASE_TITLE[G.ph] || "") + (G.ph !== "lobby" && G.ph !== "end" ? " · Runde " + G.r + "/" + G.R : "") + (spectator ? " (Zuschauer)" : "");
+  renderPlayers(pl);
+  for (const [id, ph] of [["pLobby", "lobby"], ["pMake", "make"], ["pVote", "vote"], ["pRes", "res"], ["pEnd", "end"]]) $("#" + id).hidden = G.ph !== ph;
+  $("#timer").hidden = !(G.ph === "make" || G.ph === "vote" || G.ph === "res");
+  tickTimer();
+  if (G.ph === "lobby") renderLobby(pl);
+  else if (G.ph === "make") renderMake(pl, spectator);
+  else if (G.ph === "vote") renderVote(pl);
+  else if (G.ph === "res") renderRes();
+  else if (G.ph === "end") renderEnd();
+}
+
+function renderPlayers(pl) {
+  const box = $("#players"); box.textContent = "";
+  const hostPid = (rawPlayers().find((p) => p.g) || {}).pid;
+  for (const p of pl) {
+    const c = el("div", "pl" + (p.isMe ? " me" : ""));
+    c.append(el("span", "av", p.av), el("span", null, p.name + (p.isMe ? " (du)" : "")));
+    if (p.pid === hostPid) c.append(el("span", "crown", "👑"));
+    if (G && G.ph !== "lobby") c.append(el("span", "pts", String(Number(G.sc[p.pid]) || 0)));
+    if (G && G.ph === "make" && p.ready && p.sub && p.sub.k === G.seed) c.append(el("span", "ok", "✓"));
+    box.append(c);
+  }
+}
+
+function renderSeg(box, options, current, onPick, enabled) {
+  box.textContent = "";
+  for (const [val, label] of options) {
+    const b = el("button", null, label); b.type = "button";
+    b.setAttribute("aria-pressed", String(val === current)); b.disabled = !enabled;
+    b.onclick = () => onPick(val); box.append(b);
+  }
+}
+function renderLobby(pl) {
+  renderSeg($("#segRounds"), [[3, "3"], [5, "5"], [7, "7"]], G.R, (v) => hostSetting("R", v), amHost);
+  renderSeg($("#segTime"), [[45, "45s"], [60, "60s"], [90, "90s"]], G.T, (v) => hostSetting("T", v), amHost);
+  renderSeg($("#segMode"), Object.entries(MODES), G.mode, (v) => hostSetting("mode", v), amHost);
+  renderSeg($("#segPool"), Object.entries(POOL_NAMES), G.pool, (v) => hostSetting("pool", v), amHost);
+  $("#modeHint").textContent = MODE_HINTS[G.mode];
+  $("#startBtn").hidden = !amHost;
+  $("#lobbyHint").textContent = amHost
+    ? (pl.length < 2 ? "Teile den Code " + code + ". Ab 3 Leuten macht's am meisten Spaß. Zum Testen kannst du auch allein starten." : pl.length + " Spieler bereit.")
+    : "Warte, bis der Host startet …";
+}
+$("#startBtn").onclick = hostStart;
+
+function renderMake(pl, spectator) {
+  setupMake();
+  const duel = G.gi >= 0;
+  const key = "make" + G.seed + ":" + mk.opts.join(",") + ":" + mk.ready;
+  $("#makeLabel").textContent = duel ? "Duell: Alle haben dieses GIF" : "Wähle dein GIF";
+  $("#rerollBtn").hidden = duel;
+  $("#rerollBtn").disabled = mk.rr <= 0 || mk.ready;
+  $("#rerollBtn").textContent = "🎲 Neu würfeln (" + mk.rr + ")";
+  if (builtKey !== key) {
+    builtKey = key;
+    drawOpts($("#opts"), mk, () => { drawPreview(); pushSub(false); });
+    $("#opts").hidden = duel;
+    drawPreview();
+  }
+  const lock = mk.ready || spectator;
+  $("#topInput").disabled = lock; $("#botInput").disabled = lock;
+  for (const b of $("#segStyle").querySelectorAll("button")) { b.disabled = lock; b.setAttribute("aria-pressed", String(b.dataset.s === mk.s)); }
+  for (const b of $("#opts").querySelectorAll("button")) b.disabled = lock;
+  $("#readyBtn").textContent = mk.ready ? "Doch noch ändern" : "Fertig!";
+  $("#readyBtn").className = "btn big " + (mk.ready ? "" : "mint");
+  $("#readyBtn").disabled = spectator;
+  const readyN = pl.filter((p) => p.ready && p.sub && p.sub.k === G.seed).length;
+  $("#makeStatus").textContent = spectator ? "Du schaust zu. Ab der nächsten Lobby spielst du mit." : readyN + " von " + pl.length + " fertig. Wenn die Zeit abläuft, zählt dein aktueller Entwurf.";
+}
+
+function renderVote(pl) {
+  const s = G.subs[G.vi]; if (!s) return;
+  const key = "vote" + G.seq;
+  const own = s.p === myPid;
+  if (builtKey !== key) {
+    builtKey = key;
+    $("#voteNote").textContent = "Meme " + (G.vi + 1) + " von " + G.subs.length;
+    const vm = $("#voteMeme"); vm.textContent = ""; vm.append(renderMeme(s, { credit: true }));
+    const box = $("#ratings"); box.textContent = "";
+    for (const [v, e, label] of RATINGS) {
+      const b = el("button", "rate"); b.type = "button"; b.dataset.v = v;
+      b.append(el("span", null, e), document.createTextNode(label));
+      b.onclick = () => castVote(v, e); box.append(b);
+    }
+  }
+  const voted = myVoteSeq === G.seq;
+  for (const b of $("#ratings").querySelectorAll(".rate")) { b.disabled = own; b.setAttribute("aria-pressed", String(voted && Number(b.dataset.v) === myVote)); }
+  const voters = pl.filter((p) => p.pid !== s.p);
+  const n = voters.filter((p) => p.vote && p.vote.k === G.seq).length;
+  $("#voteProgress").textContent = own ? "Das ist dein Meme. Lehn dich zurück." : n + " von " + voters.length + " haben bewertet";
+}
+
+function renderRes() {
+  const key = "res" + G.seq; if (builtKey === key) return; builtKey = key;
+  const box = $("#results"); box.textContent = "";
+  if (!G.subs.length) { box.append(el("p", "vote-note", "Diese Runde hat niemand ein Meme abgegeben.")); return; }
+  const order = G.subs.map((s, i) => ({ s, pts: G.sp[i] || 0 })).sort((a, b) => b.pts - a.pts);
+  order.forEach(({ s, pts }, i) => {
+    const c = el("div", "res-card" + (i === 0 && pts > 0 ? " win" : ""));
+    if (i === 0 && pts > 0) { c.append(el("div", "winner-flag", "Rundensieg")); burst(); }
+    c.append(renderMeme(s, { credit: true }));
+    const [nm, av] = nameOf(s.p);
+    const line = el("div", "who-line"); line.append(el("span", null, av + " " + nm), el("span", "pts-badge", "+" + pts));
+    c.append(line); box.append(c);
+  });
+}
+function burst() { for (let i = 0; i < 12; i++) setTimeout(() => floatEmoji(pick(["🎉", "🔥", "💀", "⭐"])), i * 90); }
+
+let famedSeq = -1;
+function renderEnd() {
+  const key = "end" + G.seq;
+  $("#againBtn").hidden = !amHost;
+  const canFame = (amHost || (lobby && lobby.local)) && db && canWriteFame !== false && G.best && famedSeq !== G.seq;
+  $("#fameBtn").hidden = !canFame;
+  if (builtKey === key) return; builtKey = key;
+  const ranking = Object.entries(G.sc).map(([pid, pts]) => ({ pid, pts: Number(pts) || 0 })).sort((a, b) => b.pts - a.pts);
+  const pod = $("#podium"); pod.textContent = "";
+  const places = [1, 0, 2];
+  for (const idx of places) {
+    const r = ranking[idx]; if (!r) continue;
+    const [nm, av] = nameOf(r.pid);
+    const p = el("div", "pod p" + (idx + 1));
+    p.append(el("div", "av", av), el("div", "nm", nm), el("div", "score", r.pts + " Punkte"));
+    const blk = el("div", "block", String(idx + 1)); p.append(blk); pod.append(p);
+  }
+  if (!ranking.length) pod.append(el("p", "vote-note", "Keine Punkte in diesem Spiel."));
+  const bm = $("#bestMeme"); bm.textContent = "";
+  if (G.best) {
+    bm.append(renderMeme(G.best, { credit: true }));
+    const [nm, av] = nameOf(G.best.p);
+    $("#bestBy").textContent = av + " " + nm + " · " + G.best.v + " Punkte";
+  } else $("#bestBy").textContent = "Kein Meme abgegeben";
+  $("#endHint").textContent = amHost ? "Du bist Host. Starte eine neue Runde, wenn alle bereit sind." : "Warte auf den Host für eine neue Runde.";
+  burst();
+}
+$("#againBtn").onclick = hostAgain;
+$("#fameBtn").onclick = async () => {
+  if (!db || !G || !G.best) return;
+  const [nm, av] = nameOf(G.best.p);
+  const doc = { g: GIFS[G.best.g][0], t: G.best.t, b: G.best.b, s: G.best.s, n: nm, av, pts: G.best.v, at: Date.now() };
+  $("#fameBtn").disabled = true;
+  try { await db.collection("fame").doc(code.toLowerCase() + "-" + Date.now()).set(doc); famedSeq = G.seq; $("#fameBtn").hidden = true; toast("In der Ruhmeshalle gespeichert."); }
+  catch (e) { canWriteFame = false; $("#fameBtn").hidden = true; toast("Speichern ist für dich hier nicht erlaubt."); }
+  finally { $("#fameBtn").disabled = false; }
+};
+
+function tickTimer() {
+  if (!G) return;
+  const ms = Math.max(0, (amHost ? hostDeadline : localDeadline) - Date.now());
+  const t = $("#timer"); const s = Math.ceil(ms / 1000);
+  t.textContent = String(s); t.classList.toggle("hot", s <= 5 && G.ph !== "res");
+}
+setInterval(() => { if (!game) return; resolveHost(); hostTick(); tickTimer(); }, 400);
+
+// ---------- room chrome ----------
+$("#createBtn").onclick = async () => {
+  const btn = $("#createBtn"); if (btn.disabled) return; btn.disabled = true;
+  try {
+    for (let tries = 0; tries < 4; tries++) {
+      let c = ""; for (let i = 0; i < 4; i++) c += "ABCDEFGHJKLMNPQRSTUVWXYZ"[Math.floor(Math.random() * 24)];
+      if ((await enterRoom(c, true)) !== "taken") break;
+    }
+  } finally { btn.disabled = false; }
+};
+$("#joinBtn").onclick = () => enterRoom($("#codeInput").value.trim(), false);
+$("#codeInput").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#joinBtn").click(); });
+$("#codeInput").addEventListener("input", (e) => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, ""); });
+$("#leaveBtn").onclick = leaveRoom;
+$("#copyBtn").onclick = () => {
+  const p = navigator.clipboard && navigator.clipboard.writeText(code);
+  if (p) p.then(() => toast("Code " + code + " kopiert."), () => toast("Code: " + code)); else toast("Code: " + code);
+};
+
+// ---------- solo practice ----------
+const solo = { opts: [], g: 0, t: "", b: "", s: "k" };
+function soloDeal() { solo.opts = shuffle([...Array(N).keys()]).slice(0, 3); solo.g = solo.opts[0]; drawOpts($("#soloOpts"), solo, soloPreview); soloPreview(); }
+function soloPreview() { const p = $("#soloPreview"); p.textContent = ""; p.append(renderMeme(solo, { credit: true })); }
+wireEditor({ top: "#soloTop", bot: "#soloBot", style: "#soloStyle" }, () => solo, soloPreview);
+$("#soloReroll").onclick = soloDeal;
+function wireIdea(btnSel, inputSel) {
+  $(btnSel).onclick = () => {
+    const inp = $(inputSel); if (inp.disabled) return;
+    let idea = pick(IDEAS); if (idea === inp.value && IDEAS.length > 1) idea = pick(IDEAS);
+    inp.value = idea; inp.dispatchEvent(new Event("input")); inp.focus();
+  };
+}
+wireIdea("#ideaBtn", "#topInput"); wireIdea("#soloIdea", "#soloTop");
+$("#soloBtn").onclick = () => { show("solo"); if (!solo.opts.length) soloDeal(); };
+$("#soloBack").onclick = () => show("home");
+</script>
