@@ -131,6 +131,7 @@ input[type=text]::placeholder { color: #9a9187; font-weight: 400; }
 .seg button:first-child { border-left: 0; }
 .seg button[aria-pressed=true] { background: var(--pink); }
 .seg button[disabled] { cursor: default; }
+.settings .wide { grid-column: 1 / -1; }
 .hint { font-size: 14px; color: var(--muted); margin: 0; }
 
 .make { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
@@ -182,7 +183,7 @@ footer a { color: var(--sun); }
 <div class="wrap">
   <header class="brand">
     <h1 class="logo">Gif<span>fig</span></h1>
-    <p class="tag">Das Meme-Partyspiel mit den <b>besten GIFs von GIPHY</b>, international und deutsch. Schreib die lustigste Caption, deine Freunde stimmen ab.</p>
+    <p class="tag">Das Meme-Partyspiel mit über 270 <b>GIFs und Meme-Vorlagen</b>, international, deutsch und auf Wunsch richtig derb. Schreib die lustigste Caption, deine Freunde stimmen ab.</p>
   </header>
 
   <!-- HOME -->
@@ -199,6 +200,7 @@ footer a { color: var(--sun); }
           <input type="text" id="codeInput" class="code-input" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Raumcode">
           <button class="btn big" id="joinBtn" type="button">Beitreten</button>
         </div>
+        <p class="hint" id="inviteNote" hidden style="color:var(--ink);font-weight:700"></p>
         <p class="err" id="homeErr" role="alert"></p>
         <div class="stack" style="gap:8px" id="openWrap">
           <div class="label">Offene Spiele</div>
@@ -210,12 +212,12 @@ footer a { color: var(--sun); }
       <section class="sticker stack" aria-labelledby="h-how">
         <h2 id="h-how" style="font-size:24px">So spielt ihr</h2>
         <ol class="steps">
-          <li><span>Einer startet ein Spiel und teilt den <b>4-stelligen Code</b>. Bis zu 8 Leute spielen mit.</span></li>
+          <li><span>Einer startet ein Spiel und teilt den <b>Code</b> oder den <b>Einladungslink</b>. Bis zu 8 Leute spielen mit.</span></li>
           <li><span>Jede Runde bekommst du <b>3 GIFs zur Auswahl</b> und 2 Neu-Würfe. Schreib oben und unten deine Caption, wähle einen Stil.</span></li>
-          <li><span>Alle Memes laufen anonym durch. Ihr bewertet von 😐 bis 💀. Die Punkte zählen fürs Podium.</span></li>
+          <li><span>Alle Memes laufen anonym durch. Ihr bewertet von 😐 bis 💀. Der Rundensieger bekommt <b>+2 Bonus</b>.</span></li>
           <li><span>Das beste Meme des Spiels landet in der <b>Ruhmeshalle</b>.</span></li>
         </ol>
-        <p class="hint">Modi: <b>Klassisch</b> (jeder eigenes GIF), <b>Duell</b> (alle dasselbe GIF), <b>Mix</b> (abwechselnd). GIFs: alle, nur deutsche Memes (Bernd das Brot, Heinz, Dittsche, Tagesschau …) oder nur internationale. Kein Plan? Drück auf 💡 Idee.</p>
+        <p class="hint">Modi: <b>Klassisch</b> (jeder eigenes GIF), <b>Duell</b> (alle dasselbe GIF), <b>Mix</b> (abwechselnd). Topf: alle, nur deutsche Memes (Bernd das Brot, Heinz, Dittsche …), nur internationale oder klassische Meme-Vorlagen (Drake, This Is Fine …). Derbe Memes (ab 16) schaltet der Host extra an. Kein Plan? Drück auf 💡 Idee.</p>
         <button class="linkish" id="soloBtn" type="button">Alleine üben →</button>
       </section>
     </div>
@@ -236,6 +238,7 @@ footer a { color: var(--sun); }
         <div class="codechip"><span class="label" style="color:var(--ink)">Code</span><b id="codeText">----</b>
           <button class="btn small" id="copyBtn" type="button">Kopieren</button></div>
         <button class="btn small" id="leaveBtn" type="button">Verlassen</button>
+        <button class="btn small" id="muteBtn" type="button" aria-label="Ton an oder aus">🔊</button>
       </div>
       <div class="timer" id="timer" hidden>60</div>
     </div>
@@ -247,9 +250,11 @@ footer a { color: var(--sun); }
         <div class="stack" style="gap:6px"><span class="label">Runden</span><div class="seg" id="segRounds"></div></div>
         <div class="stack" style="gap:6px"><span class="label">Zeit pro Meme</span><div class="seg" id="segTime"></div></div>
         <div class="stack" style="gap:6px"><span class="label">Modus</span><div class="seg" id="segMode"></div></div>
-        <div class="stack" style="gap:6px"><span class="label">GIFs</span><div class="seg" id="segPool"></div></div>
+        <div class="stack wide" style="gap:6px"><span class="label">GIFs &amp; Bilder</span><div class="seg" id="segPool"></div></div>
+        <div class="stack" style="gap:6px"><span class="label">Derbe Memes (ab 16)</span><div class="seg" id="segDerb"></div></div>
       </div>
       <p class="hint" id="modeHint"></p>
+      <p class="hint" id="poolHint"></p>
       <div class="row">
         <button class="btn big pink" id="startBtn" type="button">Spiel starten</button>
         <span class="hint" id="lobbyHint"></span>
@@ -370,24 +375,82 @@ const GIFS = [
 ["WXB88TeARFVvi","Tanzende Katze"],["pY8jLmZw0ElqvVeRH4","Lass mich nachdenken"],["xun2qNfnK1cV5r07GM","Misstrauische Katze"],["g2JO6qWbQhiV7m4AKM","Kung Paw Katze"],
 ["C7grnU4M3o5on6ALso","Katze miaut"],["5r5UevTRi3U2hUS0rO","Y U NO"],["3o7TKwUAFEHorFo8sE","Trollface"],
 // deutsche Memes (drittes Feld = 1)
-["1BeoNid3q0fVx4ff05","Bernd das Brot verwirrt",1],["2cedB4Qub1AIQzgY88","Bernd: Ach komm",1],["3ov9k6peQFE0ocXHyM","Bernd unter der Dusche",1],["3ov9kc493g7ioz5NKg","Bernd ganz nah",1],
-["QdeXeNkGVkkJ8xJ3NH","Bernd: Mist",1],["xUPGcmz5xaxnQbhuvu","Bernd sagt Nein",1],["3osxYjPTc4507tiofu","Sehr gut, sehr gut!",1],["43dOLsrab71tfigK4T","Bam Bam Bam Baaam",1],
-["juL3OAXtYNfmzqJbkb","Weiter so, Germany",1],["mdmEgT1VVOHfKmlcTB","Haaaalel",1],["3ohzdPzP6FKTtBPuvK","Dittsche im Imbiss",1],["Lr3vXQDrKZ8Aeef8fY","Dittsche jubelt",1],
-["xUPGcorwlGlpK88E4E","Dittsche trinkt",1],["f7vXDGeQ2diZKn9uJf","Oh mein Gott",1],["sEXJjw3F0SVAztnU7Q","OHO",1],["SjRMvghuBV6lRg3uHx","Welke feiert",1],
-["qz0LOvY7s4NPzOMEDW","Welke lacht",1],["HmgoqIQntkuGnEbYCT","Welke staunt",1],["71DGQPBz6WDdPT9WnJ","Scheiße",1],["CAZTRomzqA51e","Tagesschau-Lachanfall",1],
-["l4EoZeOktaRwZdFQs","Susanne Daubner wartet",1],["6zmnjvkuOFlogGxdBN","Ich hab gefragt",1],["8LDAFhc0YTzc6dpe9w","Rüdiger will die Scheidung",1],["CiGp1Uy2nRb7t2IGDQ","Das muss ich unbedingt verpassen",1],
-["GTdAn0b0PnGXGsSQsq","Depressiver Stuhl",1],["GgJWHeG5tnIhC6dr8Y","Absolute Lüge",1],["rDKEooBBiB3uIO9XbI","Käsesoßencowboy",1],["wNnbuAu0y7WLkPvJlC","Absoluter Heinz",1],
-["zx2ZGizuNO0JDeArjr","Unproduktiver Husten",1],["Pc7O1E77aPaJkGigtu","Mach ich gerne",1],["byvhhfpHobUabfgb5G","Jawohl",1],["qMFo7PQzikMxhp0zuH","Gut gemacht",1],
-["W6dYsT3p4xJxgIy75D","Mein Mantel ist geperlt",1],["k6MGpqbd46ptcDWNuV","Da kann nichts schiefgehen",1],["gkzvo4Dv2iYebc60YF","Pünktlichkeit ist Fiktion",1],["xT0xeqAUMNESci8GuQ","Horst Lichter: Dein Ernst?",1],
-["5BP9oKenBueceelwF4","Polizei notiert",1],["l0HlDpz2iIlItNoiY","Bierkrug",1],["RFI36OCHgq0HxOVCuv","Ich kann das alles nicht mehr",1],["2FHaRWnW8a0c9JngzN","Kein Salitos mehr",1],
-["VSjyZSiaClPk8yEZoS","Klopp: Yes!",1],["qmU61BkHHwSTRuiGZW","Klopp zuckt",1]
+["1BeoNid3q0fVx4ff05","Bernd das Brot verwirrt","d"],["2cedB4Qub1AIQzgY88","Bernd: Ach komm","d"],["3ov9k6peQFE0ocXHyM","Bernd unter der Dusche","d"],["3ov9kc493g7ioz5NKg","Bernd ganz nah","d"],
+["QdeXeNkGVkkJ8xJ3NH","Bernd: Mist","d"],["xUPGcmz5xaxnQbhuvu","Bernd sagt Nein","d"],["3osxYjPTc4507tiofu","Sehr gut, sehr gut!","d"],["43dOLsrab71tfigK4T","Bam Bam Bam Baaam","d"],
+["juL3OAXtYNfmzqJbkb","Weiter so, Germany","d"],["mdmEgT1VVOHfKmlcTB","Haaaalel","d"],["3ohzdPzP6FKTtBPuvK","Dittsche im Imbiss","d"],["Lr3vXQDrKZ8Aeef8fY","Dittsche jubelt","d"],
+["xUPGcorwlGlpK88E4E","Dittsche trinkt","d"],["f7vXDGeQ2diZKn9uJf","Oh mein Gott","d"],["sEXJjw3F0SVAztnU7Q","OHO","d"],["SjRMvghuBV6lRg3uHx","Welke feiert","d"],
+["qz0LOvY7s4NPzOMEDW","Welke lacht","d"],["HmgoqIQntkuGnEbYCT","Welke staunt","d"],["71DGQPBz6WDdPT9WnJ","Scheiße","d"],["CAZTRomzqA51e","Tagesschau-Lachanfall","d"],
+["l4EoZeOktaRwZdFQs","Susanne Daubner wartet","d"],["6zmnjvkuOFlogGxdBN","Ich hab gefragt","d"],["8LDAFhc0YTzc6dpe9w","Rüdiger will die Scheidung","d"],["CiGp1Uy2nRb7t2IGDQ","Das muss ich unbedingt verpassen","d"],
+["GTdAn0b0PnGXGsSQsq","Depressiver Stuhl","d"],["GgJWHeG5tnIhC6dr8Y","Absolute Lüge","d"],["rDKEooBBiB3uIO9XbI","Käsesoßencowboy","d"],["wNnbuAu0y7WLkPvJlC","Absoluter Heinz","d"],
+["zx2ZGizuNO0JDeArjr","Unproduktiver Husten","d"],["Pc7O1E77aPaJkGigtu","Mach ich gerne","d"],["byvhhfpHobUabfgb5G","Jawohl","d"],["qMFo7PQzikMxhp0zuH","Gut gemacht","d"],
+["W6dYsT3p4xJxgIy75D","Mein Mantel ist geperlt","d"],["k6MGpqbd46ptcDWNuV","Da kann nichts schiefgehen","d"],["gkzvo4Dv2iYebc60YF","Pünktlichkeit ist Fiktion","d"],["xT0xeqAUMNESci8GuQ","Horst Lichter: Dein Ernst?","d"],
+["5BP9oKenBueceelwF4","Polizei notiert","d"],["l0HlDpz2iIlItNoiY","Bierkrug","d"],["RFI36OCHgq0HxOVCuv","Ich kann das alles nicht mehr","d"],["2FHaRWnW8a0c9JngzN","Kein Salitos mehr","d"],
+["VSjyZSiaClPk8yEZoS","Klopp: Yes!","d"],["qmU61BkHHwSTRuiGZW","Klopp zuckt","d"],
+// neue Reaktionen, derbe Memes (x) und Imgflip-Vorlagen (v)
+["qV57XdnY3xpkIRNnaZ","SpongeBob starrt"],["lnieUIckonF4eA0tGF","Spider-Man WTF"],["Ni4cpi0uUkd6U","Aufgeschreckt"],["QOAA3I4EezWzXJNY2M","Schockierte Schildkröte"],
+["wIxBzHWegpOUM","Grübeln"],["LyJ6KPlrFdKnK","Steve Harvey verwirrt"],["11ahZZugJHrdLO","Jim Carrey entsetzt"],["1MIuZovwa4AREYsFJY","Seitenblick"],
+["AAsj7jdrHjtp6","Skeptisches Kind"],["12rQHIwkWykTRe","Panisches OMG"],["b8RQzkElbBsXqEPF2X","What is going on?"],["2wSaulb0fsDydh0IoB","Ron Swanson"],
+["XnEufpgwC0Stqu5qMF","Patrick verwirrt"],["kKEeiM9TshxZ1FfZ8U","Sully geschockt"],["3ohc0VmrLRmy5om1q0","Bruhh"],["NrqabhEpXWsGA","BRUH"],
+["EN2L7yi8THiX4VEoal","bruh Katze"],["HYNXRFetqpFiNDpmBY","SpongeBob-Gesicht"],["iOz3p2txHIo4U","Betrunkenes Grinsen"],["DOCfegc5Ybok0","Ex und hopp"],
+["cbYlrhv7zvXz2","Rutsch-Fail"],["9iBIdXITr6LoVf8XgY","Kermit im Eimer"],["BFWDNv8fyMuSQ","Homer tanzt"],["3oEjI9T0ixjZCFwi8U","Stolpern"],
+["igsvLnrCpT6NQftbBd","Trauriger Mr. Bean"],["pMePjXUqNNND2","Unangenehmes Lächeln"],["RJAjTowsU0K1a","Cringe"],["acgXBmnZjOS0lYImih","Katze im Dunkeln"],
+["H3BoxrpcT4fPynU424","Tony Stark cringe"],["J5Dku4D5lCHp11Dnt7","Patrick cringe"],["rtvU7c5d7U1OlCd4nx","Katze WTF"],["3FBwwRCNTSa52","Zoom-Cringe"],
+["13n7XeyIXEIrbG","Peinlicher Junge"],["1YlqzxnnQwaGc","Homer in der Hecke"],["jOpLbiGmHR9S0","Michael Scott grinst"],["ZmM3OWeJ73016zKZ4x","Affenpuppe"],
+["AmDzMmCJZABsk","Peinliche Robbe"],["unFLKoAV3TkXe","Jesse trinkt"],["13aSSyJaI5NkTm","Nacho Libre"],["w89ak63KNl0nJl80ig","Jim duckt sich"],
+["fkPxDJ2bpZX7q","John Cena staunt"],["cF7QqO5DYdft6","Oh nein"],["l0DEKzl8fVWF1n6E0","Erschrocken"],["cKhRk6HFycY1pQMKpV","You Guys!"],
+["DQcwSDPm18rJtLcnF8","Kater WTF"],["xT9IgMw9fhuEGUaJqg","Savage"],["5EDkO4Y0CnJdtfSDpJ","BRO"],["8S2lQjLTjUSGWpICfx","Ghostface-Mittelfinger","x"],
+["wemmDejrx2bCXY785T","Doppelter Mittelfinger","x"],["RVW5PilbP2tLG","Ross-Mittelfinger","x"],["7trCZ0AMmIkuvBP9qz","Katzen-Mittelfinger","x"],["8bQdMxDSJ8oiQ","Rachel-Mittelfinger","x"],
+["AACnRPVC9U3le","Fuck you","x"],["s2Ok0YTvyzLJgDsolu","Eff you","x"],["KiICaQKQkdu3rWxNCT","I'll kill you","x"],["J3FoQzbelGfAHXXzF6","Hirn-Scan","x"],
+["l3fzN22Q72pTddXCo","Frank Gallagher","x"],["6LTNPzqzyTu4IjaTd8","Skelett-Mittelfinger","x"],["zKDb0g6HHW8JVHvUBo","Go fuck yourself","x"],["JEDfhCDgLCNQA","Wasted","x"],
+["j8fCV5u9jDt8RRCDNn","Comic-Mittelfinger","x"],["3ohs4t767mAQAYAU8g","…Alter!","d"],["eRGr6jMYnCX9aRZShW","Alter!","d"],["8rEFnZrHC8eHwhqvNy","Farid Bang im Interview","d"],
+["UrtwSqrq93agvf3CjC","WHY???","d"],["mEJFcADnI7oGmFcXls","Was geht?","d"],["ZD3Be7gacexfYcIXr1","Du da!","d"],["ZF8Y0tP8WwsftumMPs","Bruder muss los","d"],
+["SSQ69HwBEK7v6boGzb","Hau halt ab!","d"],["shHE0PWqCM5ZDabnuU","Bin dann mal weg","d"],["GmIWwErEW4dcFXY4E2","Was machst du hier?","d"],["63vu6fpEESqTvXSzXH","Willst mich verarschen","d"],
+["OQRnLiTN5a4VKXnRtE","Scheiß drauf","dx"],["iVwybeldV6CZzaef1L","Du Sch*#!% Ding","dx"],["if-145qvv","Squidward window","v"],["if-19vcz0","Pawn Stars Best I Can Do","v"],
+["if-1b42wl","Bike Fall","v"],["if-1bgw","Futurama Fry","v"],["if-1bhw","Grandma Finds The Internet","v"],["if-1bij","One Does Not Simply","v"],
+["if-1bip","Bad Luck Brian","v"],["if-1c1uej","Sad Pablo Escobar","v"],["if-1e7ql7","Evil Kermit","v"],["if-1g8my4","Zwei Knöpfe","v"],
+["if-1h7in3","Roll Safe Think About It","v"],["if-1ihzfe","X, X Everywhere","v"],["if-1iruch","Drake Blank","v"],["if-1itoun","Charlie Conspiracy (Always Sunny in Philidelphia)","v"],
+["if-1nck6k","Sleeping Shaq","v"],["if-1o00in","Is This A Pigeon","v"],["if-1op9wy","Whisper and Goosebumps","v"],["if-1otk96","Mocking Spongebob","v"],
+["if-1qg8fp","Grim Reaper Knocking Door","v"],["if-1tkjq9","spiderman pointing at spiderman","v"],["if-1tl71a","I Bet He's Thinking About Other Women","v"],["if-1ur9b0","Abgelenkter Freund","v"],
+["if-1wz1x","This Is Where I'd Put My Trophy If I Had One","v"],["if-1yxkcp","Blank Nut Button","v"],["if-1yz6z4","Types of Headaches meme","v"],["if-21tqf4","The Scroll Of Truth","v"],
+["if-21uy0f","Y'all Got Any More Of That","vx"],["if-22bdq6","Left Exit 12 Off Ramp","v"],["if-23ls","Disaster Girl","v"],["if-24y43o","Change My Mind","v"],
+["if-24zoa8","No - Yes","v"],["if-265k","Third World Skeptical Kid","v"],["if-26am","Ancient Aliens","v"],["if-26hg","Yo Dawg Heard You","v"],
+["if-27qxmb","You know, I'm something of a scientist myself","v"],["if-28j0te","Epic Handshake","v"],["if-28s2gu","Who Killed Hannibal","v"],["if-29v4rt","Friendship ended","v"],
+["if-2cjr7j","is this butterfly","v"],["if-2fm6x","Waiting Skeleton","v"],["if-2gnnjh","Monkey Puppet","v"],["if-2kbn1e","Überraschtes Pikachu","v"],
+["if-2odckz","Marked Safe From","v"],["if-2oo7h0","Domino Effect","v"],["if-2reqtg","Flex Tape","v"],["if-2xscjb","You Guys are Getting Paid","v"],
+["if-2ybua0","Tuxedo Winnie The Pooh","v"],["if-2za3u1","They're The Same Picture","v"],["if-30b1gx","Drake","v"],["if-345v97","Frau schreit Katze an","v"],
+["if-3eqjd8","Spider Man Triple","v"],["if-3i7p","Imagination Spongebob","v"],["if-3kwur5","All My Homies Hate","v"],["if-3lmzyx","UNO Draw 25 Cards","v"],
+["if-3nx72a","Grant Gustin over grave","v"],["if-3po4m7","Anime Girl Hiding from Terminator","v"],["if-3qqcim","Panik Kalm Panik","v"],["if-3vfrmx","AJ Styles & Undertaker","v"],
+["if-46e43q","Always Has Been","v"],["if-4acd7j","Laughing Leo","v"],["if-4pn1an","They don't know","v"],["if-54d9lj","Two Paths","v"],
+["if-54hjww","Trade Offer","v"],["if-58eyvu","where monkey","v"],["if-5c7lwq","Anakin Padme 4 Panel","v"],["if-5o32tt","Gus Fring we are not the same","v"],
+["if-5v6gwj","Two guys on a bus","v"],["if-5youx3","whe i'm in a competition and my opponent is","v"],["if-64sz4u","Megamind peeking","v"],["if-72epa9","0 days without (Lenny, Simpsons)","v"],
+["if-8d317n","Absolute Cinema","v"],["if-8k0sa","Star Wars Yoda","v"],["if-8tw3vb","Bell Curve","v"],["if-9ehk","Batman Slapping Robin","v"],
+["if-bwu6w","c'mon do something","v"],["if-gk5el","Hide the Pain Harold","v"],["if-grr","The Rock Driving","v"],["if-gtj5t","Oprah You Get A","v"],
+["if-hlmst","I'm The Captain Now","v"],["if-hmt3v","Look At Me","v"],["if-wxica","This Is Fine","v"]
 ];
 const N = GIFS.length;
 const ONLINE_URL = "https://marlonm05.github.io/Makeitmeme/";
 const ALL_IDX = [...Array(N).keys()];
-const POOLS = { all: ALL_IDX, de: ALL_IDX.filter((i) => GIFS[i][2]), int: ALL_IDX.filter((i) => !GIFS[i][2]) };
-const POOL_NAMES = { all: "Alle", de: "🇩🇪 Deutsch", int: "International" };
+const tagsOf = (i) => (typeof GIFS[i][2] === "string" ? GIFS[i][2] : "");
+const POOL_NAMES = { all: "Alle", de: "🇩🇪 Deutsch", int: "International", tpl: "🖼️ Vorlagen" };
+const POOL_TEST = { all: () => true, de: (t) => t.includes("d"), int: (t) => !t.includes("d") && !t.includes("v"), tpl: (t) => t.includes("v") };
+const poolCache = new Map();
+function poolFor(g) {
+  const pool = g && POOL_TEST[g.pool] ? g.pool : "all", derb = !!(g && g.derb), key = pool + derb;
+  if (!poolCache.has(key)) {
+    const list = ALL_IDX.filter((i) => POOL_TEST[pool](tagsOf(i)) && (derb || !tagsOf(i).includes("x")));
+    poolCache.set(key, list.length >= 6 ? list : ALL_IDX.filter((i) => !tagsOf(i).includes("x")));
+  }
+  return poolCache.get(key);
+}
+const ROUND_BONUS = 2;
+const IDEAS_DERB = [
+  "Wenn du nach der Party aufwachst", "Mein Gesicht nach dem fünften Jägermeister", "Wenn der Ex wieder schreibt", "Wenn jemand auf dem Klo telefoniert",
+  "Wenn das Klopapier alle ist", "Ich mit Kater am Sonntag", "Wenn jemand im Bus furzt", "Wenn der Chef dich in der Kneipe sieht",
+  "Wenn Mama deinen Browserverlauf findet", "Wenn du betrunken deinem Ex schreibst", "Die Gruppe um 4 Uhr morgens beim Döner", "Wenn jemand dein Bier austrinkt"
+];
 const IDEAS = [
+  "Wenn der Döner 8 € kostet", "Ich nach dem Abi", "Mama: Ich geh nur kurz in den Laden", "Wenn die Klassenarbeit zurückkommt",
+  "Mein Kontostand am 20.", "Wenn das Navi sagt: Bitte wenden", "Ich, wenn der Lehrer krank ist", "Der eine Freund, der nie Geld dabei hat",
   "Wenn die Deutsche Bahn mal pünktlich ist", "Ich nach 5 Minuten Sport", "Mama: Wir haben Essen zu Hause", "Lehrer: Das kommt in der Arbeit dran",
   "Montagmorgen, 6 Uhr", "Wenn das WLAN weg ist", "Ich beim Pfandflaschen-Abgeben", "Wenn jemand Döner ohne Soße bestellt",
   "Oma: Hast du schon gegessen?", "Wenn der Lieferando-Fahrer klingelt", "Sonntags hat alles zu", "Wenn der Akku bei 1 % ist",
@@ -440,11 +503,43 @@ function renderMeme(m, opts = {}) {
   fig.append(fr);
   if (opts.credit) {
     const c = el("div", "credit"); c.style.cssText = "background:var(--paper);padding:3px 8px;line-height:1.4";
-    const a = el("a", null, "GIPHY: " + g[1]); a.href = "https://giphy.com/gifs/" + g[0]; a.target = "_blank"; a.rel = "noopener";
+    const tpl = g[0].startsWith("if-");
+    const a = el("a", null, (tpl ? "Imgflip-Vorlage: " : "GIPHY: ") + g[1]);
+    a.href = tpl ? "https://imgflip.com/memetemplates" : "https://giphy.com/gifs/" + g[0]; a.target = "_blank"; a.rel = "noopener";
     c.append(a); fig.append(c);
   }
   return fig;
 }
+
+// ---------- sound & screen ----------
+let muted = ls.get("giffig-mute") === "1", actx = null;
+function audio() { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); } catch { actx = null; } return actx; }
+document.addEventListener("pointerdown", audio, { once: true });
+function beep(freq, dur, type, vol, delay) {
+  const a = !muted && actx; if (!a || a.state !== "running") return;
+  try {
+    const t = a.currentTime + (delay || 0), o = a.createOscillator(), g = a.createGain();
+    o.type = type || "square"; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(vol || 0.05, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  } catch {}
+}
+function sfx(kind) {
+  if (kind === "phase") { beep(523, 0.1); beep(784, 0.14, "square", 0.05, 0.1); }
+  else if (kind === "tick") beep(880, 0.05, "sine", 0.05);
+  else if (kind === "pop") beep(660, 0.08, "triangle", 0.08);
+  else if (kind === "win") [523, 659, 784, 1047].forEach((f, i) => beep(f, 0.18, "square", 0.05, i * 0.11));
+}
+let wakeLock = null;
+async function keepAwake(on) {
+  try {
+    if (on && !wakeLock && navigator.wakeLock && document.visibilityState === "visible") {
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", () => { wakeLock = null; });
+    } else if (!on && wakeLock) { const w = wakeLock; wakeLock = null; await w.release(); }
+  } catch { wakeLock = null; }
+}
+document.addEventListener("visibilitychange", () => { if (game && document.visibilityState === "visible") keepAwake(true); });
 
 // ---------- identity ----------
 let myPid = ss.get("giffig-pid"); if (!myPid) { myPid = rid(8); ss.set("giffig-pid", myPid); }
@@ -544,7 +639,7 @@ let game = null, code = null, joinedAt = 0, myJa = 0;
 let G = null, lastG = null, amHost = false, hostDeadline = 0, hostMin = 0;
 let seenSeq = -1, localDeadline = 0, builtKey = "";
 
-function defaultG() { return { ph: "lobby", seq: 1, rem: 0, R: 5, T: 60, mode: "own", pool: "all", r: 0, seed: 0, ord: [], gi: -1, subs: [], sp: [], vi: 0, sc: {}, nm: {}, best: null }; }
+function defaultG() { return { ph: "lobby", seq: 1, rem: 0, R: 5, T: 60, mode: "own", pool: "all", derb: false, bon: [], r: 0, seed: 0, ord: [], gi: -1, subs: [], sp: [], vi: 0, sc: {}, nm: {}, best: null }; }
 
 function rawPlayers() {
   if (!game) return [];
@@ -559,7 +654,7 @@ function rawPlayers() {
 }
 function players() { return rawPlayers().slice(0, MAX_PLAYERS).map((p) => ({ pid: p.pid, name: clampStr(p.name, 16) || "Jemand", av: clampStr(p.av, 4) || "🙂", ja: p.ja, sub: p.sub, ready: !!p.ready, vote: p.vote, react: p.react, g: p.g, isMe: p.pid === myPid })); }
 
-async function enterRoom(c, create) {
+async function enterRoom(c, create, keep) {
   if (!me.name) { $("#homeErr").textContent = "Gib zuerst einen Spitznamen ein."; nameInput.focus(); return "error"; }
   if (!lobby) { $("#homeErr").textContent = "Mehrspieler ist hier nicht verfügbar. Spiel ohne Konto auf " + ONLINE_URL + " oder probier den Übungsmodus."; return "error"; }
   c = c.toUpperCase();
@@ -574,19 +669,43 @@ async function enterRoom(c, create) {
   }
   $("#homeErr").textContent = "";
   code = c; joinedAt = Date.now(); myJa = joinedAt; G = null; lastG = null; amHost = false; seenSeq = -1; builtKey = "";
-  resetMake();
+  if (!keep) resetMake();
   $("#codeText").textContent = code;
   const pres = { pid: myPid, name: me.name, av: me.av, ja: myJa, sub: null, ready: false, vote: null, react: null, g: null };
+  if (keep && mk.key !== -1) { pres.sub = { k: mk.key, g: mk.g, t: mk.t, b: mk.b, s: mk.s }; pres.ready = mk.ready; }
   if (create) { const g = defaultG(); g.seq = Math.floor(Math.random() * 1e6); pres.g = g; amHost = true; G = g; lastG = g; }
   await game.presence(pres).catch(() => {});
-  game.onPeers(onGamePeers, () => { toast("Verbindung zum Raum verloren."); leaveRoom(); });
+  const myGame = game;
+  game.onPeers(onGamePeers, () => { if (game === myGame) onRoomLost(); });
   show("room");
   render();
   pushLobbyPresence();
+  keepAwake(true);
+  safe(() => history.replaceState(null, "", "#" + code));
+  $("#copyBtn").textContent = lobby.local ? "Link kopieren" : "Kopieren";
+  return "ok";
+}
+
+async function onRoomLost() {
+  const c = code, wasHost = amHost, old = game;
+  game = null;
+  if (old) old.leave().catch(() => {});
+  if (lobby && lobby.local && !wasHost && c) {
+    for (let i = 0; i < 3; i++) {
+      toast("Verbindung weg. Verbinde neu …");
+      await new Promise((r) => setTimeout(r, 1500 * (i + 1)));
+      if (code !== c) return;
+      if ((await enterRoom(c, false, true)) === "ok") { toast("Wieder drin!"); return; }
+    }
+  }
+  toast(wasHost ? "Verbindung zum Raum verloren." : "Das Spiel ist vorbei: Der Host ist nicht mehr da.");
+  code = c; leaveRoom();
 }
 
 async function leaveRoom() {
   const g = game; game = null; code = null; G = null; amHost = false;
+  keepAwake(false);
+  safe(() => history.replaceState(null, "", location.pathname + location.search));
   if (g) await g.leave().catch(() => {});
   show("home"); pushLobbyPresence(); renderOpenGames();
 }
@@ -619,7 +738,7 @@ function sanitizeG(g) {
   o.ph = ["lobby", "make", "vote", "res", "end"].includes(g.ph) ? g.ph : "lobby";
   o.seq = Number(g.seq) || 0; o.rem = Math.max(0, Math.min(Number(g.rem) || 0, 200000));
   o.R = [3, 5, 7].includes(g.R) ? g.R : 5; o.T = [45, 60, 90].includes(g.T) ? g.T : 60;
-  o.mode = MODES[g.mode] ? g.mode : "own"; o.pool = POOLS[g.pool] ? g.pool : "all"; o.r = Number(g.r) || 0; o.seed = Number(g.seed) || 0;
+  o.mode = MODES[g.mode] ? g.mode : "own"; o.pool = POOL_TEST[g.pool] ? g.pool : "all"; o.derb = g.derb === true; o.bon = Array.isArray(g.bon) ? g.bon.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : []; o.r = Number(g.r) || 0; o.seed = Number(g.seed) || 0;
   o.ord = Array.isArray(g.ord) ? g.ord.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : [];
   o.gi = Number.isInteger(g.gi) ? g.gi : -1;
   o.subs = Array.isArray(g.subs) ? g.subs.slice(0, MAX_PLAYERS).map((s) => ({ p: clampStr(s && s.p, 8), g: gifIdx(s && s.g), t: clampStr(s && s.t, 60), b: clampStr(s && s.b, 60), s: styleOf(s && s.s) })) : [];
@@ -651,7 +770,7 @@ function setPhase(g, ms) {
 function isDuel(g) { return g.mode === "same" || (g.mode === "mix" && g.r % 2 === 0); }
 function nextRound(g) {
   g.r += 1; g.ph = "make"; g.seed = 1 + Math.floor(Math.random() * 2e9);
-  g.ord = players().map((p) => p.pid); g.gi = isDuel(g) ? pick(POOLS[g.pool] || ALL_IDX) : -1;
+  g.ord = players().map((p) => p.pid); g.gi = isDuel(g) ? pick(poolFor(g)) : -1; g.bon = [];
   g.subs = []; g.sp = []; g.vi = 0;
   setPhase(g, g.T * 1000);
 }
@@ -688,7 +807,12 @@ function hostTick() {
       g.sp[g.vi] = pts; g.sc[s.p] = (Number(g.sc[s.p]) || 0) + pts;
       if (!g.best || pts > g.best.v) g.best = { ...s, v: pts };
       if (g.vi < g.subs.length - 1) { g.vi += 1; setPhase(g, VOTE_MS); }
-      else { g.ph = "res"; setPhase(g, RES_MS); }
+      else {
+        const top = Math.max(0, ...g.sp);
+        g.bon = top > 0 ? g.subs.filter((x, i) => g.sp[i] === top).map((x) => x.p) : [];
+        for (const pid of g.bon) g.sc[pid] = (Number(g.sc[pid]) || 0) + ROUND_BONUS;
+        g.ph = "res"; setPhase(g, RES_MS);
+      }
       return;
     }
   } else if (g.ph === "res") {
@@ -733,7 +857,7 @@ function setupMake() {
   mk = { key: G.seed, opts: [], g: 0, t: "", b: "", s: mk.s || "k", ready: false, rr: 2 };
   if (G.gi >= 0) { mk.opts = [G.gi]; mk.g = G.gi; }
   else {
-    const pool = POOLS[G.pool] || ALL_IDX;
+    const pool = poolFor(G);
     const deck = shuffle(pool, seeded(G.seed));
     const k = G.ord.indexOf(myPid);
     mk.opts = k >= 0 ? [0, 1, 2].map((j) => deck[(k * 3 + j) % deck.length]) : shuffle(pool).slice(0, 3);
@@ -767,7 +891,7 @@ wireEditor({ top: "#topInput", bot: "#botInput", style: "#segStyle" }, () => mk,
 $("#rerollBtn").onclick = () => {
   if (!mk || mk.rr <= 0 || mk.ready || G.gi >= 0) return;
   mk.rr -= 1;
-  const pool = shuffle((POOLS[G.pool] || ALL_IDX).filter((i) => !mk.opts.includes(i)));
+  const pool = shuffle(poolFor(G).filter((i) => !mk.opts.includes(i)));
   mk.opts = pool.slice(0, 3); mk.g = mk.opts[0];
   builtKey = ""; render(); pushSub(true);
 };
@@ -793,7 +917,7 @@ function castVote(v, e) {
   const s = G.subs[G.vi]; if (!s || s.p === myPid) return;
   myVoteSeq = G.seq; myVote = v; reactN += 1;
   game.presence({ vote: { k: G.seq, v }, react: { e, n: reactN } }).catch(() => {});
-  floatEmoji(e); render();
+  floatEmoji(e); sfx("pop"); render();
 }
 
 // ---------- rendering ----------
@@ -808,7 +932,7 @@ function render() {
     for (const id of ["pLobby", "pMake", "pVote", "pRes", "pEnd"]) $("#" + id).hidden = true;
     renderPlayers(pl); $("#timer").hidden = true; return;
   }
-  if (G.seq !== seenSeq) { seenSeq = G.seq; localDeadline = Date.now() + G.rem; builtKey = ""; }
+  if (G.seq !== seenSeq) { if (seenSeq !== -1 && (G.ph === "make" || G.ph === "vote")) sfx("phase"); seenSeq = G.seq; localDeadline = Date.now() + G.rem; builtKey = ""; }
   const spectator = !pl.some((p) => p.pid === myPid);
   $("#phaseTitle").textContent = (PHASE_TITLE[G.ph] || "") + (G.ph !== "lobby" && G.ph !== "end" ? " · Runde " + G.r + "/" + G.R : "") + (spectator ? " (Zuschauer)" : "");
   renderPlayers(pl);
@@ -848,6 +972,8 @@ function renderLobby(pl) {
   renderSeg($("#segTime"), [[45, "45s"], [60, "60s"], [90, "90s"]], G.T, (v) => hostSetting("T", v), amHost);
   renderSeg($("#segMode"), Object.entries(MODES), G.mode, (v) => hostSetting("mode", v), amHost);
   renderSeg($("#segPool"), Object.entries(POOL_NAMES), G.pool, (v) => hostSetting("pool", v), amHost);
+  renderSeg($("#segDerb"), [[false, "Aus"], [true, "🌶️ An"]], G.derb, (v) => hostSetting("derb", v), amHost);
+  $("#poolHint").textContent = poolFor(G).length + " GIFs und Bilder im Topf" + (G.derb ? ", inklusive derber Memes." : ".");
   $("#modeHint").textContent = MODE_HINTS[G.mode];
   $("#startBtn").hidden = !amHost;
   $("#lobbyHint").textContent = amHost
@@ -908,9 +1034,12 @@ function renderRes() {
   const box = $("#results"); box.textContent = "";
   if (!G.subs.length) { box.append(el("p", "vote-note", "Diese Runde hat niemand ein Meme abgegeben.")); return; }
   const order = G.subs.map((s, i) => ({ s, pts: G.sp[i] || 0 })).sort((a, b) => b.pts - a.pts);
-  order.forEach(({ s, pts }, i) => {
-    const c = el("div", "res-card" + (i === 0 && pts > 0 ? " win" : ""));
-    if (i === 0 && pts > 0) { c.append(el("div", "winner-flag", "Rundensieg")); burst(); }
+  const top = order[0].pts;
+  if (top > 0) { burst(); sfx("win"); }
+  order.forEach(({ s, pts }) => {
+    const win = pts > 0 && pts === top;
+    const c = el("div", "res-card" + (win ? " win" : ""));
+    if (win) c.append(el("div", "winner-flag", "Rundensieg +" + ROUND_BONUS));
     c.append(renderMeme(s, { credit: true }));
     const [nm, av] = nameOf(s.p);
     const line = el("div", "who-line"); line.append(el("span", null, av + " " + nm), el("span", "pts-badge", "+" + pts));
@@ -944,7 +1073,7 @@ function renderEnd() {
     $("#bestBy").textContent = av + " " + nm + " · " + G.best.v + " Punkte";
   } else $("#bestBy").textContent = "Kein Meme abgegeben";
   $("#endHint").textContent = amHost ? "Du bist Host. Starte eine neue Runde, wenn alle bereit sind." : "Warte auf den Host für eine neue Runde.";
-  burst();
+  burst(); sfx("win");
 }
 $("#againBtn").onclick = hostAgain;
 $("#fameBtn").onclick = async () => {
@@ -957,11 +1086,14 @@ $("#fameBtn").onclick = async () => {
   finally { $("#fameBtn").disabled = false; }
 };
 
+let lastTick = -1;
 function tickTimer() {
   if (!G) return;
   const ms = Math.max(0, (amHost ? hostDeadline : localDeadline) - Date.now());
   const t = $("#timer"); const s = Math.ceil(ms / 1000);
   t.textContent = String(s); t.classList.toggle("hot", s <= 5 && G.ph !== "res");
+  if ((G.ph === "make" || G.ph === "vote") && s > 0 && s <= 5 && s !== lastTick) sfx("tick");
+  lastTick = s;
 }
 setInterval(() => { if (!game) return; resolveHost(); hostTick(); tickTimer(); }, 400);
 
@@ -980,20 +1112,39 @@ $("#codeInput").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#
 $("#codeInput").addEventListener("input", (e) => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, ""); });
 $("#leaveBtn").onclick = leaveRoom;
 $("#copyBtn").onclick = () => {
-  const p = navigator.clipboard && navigator.clipboard.writeText(code);
-  if (p) p.then(() => toast("Code " + code + " kopiert."), () => toast("Code: " + code)); else toast("Code: " + code);
+  const text = lobby && lobby.local ? location.href.split("#")[0] + "#" + code : code;
+  const what = lobby && lobby.local ? "Einladungslink" : "Code " + code;
+  let p = null; try { p = navigator.clipboard && navigator.clipboard.writeText(text); } catch {}
+  if (p) p.then(() => toast(what + " kopiert."), () => toast(text)); else toast(text);
 };
+$("#muteBtn").onclick = () => { muted = !muted; ls.set("giffig-mute", muted ? "1" : "0"); $("#muteBtn").textContent = muted ? "🔇" : "🔊"; if (!muted) sfx("pop"); };
+$("#muteBtn").textContent = muted ? "🔇" : "🔊";
+
+// Einladung per Link (#CODE)
+function applyInvite() {
+  if (game) return;
+  const invite = (location.hash.match(/^#([A-Za-z]{4})$/) || [])[1];
+  if (!invite) return;
+  $("#codeInput").value = invite.toUpperCase();
+  $("#inviteNote").hidden = false;
+  $("#inviteNote").textContent = "Du wurdest zu Spiel " + invite.toUpperCase() + " eingeladen. Gib deinen Namen ein und tipp auf Beitreten.";
+  $("#joinBtn").classList.add("sun"); $("#createBtn").classList.remove("sun");
+}
+applyInvite();
+window.addEventListener("hashchange", applyInvite);
+window.addEventListener("beforeunload", (e) => { if (game && lobby && lobby.local && amHost && players().length > 1) { e.preventDefault(); e.returnValue = ""; } });
 
 // ---------- solo practice ----------
 const solo = { opts: [], g: 0, t: "", b: "", s: "k" };
-function soloDeal() { solo.opts = shuffle([...Array(N).keys()]).slice(0, 3); solo.g = solo.opts[0]; drawOpts($("#soloOpts"), solo, soloPreview); soloPreview(); }
+function soloDeal() { solo.opts = shuffle(poolFor({ pool: "all", derb: false })).slice(0, 3); solo.g = solo.opts[0]; drawOpts($("#soloOpts"), solo, soloPreview); soloPreview(); }
 function soloPreview() { const p = $("#soloPreview"); p.textContent = ""; p.append(renderMeme(solo, { credit: true })); }
 wireEditor({ top: "#soloTop", bot: "#soloBot", style: "#soloStyle" }, () => solo, soloPreview);
 $("#soloReroll").onclick = soloDeal;
 function wireIdea(btnSel, inputSel) {
   $(btnSel).onclick = () => {
     const inp = $(inputSel); if (inp.disabled) return;
-    let idea = pick(IDEAS); if (idea === inp.value && IDEAS.length > 1) idea = pick(IDEAS);
+    const list = game && G && G.derb ? IDEAS.concat(IDEAS_DERB) : IDEAS;
+    let idea = pick(list); if (idea === inp.value) idea = pick(list);
     inp.value = idea; inp.dispatchEvent(new Event("input")); inp.focus();
   };
 }
