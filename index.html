@@ -207,6 +207,10 @@ footer a { color: var(--sun); }
           <div class="open-list" id="openList"><p class="empty">Gerade hostet niemand. Starte ein Spiel und schick deinen Freunden den Code.</p></div>
         </div>
         <p class="hint" id="roomStatus"></p>
+        <div class="stack" id="diagWrap" style="gap:8px" hidden>
+          <button class="linkish" id="diagBtn" type="button" style="align-self:flex-start">🔧 Verbindungstest: Klappt es in meinem Netz?</button>
+          <div class="hint" id="diagOut" style="color:var(--ink)" hidden></div>
+        </div>
       </section>
 
       <section class="sticker stack" aria-labelledby="h-how">
@@ -236,7 +240,8 @@ footer a { color: var(--sun); }
     <div class="topbar">
       <div class="row">
         <div class="codechip"><span class="label" style="color:var(--ink)">Code</span><b id="codeText">----</b>
-          <button class="btn small" id="copyBtn" type="button">Kopieren</button></div>
+          <button class="btn small" id="copyBtn" type="button">Kopieren</button>
+          <button class="btn small" id="shareBtn" type="button" hidden>Teilen</button></div>
         <button class="btn small" id="leaveBtn" type="button">Verlassen</button>
         <button class="btn small" id="muteBtn" type="button" aria-label="Ton an oder aus">🔊</button>
       </div>
@@ -569,6 +574,7 @@ async function boot() {
     $("#openWrap").hidden = true;
     $("#footNote").textContent = "Schick deinen Freunden den Link zu dieser Seite und den Spielcode. Lass das Fenster offen, solange du Host bist.";
     $("#h-fame").textContent = "Deine Ruhmeshalle";
+    $("#diagWrap").hidden = false;
   }
   if (lobby) {
     lobby.onPeers(renderOpenGames, () => { statusEl.textContent = "Mehrspieler ist hier gerade nicht verfügbar. Du kannst alleine üben."; });
@@ -659,7 +665,7 @@ async function enterRoom(c, create, keep) {
   if (!lobby) { $("#homeErr").textContent = "Mehrspieler ist hier nicht verfügbar. Spiel ohne Konto auf " + ONLINE_URL + " oder probier den Übungsmodus."; return "error"; }
   c = c.toUpperCase();
   if (!/^[A-Z]{4}$/.test(c)) { $("#homeErr").textContent = "Der Code hat 4 Buchstaben."; return "error"; }
-  $("#homeErr").textContent = lobby.local ? (create ? "Erstelle Spiel …" : "Verbinde mit " + c + " …") : "";
+  $("#homeErr").textContent = lobby.local ? (create ? "Erstelle Spiel … (bis zu 20 Sekunden)" : "Verbinde mit " + c + " … (bis zu 20 Sekunden)") : "";
   try { game = await lobby.join("giffig-" + c.toLowerCase(), { create }); }
   catch (e) {
     const msg = lobby.local && e && typeof e.message === "string" ? e.message : "";
@@ -977,7 +983,7 @@ function renderLobby(pl) {
   $("#modeHint").textContent = MODE_HINTS[G.mode];
   $("#startBtn").hidden = !amHost;
   $("#lobbyHint").textContent = amHost
-    ? (pl.length < 2 ? "Teile den Code " + code + ". Ab 3 Leuten macht's am meisten Spaß. Zum Testen kannst du auch allein starten." : pl.length + " Spieler bereit.")
+    ? (pl.length < 2 ? (lobby && lobby.local ? "Wichtig: Lass diese Seite im Vordergrund offen, bis alle drin sind. Wer zu WhatsApp wechselt, trennt am Handy oft die Verbindung. Nutz „Teilen“ und komm gleich zurück." : "Teile den Code " + code + ". Ab 3 Leuten macht's am meisten Spaß.") : pl.length + " Spieler bereit.")
     : "Warte, bis der Host startet …";
 }
 $("#startBtn").onclick = hostStart;
@@ -1097,6 +1103,22 @@ function tickTimer() {
 }
 setInterval(() => { if (!game) return; resolveHost(); hostTick(); tickTimer(); }, 400);
 
+// ---------- Verbindungstest ----------
+$("#diagBtn").onclick = async () => {
+  if (!lobby || !lobby.diagnose) return;
+  const out = $("#diagOut"), btn = $("#diagBtn"); btn.disabled = true; out.hidden = false; out.textContent = "Teste … das dauert bis zu 10 Sekunden.";
+  let r; try { r = await lobby.diagnose(); } catch (e) { r = { online: false, error: String(e) }; }
+  btn.disabled = false; out.textContent = "";
+  const line = (ok, yes, no) => { const d = el("div", null, (ok ? "✅ " : "❌ ") + (ok ? yes : no)); out.append(d); };
+  line(r.online, "Du bist online.", "Dein Gerät meldet: offline.");
+  line(r.signaling, "Vermittlungsserver erreichbar.", "Vermittlungsserver nicht erreichbar (peerjs.com). Ohne ihn kann niemand ein Spiel erstellen oder beitreten. Probier ein anderes Netz oder schalte Werbeblocker und VPN aus.");
+  line(r.stun, "Direktverbindung möglich (STUN).", "Keine Direktverbindung möglich. In diesem Netz brauchst du den Relay-Weg.");
+  line(r.turn, "Relay-Server erreichbar" + (r.turnTcp ? " (auch über TCP)." : "."), "Kein Relay-Server erreichbar. Mit Spielern in einem anderen Netz klappt es hier wahrscheinlich nicht. Wechsle auf dasselbe WLAN oder auf andere Mobilfunkdaten.");
+  const good = r.online && r.signaling && (r.stun || r.turn);
+  out.append(el("div", null, good ? (r.turn ? "Sieht gut aus." : "Im selben WLAN klappt es. Mit Spielern in einem anderen Netz könnte es haken.") : "Hier wird es schwierig. Schick mir dieses Ergebnis, dann finden wir den Grund."));
+  out.firstChild && (out.style.display = "flex", out.style.flexDirection = "column", out.style.gap = "4px");
+};
+
 // ---------- room chrome ----------
 $("#createBtn").onclick = async () => {
   const btn = $("#createBtn"); if (btn.disabled) return; btn.disabled = true;
@@ -1117,6 +1139,14 @@ $("#copyBtn").onclick = () => {
   let p = null; try { p = navigator.clipboard && navigator.clipboard.writeText(text); } catch {}
   if (p) p.then(() => toast(what + " kopiert."), () => toast(text)); else toast(text);
 };
+if (navigator.share) {
+  $("#shareBtn").hidden = false;
+  $("#shareBtn").onclick = () => {
+    const url = lobby && lobby.local ? location.href.split("#")[0] + "#" + code : "";
+    const p = navigator.share({ title: "Giffig", text: "Komm in mein Giffig-Spiel! Code: " + code, url: url || undefined });
+    if (p && p.catch) p.catch(() => {});
+  };
+}
 $("#muteBtn").onclick = () => { muted = !muted; ls.set("giffig-mute", muted ? "1" : "0"); $("#muteBtn").textContent = muted ? "🔇" : "🔊"; if (!muted) sfx("pop"); };
 $("#muteBtn").textContent = muted ? "🔇" : "🔊";
 

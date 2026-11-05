@@ -5,6 +5,17 @@
   "use strict";
   const PREFIX = "gfg1-";
   const MAX_CONNS = 11;
+  const CONNECT_MS = 20000;
+  // Mehrere STUN-Server plus TURN-Relays (auch über TCP/443 für strenge WLANs).
+  const ICE_SERVERS = [
+    { urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:stun.cloudflare.com:3478", "stun:global.stun.twilio.com:3478"] },
+    { urls: ["turn:eu-0.turn.peerjs.com:3478", "turn:us-0.turn.peerjs.com:3478"], username: "peerjs", credential: "peerjsp" },
+    { urls: ["turn:openrelay.metered.ca:80", "turn:openrelay.metered.ca:443", "turns:openrelay.metered.ca:443?transport=tcp"], username: "openrelayproject", credential: "openrelayproject" },
+  ];
+  const PEER_OPTS = { debug: 0, config: { iceServers: ICE_SERVERS, iceCandidatePoolSize: 4 } };
+  const MSG_NO_SERVER = "Der Vermittlungsserver ist nicht erreichbar. Prüf deine Internetverbindung oder probier ein anderes Netz.";
+  const MSG_NOT_FOUND = "Kein Spiel mit diesem Code gefunden. Prüf den Code und ob der Host die Seite noch offen hat.";
+  const MSG_NAT = "Der Host ist da, aber die direkte Verbindung klappt in deinem Netz nicht (typisch bei Handy-Daten, Schul- oder Firmen-WLAN). Mach den Verbindungstest oder wechsel das Netz, zum Beispiel auf dasselbe WLAN wie der Host.";
   const bytes = (o) => new TextEncoder().encode(JSON.stringify(o)).length;
   const isObj = (o) => o && typeof o === "object" && !Array.isArray(o);
 
@@ -12,14 +23,15 @@
     return new Promise((resolve, reject) => {
       if (typeof Peer !== "function") { reject({ message: "Die Verbindungsbibliothek konnte nicht geladen werden. Prüf deine Internetverbindung." }); return; }
       const hubId = PREFIX + name;
-      const peer = create ? new Peer(hubId, { debug: 0 }) : new Peer({ debug: 0 });
+      const peer = create ? new Peer(hubId, PEER_OPTS) : new Peer(PEER_OPTS);
+      let peerOpen = false;
       const peers = new Map();
       const conns = new Map();
       let handlers = [], errHandlers = [], myLabel = null, myPres = {}, hubConn = null;
       let settled = false, closed = false, cache = Object.freeze([]), queued = false, sendTimer = 0;
 
       const fail = (msg) => { if (!settled) { settled = true; clearTimeout(timeout); try { peer.destroy(); } catch {} reject({ message: msg }); } };
-      const timeout = setTimeout(() => fail(create ? "Der Spielserver antwortet nicht. Versuch es gleich nochmal." : "Kein Spiel mit diesem Code gefunden."), 15000);
+      const timeout = setTimeout(() => fail(create ? MSG_NO_SERVER : (!peerOpen ? MSG_NO_SERVER : hubConn ? MSG_NAT : MSG_NOT_FOUND)), CONNECT_MS);
 
       function notify() {
         if (queued) return; queued = true;
@@ -64,7 +76,7 @@
       };
 
       peer.on("open", (id) => {
-        myLabel = id;
+        myLabel = id; peerOpen = true;
         if (create) {
           setPeer(myLabel, myPres);
           settled = true; clearTimeout(timeout); resolve(api);
@@ -84,8 +96,9 @@
           else if (m.t === "x" && typeof m.peer === "string") dropPeer(m.peer);
           else if (m.t === "full") fail("Dieses Spiel ist voll.");
         });
-        hubConn.on("close", () => { if (settled) lost(); else fail("Kein Spiel mit diesem Code gefunden."); });
-        hubConn.on("error", () => { if (settled) lost(); });
+        hubConn.on("iceStateChanged", (st) => { if (st === "failed" && !settled) fail(MSG_NAT); });
+        hubConn.on("close", () => { if (settled) lost(); else fail(MSG_NAT); });
+        hubConn.on("error", () => { if (settled) lost(); else fail(MSG_NAT); });
       });
 
       if (create) {
@@ -110,8 +123,9 @@
         const type = err && err.type;
         if (!settled) {
           if (type === "unavailable-id") fail("taken");
-          else if (type === "peer-unavailable") fail("Kein Spiel mit diesem Code gefunden.");
-          else fail("Verbindung fehlgeschlagen. Versuch es gleich nochmal.");
+          else if (type === "peer-unavailable") fail(MSG_NOT_FOUND);
+          else if (type === "network" || type === "server-error" || type === "socket-error" || type === "socket-closed") fail(MSG_NO_SERVER);
+          else fail("Verbindung fehlgeschlagen (" + (type || "unbekannt") + "). Versuch es gleich nochmal.");
           return;
         }
         if (type === "network" || type === "server-error" || type === "socket-error" || type === "socket-closed") {
@@ -120,7 +134,36 @@
         }
       });
       peer.on("disconnected", () => { if (!closed) { try { peer.reconnect(); } catch {} } });
+      // Handy-Browser trennen die Verbindung zum Vermittlungsserver, wenn die Seite im Hintergrund war.
+      document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && !closed && peer.disconnected && !peer.destroyed) { try { peer.reconnect(); } catch {} } });
     });
+  }
+
+  // Verbindungstest: zeigt, was in deinem Netz funktioniert.
+  async function diagnose() {
+    const out = { online: navigator.onLine !== false, signaling: false, stun: false, turn: false, turnTcp: false, error: "" };
+    try {
+      const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 8000);
+      const r = await fetch("https://0.peerjs.com/peerjs/id?ts=" + Date.now(), { signal: ctl.signal, cache: "no-store" });
+      clearTimeout(t); out.signaling = r.ok;
+    } catch (e) { out.error = String(e && e.message || e); }
+    try {
+      const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+      pc.createDataChannel("t");
+      await new Promise((resolve) => {
+        const done = () => resolve();
+        const timer = setTimeout(done, 9000);
+        pc.onicecandidate = (e) => {
+          if (!e.candidate) { clearTimeout(timer); done(); return; }
+          const c = e.candidate.candidate;
+          if (/ typ srflx /.test(c)) out.stun = true;
+          if (/ typ relay /.test(c)) { out.turn = true; if (/ tcp /i.test(c)) out.turnTcp = true; }
+        };
+        pc.createOffer().then((o) => pc.setLocalDescription(o)).catch(done);
+      });
+      pc.close();
+    } catch (e) { out.error = out.error || String(e && e.message || e); }
+    return out;
   }
 
   // Lokale Ruhmeshalle (pro Gerät)
@@ -157,6 +200,7 @@
   const localUser = { canEdit: () => true, isOwner: () => true, can: () => Promise.resolve(true) };
   const lobby = {
     local: true,
+    diagnose,
     presence: () => Promise.resolve(),
     peers: () => [],
     onPeers: () => () => {},
