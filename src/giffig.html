@@ -429,7 +429,17 @@ const GIFS = [
 ["if-bwu6w","c'mon do something","v"],["if-gk5el","Hide the Pain Harold","v"],["if-grr","The Rock Driving","v"],["if-gtj5t","Oprah You Get A","v"],
 ["if-hlmst","I'm The Captain Now","v"],["if-hmt3v","Look At Me","v"],["if-wxica","This Is Fine","v"]
 ];
+// Eigene Memes: Einträge aus memes.js (siehe README), ohne Build-Schritt.
+if (Array.isArray(window.GIFFIG_EXTRA)) {
+  const known = new Set(GIFS.map((x) => x[0]));
+  for (const e of window.GIFFIG_EXTRA) {
+    if (!Array.isArray(e) || typeof e[0] !== "string" || typeof e[1] !== "string") continue;
+    if (!/^[A-Za-z0-9._-]{1,80}$/.test(e[0]) || known.has(e[0])) continue;
+    known.add(e[0]); GIFS.push([e[0], e[1].slice(0, 40), typeof e[2] === "string" ? e[2] : ""]);
+  }
+}
 const N = GIFS.length;
+const imgSrc = (id) => "g/" + (id.includes(".") ? id : id + ".webp");
 const ONLINE_URL = "https://marlonm05.github.io/Makeitmeme/";
 const ALL_IDX = [...Array(N).keys()];
 const tagsOf = (i) => (typeof GIFS[i][2] === "string" ? GIFS[i][2] : "");
@@ -496,7 +506,7 @@ function renderMeme(m, opts = {}) {
   const t = clampStr(m.t, 60), b = clampStr(m.b, 60);
   if (s === "p") fig.append(el("div", "post", [t, b].filter(Boolean).join(" ")));
   const fr = el("div", "frame");
-  const img = el("img"); img.src = "g/" + g[0] + ".webp"; img.alt = g[1]; img.loading = opts.lazy ? "lazy" : "eager"; img.decoding = "async";
+  const img = el("img"); img.src = imgSrc(g[0]); img.alt = g[1]; img.loading = opts.lazy ? "lazy" : "eager"; img.decoding = "async";
   fr.append(img);
   if (s !== "p") {
     if (t) fr.append(el("span", "mt top" + sizeClass(t), t));
@@ -505,10 +515,14 @@ function renderMeme(m, opts = {}) {
   fig.append(fr);
   if (opts.credit) {
     const c = el("div", "credit"); c.style.cssText = "background:var(--paper);padding:3px 8px;line-height:1.4";
-    const tpl = g[0].startsWith("if-");
-    const a = el("a", null, (tpl ? "Imgflip-Vorlage: " : "GIPHY: ") + g[1]);
-    a.href = tpl ? "https://imgflip.com/memetemplates" : "https://giphy.com/gifs/" + g[0]; a.target = "_blank"; a.rel = "noopener";
-    c.append(a); fig.append(c);
+    const tpl = g[0].startsWith("if-"), own = g[0].includes(".");
+    if (own) c.append(document.createTextNode("Eigenes Meme: " + g[1]));
+    else {
+      const a = el("a", null, (tpl ? "Imgflip-Vorlage: " : "GIPHY: ") + g[1]);
+      a.href = tpl ? "https://imgflip.com/memetemplates" : "https://giphy.com/gifs/" + g[0]; a.target = "_blank"; a.rel = "noopener";
+      c.append(a);
+    }
+    fig.append(c);
   }
   return fig;
 }
@@ -906,7 +920,7 @@ function drawOpts(container, state, onPick) {
   container.textContent = "";
   for (const i of state.opts) {
     const b = el("button", "opt"); b.type = "button"; b.setAttribute("aria-pressed", String(i === state.g)); b.setAttribute("aria-label", GIFS[i][1]);
-    const img = el("img"); img.src = "g/" + GIFS[i][0] + ".webp"; img.alt = ""; b.append(img);
+    const img = el("img"); img.src = imgSrc(GIFS[i][0]); img.alt = ""; b.append(img);
     b.onclick = () => { state.g = i; for (const x of container.children) x.setAttribute("aria-pressed", String(x === b)); onPick(); };
     container.append(b);
   }

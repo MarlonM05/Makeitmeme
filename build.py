@@ -15,7 +15,7 @@ head = (
     '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
     '<meta name="description" content="Giffig – das Meme-Partyspiel mit GIFs. Code teilen, Captions schreiben, abstimmen.">'
     '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>'
-    '<script src="online.js"></script></head><body>\n'
+    '<script src="memes.js"></script><script src="online.js"></script></head><body>\n'
 )
 (root / "index.html").write_text(head + body + "\n</body></html>\n", encoding="utf-8")
 print("index.html gebaut")
