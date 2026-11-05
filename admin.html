@@ -23,8 +23,8 @@ body { margin: 0; background-color: var(--ground); background-image: radial-grad
   color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.45;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 60px; }
 .wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
-h1, h2 { font-family: var(--font-display); font-weight: 400; margin: 0; line-height: 1.05; text-wrap: balance; }
-button, input { font: inherit; color: inherit; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; margin: 0; line-height: 1.05; text-wrap: balance; }
+button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
 .sticker { background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; box-shadow: var(--shadow-lg); padding: 20px; min-width: 0; }
@@ -46,12 +46,20 @@ button { cursor: pointer; }
 .btn.sun { background: var(--sun); } .btn.pink { background: var(--pink); } .btn.mint { background: var(--mint); }
 .btn.big { font-family: var(--font-display); font-weight: 400; font-size: 20px; min-height: 54px; padding: 10px 22px; }
 .btn.small { min-height: 36px; padding: 4px 12px; font-size: 14px; }
-a.btn { color: var(--ink); }
 .btn.danger { background: #ffd9de; }
+a.btn { color: var(--ink); }
+.linkish { background: none; border: 0; padding: 4px 0; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; align-self: flex-start; }
 
-input[type=text], input[type=password], input[type=search] { border: 3px solid var(--ink); border-radius: 12px; background: #fff; padding: 9px 13px; min-height: 46px; width: 100%; font-weight: 600; }
+input[type=text], input[type=password], input[type=search], select { border: 3px solid var(--ink); border-radius: 12px; background: #fff; padding: 9px 13px; min-height: 46px; width: 100%; font-weight: 600; }
+select { width: auto; min-width: 150px; padding-right: 8px; }
 input::placeholder { color: #9a9187; font-weight: 400; }
 .form { max-width: 460px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; font-size: 15px; cursor: pointer; }
+.check input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--pink); }
+
+.tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+.tab { border: 3px solid var(--ink); border-radius: 999px; background: var(--paper); padding: 6px 18px; font-weight: 800; box-shadow: 3px 3px 0 var(--ink); min-height: 40px; }
+.tab[aria-selected=true] { background: var(--sun); }
 
 .drop { border: 4px dashed var(--ink); border-radius: 18px; background: #fff; min-height: 190px; display: grid; place-items: center; text-align: center; padding: 22px; cursor: pointer; transition: background .12s, transform .12s; }
 .drop:hover, .drop.over { background: var(--sun); transform: scale(1.01); }
@@ -60,21 +68,48 @@ input::placeholder { color: #9a9187; font-weight: 400; }
 .drop.over span { color: var(--ink); }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
-.card { border: 3px solid var(--ink); border-radius: 14px; background: #fff; box-shadow: var(--shadow); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.card { border: 3px solid var(--ink); border-radius: 14px; background: #fff; box-shadow: var(--shadow); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; position: relative; }
 .card.hide { opacity: .55; }
 .card.bad { border-color: var(--err); }
 .card.done { border-color: #0f7a4d; }
 .thumb { aspect-ratio: 4/3; width: 100%; border-radius: 8px; background: #eee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='8' height='8' fill='%23ddd'/%3E%3Crect x='8' y='8' width='8' height='8' fill='%23ddd'/%3E%3C/svg%3E"); display: grid; place-items: center; overflow: hidden; }
 .thumb img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
 .card input[type=text] { min-height: 38px; padding: 5px 9px; font-size: 14px; border-width: 2px; border-radius: 9px; }
+.cname { font-weight: 800; font-size: 14px; line-height: 1.25; overflow-wrap: anywhere; }
 .tags { display: flex; gap: 5px; flex-wrap: wrap; }
 .tag { border: 2px solid var(--ink); border-radius: 999px; background: #fff; padding: 2px 9px; font-size: 13px; font-weight: 700; min-height: 30px; }
 .tag[aria-pressed=true] { background: var(--pink); }
-.meta { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; align-items: center; }
+.tag.static { cursor: default; min-height: 26px; padding: 0 8px; background: var(--paper); }
+.meta { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; align-items: center; flex-wrap: wrap; }
 .card .status { font-size: 12px; font-weight: 700; min-height: 1.2em; }
+.badge { position: absolute; top: 6px; left: 6px; z-index: 2; background: var(--ink); color: var(--paper); border-radius: 999px; font-size: 11px; font-weight: 800; padding: 2px 9px; letter-spacing: .03em; }
+.badge.warn { background: var(--pink); color: var(--ink); border: 2px solid var(--ink); }
+.badge.sun { background: var(--sun); color: var(--ink); border: 2px solid var(--ink); }
 .progress { height: 14px; border: 3px solid var(--ink); border-radius: 999px; background: #fff; overflow: hidden; }
 .progress i { display: block; height: 100%; width: 0; background: var(--mint); transition: width .2s; }
 .pill { border: 2.5px solid var(--ink); border-radius: 999px; background: var(--paper); padding: 4px 12px; font-weight: 800; font-size: 14px; }
+
+.filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.filters input[type=search] { max-width: 240px; }
+.invite-box { border: 3px dashed var(--ink); border-radius: 14px; background: #fff; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.code-big { font-family: var(--font-display); font-size: clamp(26px, 6vw, 38px); letter-spacing: .08em; overflow-wrap: anywhere; }
+.people { display: flex; flex-direction: column; gap: 12px; }
+.person { border: 3px solid var(--ink); border-radius: 14px; background: #fff; box-shadow: var(--shadow); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.person.off { opacity: .6; }
+.person h3 { font-size: 20px; }
+.tinder-stage { position: relative; width: min(100%, 440px); margin: 0 auto; min-height: 120px; }
+.t-card { background: #fff; border: 3px solid var(--ink); border-radius: 18px; box-shadow: var(--shadow-lg); padding: 12px; display: flex; flex-direction: column; gap: 8px; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; will-change: transform; transition: transform .28s ease, opacity .28s ease; position: relative; }
+.t-card.drag { transition: none; cursor: grabbing; }
+.t-card .thumb { aspect-ratio: 1 / 1; max-height: 52vh; background-color: #eee; }
+.t-card .thumb img { pointer-events: none; -webkit-user-drag: none; }
+.t-card h3 { font-size: 20px; overflow-wrap: anywhere; }
+.stamp { position: absolute; top: 22px; z-index: 3; padding: 2px 14px; border: 4px solid; border-radius: 10px; font-family: var(--font-display); font-size: 26px; opacity: 0; background: rgba(255,255,255,.88); pointer-events: none; }
+.stamp.keep { left: 20px; color: #0f7a4d; border-color: #0f7a4d; transform: rotate(-12deg); }
+.stamp.nope { right: 20px; color: var(--err); border-color: var(--err); transform: rotate(12deg); }
+.t-done { text-align: center; padding: 28px 10px; }
+.t-done b { font-family: var(--font-display); font-weight: 400; font-size: 26px; display: block; margin-bottom: 6px; }
+.center { justify-content: center; }
+.btn.round { width: 74px; height: 74px; min-height: 74px; border-radius: 50%; font-size: 30px; padding: 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -83,6 +118,7 @@ input::placeholder { color: #9a9187; font-weight: 400; }
   <header class="bar">
     <h1 class="logo">Giffig<small>Admin</small></h1>
     <div class="row">
+      <span class="pill" id="whoPill" hidden></span>
       <span class="pill" id="countPill" hidden></span>
       <a class="btn small" href="./">Zum Spiel</a>
       <button class="btn small" id="logoutBtn" type="button" hidden>Abmelden</button>
@@ -91,7 +127,7 @@ input::placeholder { color: #9a9187; font-weight: 400; }
 
   <section class="sticker" id="vLoading"><p class="hint" id="loadMsg">Verbinde mit dem Server …</p></section>
 
-  <!-- Ersteinrichtung -->
+  <!-- Ersteinrichtung (nur für den Admin) -->
   <section class="sticker stack form" id="vSetup" hidden>
     <h2 style="font-size:26px">Ersteinrichtung</h2>
     <p class="hint">Lege dein Admin-Passwort fest. Den Einrichtungs-Code hast du von Claude bekommen. Er gilt nur kurz und nur einmal.</p>
@@ -111,52 +147,132 @@ input::placeholder { color: #9a9187; font-weight: 400; }
   <section class="sticker stack form" id="vLogin" hidden>
     <h2 style="font-size:26px">Anmelden</h2>
     <form class="stack" id="loginForm">
-      <label class="label" for="liPw">Admin-Passwort</label>
+      <label class="label" for="liName">Dein Name (leer lassen, wenn du der Admin bist)</label>
+      <input type="text" id="liName" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Admin">
+      <label class="label" for="liPw">Passwort</label>
       <input type="password" id="liPw" autocomplete="current-password">
       <p class="err" id="liErr" role="alert"></p>
       <button class="btn big sun" type="submit" id="liBtn">Anmelden</button>
     </form>
-    <p class="hint">Diese Seite ist nur mit deinem Passwort benutzbar. Alle Änderungen prüft der Server.</p>
+    <button class="linkish" id="toJoin" type="button">Ich habe einen Einladungs-Code</button>
+    <p class="hint">Ohne Passwort kann man hier nichts hochladen, ändern oder löschen. Das prüft der Server.</p>
+  </section>
+
+  <!-- Einladung einlösen -->
+  <section class="sticker stack form" id="vJoin" hidden>
+    <h2 style="font-size:26px">Einladung einlösen</h2>
+    <p class="hint">Gib den Code ein, den du bekommen hast, und wähle dein eigenes Passwort.</p>
+    <form class="stack" id="joinForm" autocomplete="off">
+      <label class="label" for="jnCode">Einladungs-Code</label>
+      <input type="text" id="jnCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX">
+      <label class="label" for="jnPw1">Neues Passwort (mindestens 12 Zeichen)</label>
+      <input type="password" id="jnPw1" autocomplete="new-password">
+      <label class="label" for="jnPw2">Passwort wiederholen</label>
+      <input type="password" id="jnPw2" autocomplete="new-password">
+      <p class="err" id="jnErr" role="alert"></p>
+      <button class="btn big sun" type="submit" id="jnBtn">Los geht's</button>
+    </form>
+    <button class="linkish" id="toLogin" type="button">Zurück zur Anmeldung</button>
   </section>
 
   <!-- Verwaltung -->
   <main class="stack" id="vPanel" hidden style="gap:22px">
-    <section class="sticker stack">
-      <h2 style="font-size:24px">Neue Bilder hochladen</h2>
-      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Bilder auswählen oder hierher ziehen">
-        <div><b>Bilder hierher ziehen</b><span>oder klicken zum Auswählen. Mehrere auf einmal sind kein Problem. Einfügen mit Strg+V geht auch.</span></div>
-      </div>
-      <input type="file" id="fileIn" accept="image/*" multiple hidden>
-      <p class="hint">Fotos und PNGs werden automatisch auf eine passende Größe verkleinert. GIFs und animierte WebPs bleiben unverändert (bis 6 MB, am besten unter 2 MB).</p>
+    <div class="tabs" role="tablist" id="tabs" hidden>
+      <button class="tab" role="tab" id="tabImgs" aria-selected="true" type="button">Bilder</button>
+      <button class="tab" role="tab" id="tabTinder" aria-selected="false" type="button">Tinder</button>
+      <button class="tab" role="tab" id="tabPeople" aria-selected="false" type="button">Personen</button>
+    </div>
 
-      <div class="stack" id="queueBox" hidden>
-        <div class="row" style="justify-content:space-between">
-          <span class="label" id="queueLabel"></span>
+    <div class="stack" id="paneImgs" style="gap:22px">
+      <section class="sticker stack">
+        <h2 style="font-size:24px">Neue Bilder hochladen</h2>
+        <div class="drop" id="drop" tabindex="0" role="button" aria-label="Bilder auswählen oder hierher ziehen">
+          <div><b>Bilder hierher ziehen</b><span>oder klicken zum Auswählen. Mehrere auf einmal sind kein Problem. Einfügen mit Strg+V geht auch.</span></div>
+        </div>
+        <input type="file" id="fileIn" accept="image/*" multiple hidden>
+        <p class="hint">Fotos und PNGs werden automatisch auf eine passende Größe verkleinert. GIFs und animierte WebPs bleiben unverändert (bis 6 MB, am besten unter 2 MB).</p>
+        <p class="hint" id="approvalNote" hidden><b>Hinweis:</b> Deine Bilder erscheinen im Spiel erst, nachdem der Admin sie freigegeben hat.</p>
+
+        <div class="stack" id="queueBox" hidden>
+          <div class="row" style="justify-content:space-between">
+            <span class="label" id="queueLabel"></span>
+            <div class="row">
+              <span class="label">Für alle:</span>
+              <button class="tag" type="button" data-bulk="d" aria-pressed="false">🇩🇪 Deutsch</button>
+              <button class="tag" type="button" data-bulk="x" aria-pressed="false">🌶️ Derb</button>
+              <button class="tag" type="button" data-bulk="v" aria-pressed="false">🖼️ Vorlage</button>
+            </div>
+          </div>
+          <div class="grid" id="queue"></div>
+          <div class="progress" id="prog" hidden><i></i></div>
           <div class="row">
-            <span class="label">Für alle:</span>
-            <button class="tag" type="button" data-bulk="d" aria-pressed="false">🇩🇪 Deutsch</button>
-            <button class="tag" type="button" data-bulk="x" aria-pressed="false">🌶️ Derb</button>
-            <button class="tag" type="button" data-bulk="v" aria-pressed="false">🖼️ Vorlage</button>
+            <button class="btn big mint" id="uploadBtn" type="button">Hochladen</button>
+            <button class="btn" id="clearBtn" type="button">Liste leeren</button>
+            <span class="err" id="upMsg" role="status"></span>
           </div>
         </div>
-        <div class="grid" id="queue"></div>
-        <div class="progress" id="prog" hidden><i></i></div>
-        <div class="row">
-          <button class="btn big mint" id="uploadBtn" type="button">Hochladen</button>
-          <button class="btn" id="clearBtn" type="button">Liste leeren</button>
-          <span class="err" id="upMsg" role="status"></span>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="sticker stack">
-      <div class="row" style="justify-content:space-between">
-        <h2 style="font-size:24px">Deine Bilder im Spiel</h2>
-        <input type="search" id="search" placeholder="Suchen …" style="max-width:240px" aria-label="Bilder suchen">
-      </div>
-      <p class="hint">Namen und Tags änderst du direkt hier. „Ausblenden“ nimmt ein Bild aus dem Spiel, ohne es zu löschen. Spieler sehen Änderungen nach dem Neuladen der Seite.</p>
-      <div class="grid" id="lib"><p class="hint">Lade …</p></div>
-    </section>
+      <section class="sticker stack">
+        <div class="row" style="justify-content:space-between">
+          <h2 style="font-size:24px" id="libTitle">Bilder im Spiel</h2>
+          <div class="filters">
+            <select id="fScope" aria-label="Welche Bilder" hidden></select>
+            <select id="fFrom" aria-label="Hochgeladen von" hidden></select>
+            <input type="search" id="search" placeholder="Suchen …" aria-label="Bilder suchen">
+          </div>
+        </div>
+        <p class="hint" id="libHint"></p>
+        <div class="grid" id="lib"><p class="hint">Lade …</p></div>
+        <button class="btn" id="moreBtn" type="button" hidden style="align-self:center">Mehr anzeigen</button>
+      </section>
+    </div>
+
+    <div class="stack" id="paneTinder" style="gap:22px" hidden>
+      <section class="sticker stack">
+        <div class="row" style="justify-content:space-between">
+          <h2 style="font-size:24px">Aussortieren</h2>
+          <select id="tScope" aria-label="Welche Bilder"><option value="all">Alle Bilder</option><option value="builtin">Nur eingebaute</option><option value="up">Nur hochgeladene</option></select>
+        </div>
+        <p class="hint">Wisch ein Bild nach <b>links zum Entfernen</b> oder nach <b>rechts zum Behalten</b>. Dein Fortschritt wird gespeichert, geprüfte Bilder kommen nicht wieder. Tasten: ← entfernen, → behalten, ↓ später, Strg+Z zurück.</p>
+        <div class="progress" id="tProg"><i></i></div>
+        <p class="hint" id="tStat"></p>
+        <div class="tinder-stage" id="tStage"></div>
+        <div class="row center" id="tBtns">
+          <button class="btn round danger" id="tNope" type="button" aria-label="Entfernen" title="Entfernen (←)">✗</button>
+          <button class="btn" id="tSkip" type="button" title="Später (↓)">Später</button>
+          <button class="btn round mint" id="tKeep" type="button" aria-label="Behalten" title="Behalten (→)">✓</button>
+        </div>
+        <div class="row center">
+          <button class="btn small" id="tUndo" type="button" title="Strg+Z">↶ Rückgängig</button>
+          <button class="btn small" id="tReset" type="button">Neu anfangen</button>
+        </div>
+        <p class="err" id="tMsg" role="status" style="text-align:center"></p>
+      </section>
+    </div>
+
+    <div class="stack" id="panePeople" style="gap:22px" hidden>
+      <section class="sticker stack">
+        <h2 style="font-size:24px">Person einladen</h2>
+        <p class="hint">Eingeladene Personen bekommen ein eigenes Passwort und dürfen Bilder hochladen. Sie sehen und ändern nur ihre eigenen Bilder, du siehst alles.</p>
+        <form class="stack form" id="inviteForm" autocomplete="off" style="max-width:520px">
+          <label class="label" for="ivName">Name der Person</label>
+          <input type="text" id="ivName" maxlength="24" placeholder="z. B. Lena" autocomplete="off">
+          <label class="check"><input type="checkbox" id="ivApproval"><span>Neue Bilder dieser Person erst zeigen, wenn ich sie freigegeben habe</span></label>
+          <p class="err" id="ivErr" role="alert"></p>
+          <button class="btn big sun" type="submit" id="ivBtn" style="align-self:flex-start">Einladung erstellen</button>
+        </form>
+        <div class="invite-box" id="ivResult" hidden></div>
+      </section>
+      <section class="sticker stack">
+        <h2 style="font-size:24px">Personen</h2>
+        <div class="people" id="people"><p class="hint">Lade …</p></div>
+        <div class="stack" id="pendingBox" hidden>
+          <span class="label">Offene Einladungen</span>
+          <div class="people" id="pending"></div>
+        </div>
+      </section>
+    </div>
   </main>
 </div>
 
@@ -168,18 +284,24 @@ const API = SUPABASE_URL + "/functions/v1/giffig-admin";
 const FILE_BASE = SUPABASE_URL + "/storage/v1/object/public/memes/";
 const FILE_RE = /^up-[a-z0-9]{8}\.(webp|gif|png|jpg)$/;
 const TAGS = [["d", "🇩🇪 Deutsch"], ["x", "🌶️ Derb"], ["v", "🖼️ Vorlage"]];
-const MAX_BYTES = 6 * 1024 * 1024, MAX_SIDE = 480, MAX_QUEUE = 200, BATCH = 40;
+const MAX_BYTES = 6 * 1024 * 1024, MAX_SIDE = 480, MAX_QUEUE = 200, BATCH = 40, PAGE = 48;
 const $ = (s) => document.querySelector(s);
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
 const ss = { get: (k) => { try { return sessionStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch {} } };
+const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+const date = (s) => { try { return new Date(s).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit" }); } catch { return ""; } };
+const kb = (n) => n < 1024 * 1024 ? Math.round(n / 1024) + " KB" : (n / 1024 / 1024).toFixed(1) + " MB";
 
-let token = null, library = [], queue = [], busy = false, sb = null;
+let token = null, me = { role: "owner", name: "Admin", approval: false };
+let library = [], removed = new Set(), reviews = {}, builtins = [], queue = [], busy = false, sb = null, shown = PAGE;
+const isOwner = () => me.role === "owner";
 
 // ---------- Server ----------
 const ERR = {
-  bad_code: "Der Einrichtungs-Code stimmt nicht oder ist abgelaufen.", bad_password: "Falsches Passwort.", locked: "Zu viele Fehlversuche. Warte etwa 15 Minuten.",
+  bad_code: "Der Code stimmt nicht oder ist abgelaufen.", bad_password: "Name oder Passwort stimmt nicht.", locked: "Zu viele Fehlversuche. Warte etwa 15 Minuten.",
   password_length: "Das Passwort braucht mindestens 12 Zeichen.", network: "Der Server ist nicht erreichbar. Prüf deine Internetverbindung.", auth: "Die Sitzung ist abgelaufen. Bitte neu anmelden.",
   server: "Der Server hatte ein Problem. Versuch es gleich nochmal.", not_configured: "Der Admin-Zugang ist noch nicht eingerichtet.", too_large: "Zu viele Daten auf einmal.",
+  forbidden: "Dafür fehlt dir die Berechtigung.", name_taken: "Diesen Namen gibt es schon.", name: "Der Name braucht 2 bis 24 Zeichen (Buchstaben, Zahlen, Leerzeichen, - _ .) und darf nicht „Admin“ sein.", not_found: "Das gibt es nicht mehr.",
 };
 const errText = (e) => ERR[e && e.code] || ERR.server;
 async function call(action, data) {
@@ -193,19 +315,23 @@ async function call(action, data) {
 
 // ---------- Ansichten ----------
 function view(name) {
-  for (const v of ["vLoading", "vSetup", "vLogin", "vPanel"]) $("#" + v).hidden = v !== name;
-  $("#logoutBtn").hidden = name !== "vPanel"; $("#countPill").hidden = name !== "vPanel";
+  for (const v of ["vLoading", "vSetup", "vLogin", "vJoin", "vPanel"]) $("#" + v).hidden = v !== name;
+  const panel = name === "vPanel";
+  $("#logoutBtn").hidden = !panel; $("#countPill").hidden = !panel; $("#whoPill").hidden = !panel;
 }
 function expire() { token = null; ss.set("giffig-admin", null); $("#liErr").textContent = ERR.auth; view("vLogin"); }
-function setToken(t, exp) { token = t; ss.set("giffig-admin", JSON.stringify({ t, exp })); }
+function setSession(r) { token = r.token; me = { role: r.role || "uploader", name: r.name || "", approval: false }; ss.set("giffig-admin", JSON.stringify({ t: r.token, exp: r.exp, role: me.role, name: me.name })); }
 
 async function boot() {
   if (!window.supabase) { $("#loadMsg").textContent = "Die Bibliothek konnte nicht geladen werden. Prüf deine Internetverbindung."; return; }
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+  $("#liName").value = ls.get("giffig-admin-name") || "";
+  const inv = (location.hash.match(/^#einladung=([A-Za-z0-9-]{6,20})$/) || [])[1];
   let st; try { st = await call("status"); } catch (e) { $("#loadMsg").textContent = errText(e); return; }
+  if (inv) { $("#jnCode").value = inv; view("vJoin"); $("#jnPw1").focus(); return; }
   if (!st.configured) { view("vSetup"); return; }
-  try { const s = JSON.parse(ss.get("giffig-admin") || "null"); if (s && s.exp > Date.now() && s.t) { token = s.t; await openPanel(); return; } } catch {}
-  view("vLogin"); $("#liPw").focus();
+  try { const s = JSON.parse(ss.get("giffig-admin") || "null"); if (s && s.exp > Date.now() && s.t) { token = s.t; me = { role: s.role, name: s.name, approval: false }; await openPanel(); return; } } catch {}
+  view("vLogin"); ($("#liName").value ? $("#liPw") : $("#liName")).focus();
 }
 
 $("#setupForm").addEventListener("submit", async (e) => {
@@ -215,23 +341,72 @@ $("#setupForm").addEventListener("submit", async (e) => {
   if (p1.length < 12) { err.textContent = ERR.password_length; return; }
   if (p1 !== p2) { err.textContent = "Die beiden Passwörter sind verschieden."; return; }
   $("#suBtn").disabled = true;
-  try { const r = await call("setup", { code, password: p1 }); setToken(r.token, r.exp); $("#suPw1").value = $("#suPw2").value = $("#suCode").value = ""; await openPanel(); }
+  try { const r = await call("setup", { code, password: p1 }); setSession(r); $("#suPw1").value = $("#suPw2").value = $("#suCode").value = ""; await openPanel(); }
   catch (x) { err.textContent = errText(x); }
   $("#suBtn").disabled = false;
 });
 $("#loginForm").addEventListener("submit", async (e) => {
   e.preventDefault(); const err = $("#liErr"); err.textContent = ""; $("#liBtn").disabled = true;
-  try { const r = await call("login", { password: $("#liPw").value }); setToken(r.token, r.exp); $("#liPw").value = ""; await openPanel(); }
+  const name = $("#liName").value.trim();
+  try { const r = await call("login", { name, password: $("#liPw").value }); ls.set("giffig-admin-name", name); setSession(r); $("#liPw").value = ""; await openPanel(); }
   catch (x) { err.textContent = errText(x); }
   $("#liBtn").disabled = false;
 });
+$("#joinForm").addEventListener("submit", async (e) => {
+  e.preventDefault(); const err = $("#jnErr"); err.textContent = "";
+  const code = $("#jnCode").value.trim(), p1 = $("#jnPw1").value, p2 = $("#jnPw2").value;
+  if (!code) { err.textContent = "Bitte den Einladungs-Code eintragen."; return; }
+  if (p1.length < 12) { err.textContent = ERR.password_length; return; }
+  if (p1 !== p2) { err.textContent = "Die beiden Passwörter sind verschieden."; return; }
+  $("#jnBtn").disabled = true;
+  try { const r = await call("join", { code, password: p1 }); setSession(r); ls.set("giffig-admin-name", r.name || ""); $("#jnPw1").value = $("#jnPw2").value = $("#jnCode").value = ""; history.replaceState(null, "", location.pathname); await openPanel(); }
+  catch (x) { err.textContent = errText(x); }
+  $("#jnBtn").disabled = false;
+});
+$("#toJoin").onclick = () => { view("vJoin"); $("#jnCode").focus(); };
+$("#toLogin").onclick = () => { history.replaceState(null, "", location.pathname); view("vLogin"); };
 $("#logoutBtn").onclick = () => { token = null; ss.set("giffig-admin", null); queue.forEach(freeItem); queue = []; renderQueue(); view("vLogin"); $("#liPw").focus(); };
 
-async function openPanel() {
-  view("vPanel");
-  try { const r = await call("list"); library = r.memes || []; renderLib(); }
-  catch (e) { if (e.code !== "auth") $("#lib").textContent = errText(e); }
+// ---------- Panel öffnen ----------
+async function loadBuiltins() {
+  if (!isOwner() || builtins.length) return;
+  try { const r = await fetch("catalog.json", { cache: "no-store" }); if (r.ok) builtins = await r.json(); } catch {}
 }
+async function openPanel() {
+  // Das Panel erst zeigen, wenn die Daten da sind. Sonst könnte eine späte Antwort frische Entscheidungen überschreiben.
+  $("#loadMsg").textContent = "Lade Bilder …"; view("vLoading");
+  let r;
+  try { [r] = await Promise.all([call("list"), loadBuiltins()]); }
+  catch (e) { if (e.code !== "auth") $("#loadMsg").textContent = errText(e); return; }
+  me = { ...me, ...(r.me || {}) }; library = r.memes || []; removed = new Set(r.removed || []); reviews = r.reviews || {};
+  view("vPanel");
+  $("#whoPill").textContent = (isOwner() ? "👑 " : "👤 ") + (me.name || "Admin");
+  $("#tabs").hidden = !isOwner(); $("#fScope").hidden = !isOwner(); $("#fFrom").hidden = !isOwner();
+  tHistory = []; tSkipped = new Set(); shown = PAGE;
+  $("#libTitle").textContent = isOwner() ? "Alle Bilder im Spiel" : "Deine Bilder";
+  $("#approvalNote").hidden = isOwner() || !me.approval;
+  showTab("imgs");
+}
+let tab = "imgs", tVersion = 0;
+// Liste frisch vom Server holen (andere Personen laden ja auch hoch). Frische Tinder-Entscheidungen werden dabei nie überschrieben.
+async function refreshLibrary() {
+  try { await tChain; } catch {}
+  const v = tVersion, r = await call("list");
+  if (v !== tVersion) return;
+  library = r.memes || []; removed = new Set(r.removed || []); reviews = r.reviews || reviews;
+}
+function showTab(t) {
+  tab = t;
+  $("#paneImgs").hidden = t !== "imgs"; $("#paneTinder").hidden = t !== "tinder"; $("#panePeople").hidden = t !== "people";
+  for (const [id, name] of [["#tabImgs", "imgs"], ["#tabTinder", "tinder"], ["#tabPeople", "people"]]) $(id).setAttribute("aria-selected", String(t === name));
+  if (t === "people") { loadPeople(); return Promise.resolve(); }
+  const draw = () => { if (t === "tinder") tinderShow(); else { setupFilters(); renderLib(); } };
+  draw();
+  return refreshLibrary().then(() => { if (tab === t) draw(); }).catch(() => {});
+}
+$("#tabImgs").onclick = () => showTab("imgs");
+$("#tabTinder").onclick = () => showTab("tinder");
+$("#tabPeople").onclick = () => showTab("people");
 
 // ---------- Bilder vorbereiten ----------
 const nameFrom = (f) => f.name.replace(/\.[^.]+$/, "").replace(/[-_.]+/g, " ").replace(/[<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 40) || "Meme";
@@ -255,7 +430,6 @@ async function prepareBlob(file) {
   if (file.type === "image/webp" && (await isAnimatedWebp(file))) return { blob: file, animated: true };
   return { blob: await shrink(file), animated: false };
 }
-const kb = (n) => n < 1024 * 1024 ? Math.round(n / 1024) + " KB" : (n / 1024 / 1024).toFixed(1) + " MB";
 function freeItem(it) { if (it.url) URL.revokeObjectURL(it.url); }
 
 async function addFiles(files) {
@@ -276,10 +450,10 @@ async function addFiles(files) {
 }
 
 // ---------- Warteschlange ----------
-function tagButtons(set, onToggle) {
+function tagButtons(set, onToggle, disabled) {
   const box = el("div", "tags");
   for (const [k, label] of TAGS) {
-    const b = el("button", "tag", label); b.type = "button"; b.setAttribute("aria-pressed", String(set.has(k)));
+    const b = el("button", "tag", label); b.type = "button"; b.setAttribute("aria-pressed", String(set.has(k))); b.disabled = !!disabled;
     b.onclick = () => onToggle(k, b); box.append(b);
   }
   return box;
@@ -291,7 +465,7 @@ function renderQueue() {
   $("#queueLabel").textContent = queue.length + " Bild" + (queue.length === 1 ? "" : "er") + " in der Liste";
   $("#uploadBtn").disabled = busy || !ready; $("#uploadBtn").textContent = busy ? "Lädt hoch …" : ready ? ready + " hochladen" : "Hochladen";
   $("#clearBtn").disabled = busy;
-  for (const b of document.querySelectorAll("[data-bulk]")) { const k = b.dataset.bulk, on = queue.length && queue.every((q) => q.tags.has(k)); b.setAttribute("aria-pressed", String(!!on)); }
+  renderQueueBulk();
   for (const it of queue) {
     const c = el("div", "card " + (it.state === "bad" || it.state === "failed" ? "bad" : it.state === "done" ? "done" : ""));
     const th = el("div", "thumb"); if (it.url) { const im = el("img"); im.src = it.url; im.alt = ""; th.append(im); } else th.append(el("span", "hint", "…"));
@@ -344,10 +518,11 @@ async function uploadAll() {
         for (const it of sent) { if (ok.has(it.file)) { it.state = "done"; it.msg = "Hochgeladen ✓"; } else { it.state = "failed"; it.msg = "Konnte nicht gespeichert werden"; } }
         library = [...(r.added || []), ...library];
       }
-      renderQueue(); renderLib();
+      renderQueue(); setupFilters(); renderLib();
     }
     const okN = items.filter((q) => q.state === "done").length, badN = items.length - okN;
-    $("#upMsg").className = badN ? "err" : "ok"; $("#upMsg").textContent = okN + " hochgeladen" + (badN ? ", " + badN + " fehlgeschlagen (nochmal versuchen mit dem Knopf)." : ". Spieler sehen sie nach dem Neuladen.");
+    $("#upMsg").className = badN ? "err" : "ok";
+    $("#upMsg").textContent = okN + " hochgeladen" + (badN ? ", " + badN + " fehlgeschlagen (nochmal versuchen mit dem Knopf)." : (!isOwner() && me.approval ? ". Sie erscheinen nach der Freigabe im Spiel." : ". Spieler sehen sie nach dem Neuladen."));
     setTimeout(() => { if (!busy) { queue.filter((q) => q.state === "done").forEach(freeItem); queue = queue.filter((q) => q.state !== "done"); renderQueue(); } }, 2500);
   } catch (e) {
     for (const it of items) if (it.state === "up") { it.state = "failed"; it.msg = errText(e); }
@@ -365,47 +540,261 @@ $("#fileIn").onchange = (e) => { addFiles(e.target.files); e.target.value = ""; 
 for (const t of ["dragenter", "dragover"]) drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); });
 for (const t of ["dragleave", "dragend"]) drop.addEventListener(t, () => drop.classList.remove("over"));
 drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); addFiles(e.dataTransfer && e.dataTransfer.files); });
-// Daneben fallen gelassene Dateien sollen nicht den Browser-Tab überschreiben.
 for (const t of ["dragover", "drop"]) window.addEventListener(t, (e) => { if (!drop.contains(e.target)) e.preventDefault(); });
-document.addEventListener("paste", (e) => { if (!$("#vPanel").hidden && e.clipboardData && e.clipboardData.files.length) { e.preventDefault(); addFiles(e.clipboardData.files); } });
+document.addEventListener("paste", (e) => { if (!$("#vPanel").hidden && !$("#paneImgs").hidden && e.clipboardData && e.clipboardData.files.length) { e.preventDefault(); addFiles(e.clipboardData.files); } });
 
 // ---------- Bibliothek ----------
-async function patch(m, data, card) {
-  try { const r = await call("update", { id: m.id, ...data }); Object.assign(m, r.meme); card && card.classList.toggle("hide", !!m.hidden); return true; }
-  catch (e) { if (e.code !== "auth") alert_(errText(e)); return false; }
+const builtinSrc = (id) => "g/" + (id.includes(".") ? id : id + ".webp");
+function alertMsg(msg) { $("#upMsg").className = "err"; $("#upMsg").textContent = msg; window.scrollTo({ top: 0, behavior: "smooth" }); }
+async function patch(m, data) {
+  try { const r = await call("update", { id: m.id, ...data }); Object.assign(m, r.meme); return true; }
+  catch (e) { if (e.code !== "auth") alertMsg(errText(e)); return false; }
 }
-function alert_(msg) { $("#upMsg").className = "err"; $("#upMsg").textContent = msg; window.scrollTo({ top: 0, behavior: "smooth" }); }
+function setupFilters() {
+  const sc = $("#fScope"), cur = sc.value;
+  sc.textContent = "";
+  for (const [v, t] of [["all", "Alle Bilder"], ["up", "Hochgeladene"], ["builtin", "Eingebaute (im Spiel)"], ["removed", "Entfernt / ausgeblendet"], ["pending", "Wartet auf Freigabe"]]) { const o = el("option", null, t); o.value = v; sc.append(o); }
+  sc.value = cur || "all";
+  const fr = $("#fFrom"), curF = fr.value; fr.textContent = "";
+  const names = [...new Set(library.map((m) => m.uploaded_by_name || "Admin"))].sort((a, b) => a.localeCompare(b));
+  const all = el("option", null, "Von allen"); all.value = ""; fr.append(all);
+  for (const n of names) { const o = el("option", null, "Von " + n); o.value = n; fr.append(o); }
+  fr.value = names.includes(curF) ? curF : "";
+}
+function visibleItems() {
+  const scope = isOwner() ? $("#fScope").value : "up", from = isOwner() ? $("#fFrom").value : "", q = $("#search").value.trim().toLowerCase();
+  let items = library.filter((m) => FILE_RE.test(m.file)).map((m) => ({ kind: "up", m }));
+  if (isOwner()) for (const b of builtins) items.push({ kind: "builtin", b, off: removed.has(b.id) });
+  items = items.filter((it) => {
+    const off = it.kind === "up" ? it.m.hidden : it.off;
+    const pending = it.kind === "up" && it.m.hidden && (it.m.uploaded_by_name || "Admin") !== "Admin";
+    if (scope === "up" && it.kind !== "up") return false;
+    if (scope === "builtin" && !(it.kind === "builtin" && !it.off)) return false;
+    if (scope === "removed" && !off) return false;
+    if (scope === "pending" && !pending) return false;
+    if (from && !(it.kind === "up" && (it.m.uploaded_by_name || "Admin") === from)) return false;
+    const name = (it.kind === "up" ? it.m.name : it.b.name).toLowerCase();
+    return !q || name.includes(q);
+  });
+  return items;
+}
 function renderLib() {
   library.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)) || a.name.localeCompare(b.name));
-  const q = $("#search").value.trim().toLowerCase(), box = $("#lib"); box.textContent = "";
-  $("#countPill").textContent = library.length + " Bild" + (library.length === 1 ? "" : "er");
-  const list = library.filter((m) => !q || m.name.toLowerCase().includes(q));
-  if (!list.length) { box.append(el("p", "hint", library.length ? "Nichts gefunden." : "Noch keine eigenen Bilder. Zieh oben welche rein.")); return; }
-  for (const m of list) {
-    if (!FILE_RE.test(m.file)) continue;
-    const c = el("div", "card" + (m.hidden ? " hide" : ""));
-    const th = el("div", "thumb"), im = el("img"); im.src = FILE_BASE + m.file; im.alt = m.name; im.loading = "lazy"; th.append(im);
-    const nm = el("input"); nm.type = "text"; nm.value = m.name; nm.maxLength = 40; nm.setAttribute("aria-label", "Name");
-    nm.onchange = async () => { const v = nm.value.trim(); if (!v) { nm.value = m.name; return; } if (!(await patch(m, { name: v }, c))) nm.value = m.name; else nm.value = m.name; };
-    const tags = tagButtons(new Set(m.tags.split("")), async (k, b) => {
-      const s = new Set(m.tags.split("")); s.has(k) ? s.delete(k) : s.add(k);
-      if (await patch(m, { tags: [...s].join("") }, c)) b.setAttribute("aria-pressed", String(s.has(k)));
-    });
-    const row = el("div", "row"); row.style.justifyContent = "space-between";
-    const eye = el("button", "btn small", m.hidden ? "Einblenden" : "Ausblenden"); eye.type = "button";
-    eye.onclick = async () => { if (await patch(m, { hidden: !m.hidden }, c)) eye.textContent = m.hidden ? "Einblenden" : "Ausblenden"; };
-    const del = el("button", "btn small danger", "Löschen"); del.type = "button"; let armed = 0;
-    del.onclick = async () => {
-      if (!armed) { armed = setTimeout(() => { armed = 0; del.textContent = "Löschen"; }, 4000); del.textContent = "Wirklich?"; return; }
-      clearTimeout(armed); del.disabled = true;
-      try { await call("delete", { id: m.id }); library = library.filter((x) => x !== m); renderLib(); }
-      catch (e) { del.disabled = false; del.textContent = "Löschen"; armed = 0; if (e.code !== "auth") alert_(errText(e)); }
-    };
-    row.append(eye, del);
-    c.append(th, nm, tags, row); box.append(c);
-  }
+  const items = visibleItems(), box = $("#lib"); box.textContent = "";
+  const live = library.filter((m) => !m.hidden).length + (isOwner() ? builtins.filter((b) => !removed.has(b.id)).length : 0);
+  $("#countPill").textContent = isOwner() ? live + " im Spiel" : library.length + " Bild" + (library.length === 1 ? "" : "er");
+  $("#libHint").textContent = isOwner()
+    ? "Hier siehst du alle Bilder: hochgeladene und eingebaute. „Aus dem Spiel nehmen“ blendet ein Bild für alle Spieler aus und lässt sich jederzeit zurücknehmen. Eigene Uploads kannst du auch ganz löschen. Änderungen sehen Spieler nach dem Neuladen."
+    : "Du siehst hier nur deine eigenen Bilder. Name und Tags kannst du ändern, Löschen entfernt das Bild für immer.";
+  if (!items.length) { box.append(el("p", "hint", library.length || builtins.length ? "Nichts gefunden." : "Noch keine Bilder. Zieh oben welche rein.")); $("#moreBtn").hidden = true; return; }
+  for (const it of items.slice(0, shown)) box.append(it.kind === "up" ? uploadCard(it.m) : builtinCard(it.b, it.off));
+  $("#moreBtn").hidden = items.length <= shown; $("#moreBtn").textContent = "Mehr anzeigen (" + (items.length - shown) + " weitere)";
 }
-$("#search").addEventListener("input", renderLib);
+function uploadCard(m) {
+  const c = el("div", "card" + (m.hidden ? " hide" : ""));
+  const by = m.uploaded_by_name || "Admin", pending = m.hidden && by !== "Admin";
+  if (m.hidden) c.append(el("span", "badge warn", pending ? "wartet auf Freigabe" : "ausgeblendet"));
+  const th = el("div", "thumb"), im = el("img"); im.src = FILE_BASE + m.file; im.alt = m.name; im.loading = "lazy"; th.append(im);
+  const nm = el("input"); nm.type = "text"; nm.value = m.name; nm.maxLength = 40; nm.setAttribute("aria-label", "Name");
+  nm.onchange = async () => { const v = nm.value.trim(); if (v && v !== m.name) await patch(m, { name: v }); nm.value = m.name; };
+  const tags = tagButtons(new Set(m.tags.split("")), async (k, b) => {
+    const s = new Set(m.tags.split("")); s.has(k) ? s.delete(k) : s.add(k);
+    if (await patch(m, { tags: [...s].join("") })) b.setAttribute("aria-pressed", String(s.has(k)));
+  });
+  const meta = el("div", "meta"); meta.append(el("span", null, "von " + by), el("span", null, date(m.created_at)));
+  const row = el("div", "row"); row.style.justifyContent = "space-between";
+  if (isOwner()) {
+    const eye = el("button", "btn small" + (pending ? " mint" : ""), m.hidden ? (pending ? "Freigeben" : "Einblenden") : "Ausblenden"); eye.type = "button";
+    eye.onclick = async () => { if (await patch(m, { hidden: !m.hidden })) { setupFilters(); renderLib(); } };
+    row.append(eye);
+  }
+  const del = el("button", "btn small danger", "Löschen"); del.type = "button"; let armed = 0;
+  del.onclick = async () => {
+    if (!armed) { armed = setTimeout(() => { armed = 0; del.textContent = "Löschen"; }, 4000); del.textContent = "Wirklich?"; return; }
+    clearTimeout(armed); del.disabled = true;
+    try { await call("delete", { id: m.id }); library = library.filter((x) => x !== m); setupFilters(); renderLib(); }
+    catch (e) { del.disabled = false; del.textContent = "Löschen"; armed = 0; if (e.code !== "auth") alertMsg(errText(e)); }
+  };
+  row.append(del);
+  c.append(th, nm, tags, meta, row); return c;
+}
+function builtinCard(b, off) {
+  const c = el("div", "card" + (off ? " hide" : ""));
+  c.append(el("span", "badge" + (off ? " warn" : ""), off ? "aus dem Spiel genommen" : "eingebaut"));
+  const th = el("div", "thumb"), im = el("img"); im.src = builtinSrc(b.id); im.alt = b.name; im.loading = "lazy"; th.append(im);
+  const tags = el("div", "tags"); for (const [k, label] of TAGS) if ((b.tags || "").includes(k)) tags.append(el("span", "tag static", label));
+  const row = el("div", "row"); row.style.justifyContent = "space-between";
+  const btn = el("button", "btn small" + (off ? " mint" : " danger"), off ? "Wieder aufnehmen" : "Aus dem Spiel nehmen"); btn.type = "button";
+  btn.onclick = async () => {
+    btn.disabled = true;
+    try { await call("builtin_set", { id: b.id, removed: !off }); off ? removed.delete(b.id) : removed.add(b.id); renderLib(); }
+    catch (e) { btn.disabled = false; if (e.code !== "auth") alertMsg(errText(e)); }
+  };
+  row.append(btn);
+  c.append(th, el("div", "cname", b.name), tags, row); return c;
+}
+for (const id of ["#fScope", "#fFrom"]) $(id).addEventListener("change", () => { shown = PAGE; renderLib(); });
+$("#search").addEventListener("input", () => { shown = PAGE; renderLib(); });
+$("#moreBtn").onclick = () => { shown += PAGE; renderLib(); };
+
+// ---------- Tinder-Ansicht (nur Admin) ----------
+// Entscheidungen liegen auf dem Server (admin_reviews). So geht es auf jedem Gerät dort weiter, wo du aufgehört hast.
+let tSkipped = new Set(), tHistory = [], tCurrent = null, tBusy = false, tChain = Promise.resolve();
+const itemKey = (it) => (it.kind === "up" ? it.m.file : it.b.id);
+function tinderQueue() {
+  const scope = $("#tScope").value, out = [];
+  if (scope !== "builtin") {
+    const ups = library.filter((m) => FILE_RE.test(m.file) && (!m.hidden || (m.uploaded_by_name || "Admin") !== "Admin"));
+    ups.sort((a, b) => (b.hidden - a.hidden) || String(b.created_at).localeCompare(String(a.created_at)));  // wartende zuerst, dann neueste
+    for (const m of ups) out.push({ kind: "up", m });
+  }
+  if (scope !== "up") for (const b of builtins) if (!removed.has(b.id)) out.push({ kind: "builtin", b });
+  return out.filter((it) => !reviews[itemKey(it)] && !tSkipped.has(itemKey(it)));
+}
+function tinderStats() {
+  const vals = Object.values(reviews), keep = vals.filter((v) => v === "keep").length, rem = vals.filter((v) => v === "remove").length;
+  return { keep, rem, open: tinderQueue().length, skipped: tSkipped.size };
+}
+function imgOf(it) { return it.kind === "up" ? FILE_BASE + it.m.file : builtinSrc(it.b.id); }
+function tinderShow() {
+  const q = tinderQueue(), st = tinderStats(), done = st.keep + st.rem, total = done + q.length + st.skipped;
+  $("#tProg").firstElementChild.style.width = (total ? Math.round(done / total * 100) : 100) + "%";
+  $("#tStat").textContent = done + " geprüft (" + st.keep + " behalten, " + st.rem + " entfernt), noch " + q.length + " offen" + (st.skipped ? ", " + st.skipped + " auf „später“" : "") + ".";
+  const stage = $("#tStage"); stage.textContent = ""; tCurrent = q[0] || null;
+  $("#tBtns").hidden = !tCurrent; $("#tUndo").disabled = !tHistory.length || tBusy;
+  if (!tCurrent) {
+    const d = el("div", "t-done"); d.append(el("b", null, st.skipped ? "Fast geschafft" : "Alles geprüft 🎉"), el("p", "hint", st.skipped ? "Es warten noch Bilder, die du auf „später“ gelegt hast." : "Neue Uploads erscheinen hier automatisch."));
+    if (st.skipped) { const b = el("button", "btn mint", "Die „später“-Bilder zeigen"); b.type = "button"; b.onclick = () => { tSkipped.clear(); tinderShow(); }; d.append(b); }
+    stage.append(d); return;
+  }
+  const it = tCurrent, card = el("div", "t-card"), th = el("div", "thumb"), im = el("img"); im.src = imgOf(it); im.alt = ""; th.append(im);
+  const kind = it.kind === "builtin" ? "eingebaut" : "von " + (it.m.uploaded_by_name || "Admin") + " · " + date(it.m.created_at);
+  const pending = it.kind === "up" && it.m.hidden;
+  const tags = el("div", "tags"), tg = it.kind === "up" ? it.m.tags : (it.b.tags || "");
+  for (const [k, label] of TAGS) if (tg.includes(k)) tags.append(el("span", "tag static", label));
+  card.append(el("span", "stamp keep", "BEHALTEN"), el("span", "stamp nope", "WEG"), th, el("h3", null, it.kind === "up" ? it.m.name : it.b.name), tags, el("p", "hint", kind + (pending ? " · wartet auf Freigabe (✓ gibt es frei)" : "")));
+  stage.append(card); tinderGestures(card);
+  for (const nx of q.slice(1, 3)) new Image().src = imgOf(nx);  // nächste Bilder vorladen
+}
+function tinderGestures(card) {
+  let x0 = 0, dx = 0, on = false;
+  const stamps = () => { card.querySelector(".stamp.keep").style.opacity = Math.max(0, Math.min(1, dx / 90)); card.querySelector(".stamp.nope").style.opacity = Math.max(0, Math.min(1, -dx / 90)); };
+  card.addEventListener("pointerdown", (e) => { if (e.button || tBusy) return; on = true; x0 = e.clientX; dx = 0; card.classList.add("drag"); try { card.setPointerCapture(e.pointerId); } catch {} });
+  card.addEventListener("pointermove", (e) => { if (!on) return; dx = e.clientX - x0; card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 22 + "deg)"; stamps(); });
+  const end = () => {
+    if (!on) return; on = false; card.classList.remove("drag");
+    if (Math.abs(dx) > 110) tinderDecide(dx > 0 ? "keep" : "remove", card); else { card.style.transform = ""; dx = 0; stamps(); }
+  };
+  card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+}
+function tinderDecide(decision, card) {
+  const it = tCurrent; if (!it || tBusy) return; tBusy = true;
+  const key = itemKey(it);
+  const snap = { it, key, wasRemoved: it.kind === "builtin" ? removed.has(key) : null, wasHidden: it.kind === "up" ? it.m.hidden : null };
+  card = card || $("#tStage .t-card");
+  if (card) { card.classList.remove("drag"); card.style.transform = "translateX(" + (decision === "keep" ? 700 : -700) + "px) rotate(" + (decision === "keep" ? 24 : -24) + "deg)"; card.style.opacity = "0"; }
+  reviews[key] = decision;
+  if (decision === "remove") { it.kind === "builtin" ? removed.add(key) : (it.m.hidden = true); } else { it.kind === "builtin" ? removed.delete(key) : (it.m.hidden = false); }
+  tHistory.push(snap); if (tHistory.length > 50) tHistory.shift(); tVersion++;
+  $("#tMsg").textContent = "";
+  tChain = tChain.then(() => call("review", { item: key, decision })).catch((e) => { tinderRevert(snap); if (e.code !== "auth") $("#tMsg").textContent = "Speichern hat nicht geklappt: " + errText(e); });
+  setTimeout(() => { tBusy = false; tinderShow(); }, 260);
+}
+function tinderRevert(snap) {
+  delete reviews[snap.key]; tHistory = tHistory.filter((h) => h !== snap);
+  if (snap.it.kind === "builtin") { snap.wasRemoved ? removed.add(snap.key) : removed.delete(snap.key); } else snap.it.m.hidden = snap.wasHidden;
+  tinderShow();
+}
+function tinderUndo() {
+  const snap = tHistory.pop(); if (!snap || tBusy) return; tVersion++;
+  delete reviews[snap.key]; tSkipped.delete(snap.key);
+  if (snap.it.kind === "builtin") { snap.wasRemoved ? removed.add(snap.key) : removed.delete(snap.key); } else snap.it.m.hidden = snap.wasHidden;
+  tChain = tChain.then(() => call("review", { item: snap.key, decision: null })).catch((e) => { if (e.code !== "auth") $("#tMsg").textContent = "Zurücknehmen hat nicht geklappt: " + errText(e); });
+  // Das Bild wieder nach vorne holen: es ist ja jetzt wieder ungeprüft und steht an seiner alten Stelle in der Reihenfolge.
+  tinderShow();
+}
+$("#tKeep").onclick = () => tinderDecide("keep"); $("#tNope").onclick = () => tinderDecide("remove");
+$("#tSkip").onclick = () => { if (tCurrent && !tBusy) { tSkipped.add(itemKey(tCurrent)); tinderShow(); } };
+$("#tUndo").onclick = tinderUndo; $("#tScope").onchange = tinderShow;
+let tArm = 0;
+$("#tReset").onclick = () => {
+  const b = $("#tReset");
+  if (!tArm) { tArm = setTimeout(() => { tArm = 0; b.textContent = "Neu anfangen"; }, 4000); b.textContent = "Wirklich neu? (Entfernte bleiben entfernt)"; return; }
+  clearTimeout(tArm); tArm = 0; b.textContent = "Neu anfangen";
+  call("review_reset").then(() => { reviews = {}; tHistory = []; tSkipped.clear(); tinderShow(); }).catch((e) => { if (e.code !== "auth") $("#tMsg").textContent = errText(e); });
+};
+document.addEventListener("keydown", (e) => {
+  if (tab !== "tinder" || $("#vPanel").hidden || /^(INPUT|SELECT|TEXTAREA)$/.test((e.target || {}).tagName || "")) return;
+  if (e.key === "ArrowLeft") { e.preventDefault(); tinderDecide("remove"); }
+  else if (e.key === "ArrowRight") { e.preventDefault(); tinderDecide("keep"); }
+  else if (e.key === "ArrowDown") { e.preventDefault(); $("#tSkip").click(); }
+  else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); tinderUndo(); }
+});
+
+// ---------- Personen (nur Admin) ----------
+async function copyText(text, btn) {
+  const old = btn.textContent;
+  try { await navigator.clipboard.writeText(text); btn.textContent = "Kopiert ✓"; } catch { btn.textContent = "Markieren und kopieren"; }
+  setTimeout(() => { btn.textContent = old; }, 1800);
+}
+function showInvite(box, inv, title) {
+  box.hidden = false; box.textContent = "";
+  const link = location.origin + location.pathname + "#einladung=" + inv.code;
+  const row1 = el("div", "row"), row2 = el("div", "row");
+  const cb = el("button", "btn small", "Code kopieren"); cb.type = "button"; cb.onclick = () => copyText(inv.code, cb);
+  const lb = el("button", "btn small", "Link kopieren"); lb.type = "button"; lb.onclick = () => copyText(link, lb);
+  row1.append(cb, lb);
+  box.append(el("span", "label", title), el("div", "code-big", inv.code), el("p", "hint", "Gilt für " + inv.name + " bis " + date(inv.expires) + " und nur einmal. Schick den Code oder den Link an die Person. Bitte nicht öffentlich posten."), row1, row2);
+  const lk = el("input"); lk.type = "text"; lk.readOnly = true; lk.value = link; lk.setAttribute("aria-label", "Einladungs-Link"); lk.onfocus = () => lk.select(); box.append(lk);
+}
+async function loadPeople() {
+  try {
+    const r = await call("users"), box = $("#people"); box.textContent = "";
+    if (!r.users.length) box.append(el("p", "hint", "Noch niemand eingeladen. Oben kannst du eine Person einladen."));
+    for (const u of r.users) box.append(personCard(u));
+    const pb = $("#pending"); pb.textContent = ""; $("#pendingBox").hidden = !r.invites.length;
+    for (const i of r.invites.filter((x) => !x.user_id)) pb.append(inviteRow(i));
+  } catch (e) { if (e.code !== "auth") $("#people").textContent = errText(e); }
+}
+function inviteRow(i) {
+  const c = el("div", "person"), row = el("div", "row"); row.style.justifyContent = "space-between";
+  row.append(el("span", "cname", i.name + " · eingeladen, noch nicht angenommen · gültig bis " + date(i.expires_at)));
+  const del = el("button", "btn small danger", "Einladung löschen"); del.type = "button";
+  del.onclick = async () => { del.disabled = true; try { await call("invite_delete", { id: i.id }); loadPeople(); } catch (e) { del.disabled = false; if (e.code !== "auth") alertMsg(errText(e)); } };
+  row.append(del); c.append(row); return c;
+}
+function personCard(u) {
+  const c = el("div", "person" + (u.disabled ? " off" : ""));
+  const head = el("div", "row"); head.style.justifyContent = "space-between";
+  head.append(el("h3", null, u.name), el("span", "pill", u.uploads + " Bild" + (u.uploads === 1 ? "" : "er") + (u.pending ? " · " + u.pending + " warten" : "")));
+  const info = el("p", "hint", "dabei seit " + date(u.created_at) + (u.last_login ? " · zuletzt angemeldet " + date(u.last_login) : " · noch nie angemeldet") + (u.last ? " · letzter Upload " + date(u.last) : "") + (u.disabled ? " · GESPERRT" : ""));
+  const lab = el("label", "check"), cb = el("input"); cb.type = "checkbox"; cb.checked = !!u.approval_required;
+  cb.onchange = async () => { try { await call("user_update", { id: u.id, approval: cb.checked }); u.approval_required = cb.checked; } catch (e) { cb.checked = !cb.checked; if (e.code !== "auth") alertMsg(errText(e)); } };
+  lab.append(cb, el("span", null, "Neue Bilder erst nach meiner Freigabe zeigen"));
+  const row = el("div", "row");
+  const see = el("button", "btn small", "Bilder ansehen"); see.type = "button";
+  see.onclick = async () => { await showTab("imgs"); setupFilters(); $("#fScope").value = "up"; $("#fFrom").value = u.name; shown = PAGE; renderLib(); $("#lib").scrollIntoView({ behavior: "smooth" }); };
+  const lock = el("button", "btn small", u.disabled ? "Entsperren" : "Sperren"); lock.type = "button";
+  lock.onclick = async () => { try { await call("user_update", { id: u.id, disabled: !u.disabled }); loadPeople(); } catch (e) { if (e.code !== "auth") alertMsg(errText(e)); } };
+  const reset = el("button", "btn small", "Passwort zurücksetzen"); reset.type = "button"; const resBox = el("div", "invite-box"); resBox.hidden = true;
+  reset.onclick = async () => { try { showInvite(resBox, await call("reinvite", { id: u.id }), "Neues Passwort für " + u.name); } catch (e) { if (e.code !== "auth") alertMsg(errText(e)); } };
+  const del = el("button", "btn small danger", "Entfernen"); del.type = "button"; const confirmRow = el("div", "row"); confirmRow.hidden = true;
+  const keep = el("button", "btn small danger", "Person entfernen, Bilder behalten"); keep.type = "button";
+  const all = el("button", "btn small danger", "Person und alle ihre Bilder löschen"); all.type = "button";
+  const cancel = el("button", "btn small", "Abbrechen"); cancel.type = "button";
+  const run = (deleteUploads) => async () => { try { await call("user_delete", { id: u.id, deleteUploads }); const r = await call("list"); library = r.memes || []; setupFilters(); renderLib(); loadPeople(); } catch (e) { if (e.code !== "auth") alertMsg(errText(e)); } };
+  keep.onclick = run(false); all.onclick = run(true); cancel.onclick = () => { confirmRow.hidden = true; del.hidden = false; };
+  del.onclick = () => { confirmRow.hidden = false; del.hidden = true; };
+  confirmRow.append(keep, all, cancel);
+  row.append(see, lock, reset, del);
+  c.append(head, info, lab, row, confirmRow, resBox); return c;
+}
+$("#inviteForm").addEventListener("submit", async (e) => {
+  e.preventDefault(); const err = $("#ivErr"); err.textContent = ""; $("#ivBtn").disabled = true;
+  try { const inv = await call("invite", { name: $("#ivName").value.trim(), approval: $("#ivApproval").checked }); showInvite($("#ivResult"), inv, "Einladung für " + inv.name); $("#ivName").value = ""; loadPeople(); }
+  catch (x) { err.textContent = errText(x); $("#ivResult").hidden = true; }
+  $("#ivBtn").disabled = false;
+});
 
 boot();
 </script>

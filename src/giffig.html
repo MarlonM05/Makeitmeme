@@ -177,6 +177,32 @@ footer { color: var(--paper); font-size: 13px; text-align: center; opacity: .9; 
 footer a { color: var(--sun); }
 .credit { font-size: 11px; color: var(--muted); }
 .credit a { color: inherit; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; font-size: 14px; cursor: pointer; }
+.check input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: var(--pink); }
+.tips { border: 3px dashed var(--ink); border-radius: 14px; background: #fff; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.tip { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+.tip q { font-weight: 700; quotes: "„" "“"; overflow-wrap: anywhere; flex: 1 1 140px; }
+.tip .who { font-size: 12px; color: var(--muted); font-weight: 700; }
+.tip button { border: 2px solid var(--ink); border-radius: 999px; background: var(--sun); font-weight: 800; font-size: 12px; padding: 2px 10px; min-height: 28px; }
+.pl.spec { background: #dfe4ff; }
+.rank { position: absolute; top: -12px; left: -8px; z-index: 2; background: var(--sun); border: 2.5px solid var(--ink); border-radius: 999px; min-width: 40px; height: 40px; display: grid; place-items: center; font-family: var(--font-display); font-size: 18px; box-shadow: 3px 3px 0 var(--ink); }
+.top5 { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px 18px; padding-top: 10px; }
+.mini { display: flex; flex-direction: column; gap: 6px; position: relative; min-width: 0; }
+.mini .meme { cursor: zoom-in; }
+.mini .line { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; }
+.mini .line span:first-child { overflow-wrap: anywhere; min-width: 0; }
+.mini .acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.overlay { position: fixed; inset: 0; z-index: 80; background: rgba(21,18,15,.92); overflow: auto; display: flex; flex-direction: column; gap: 16px; align-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.overlay .head { width: min(1000px, 100%); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--paper); }
+.overlay .head h2 { font-size: clamp(22px, 5vw, 32px); color: var(--sun); }
+.gal-round { width: min(1000px, 100%); display: flex; flex-direction: column; gap: 10px; }
+.gal-round h3 { color: var(--paper); font-size: 20px; }
+.gal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+.gal-grid .mini .line { color: var(--paper); }
+.viewer-stage { width: min(720px, 100%); display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.viewer-stage .meme { width: 100%; }
+.viewer-stage .line { color: var(--paper); font-weight: 800; text-align: center; overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 
@@ -200,6 +226,7 @@ footer a { color: var(--sun); }
           <input type="text" id="codeInput" class="code-input" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Raumcode">
           <button class="btn big" id="joinBtn" type="button">Beitreten</button>
         </div>
+        <label class="check"><input type="checkbox" id="specChk"><span>Nur zuschauen: Du bewertest mit und gibst Tipps, spielst aber nicht mit.</span></label>
         <p class="hint" id="inviteNote" hidden style="color:var(--ink);font-weight:700"></p>
         <p class="err" id="homeErr" role="alert"></p>
         <div class="stack" style="gap:8px" id="openWrap">
@@ -217,11 +244,11 @@ footer a { color: var(--sun); }
         <h2 id="h-how" style="font-size:24px">So spielt ihr</h2>
         <ol class="steps">
           <li><span>Einer startet ein Spiel und teilt den <b>Code</b> oder den <b>Einladungslink</b>. Bis zu 8 Leute spielen mit.</span></li>
-          <li><span>Jede Runde bekommst du <b>3 GIFs zur Auswahl</b> und 2 Neu-Würfe. Schreib oben und unten deine Caption, wähle einen Stil.</span></li>
+          <li><span>Jede Runde bekommst du <b>3 GIFs zur Auswahl</b> und ein paar Neu-Würfe (der Host stellt 3, 5 oder 7 ein). Schreib oben und unten deine Caption und zieh die Texte an die richtige Stelle.</span></li>
           <li><span>Alle Memes laufen anonym durch. Ihr bewertet von 😐 bis 💀. Der Rundensieger bekommt <b>+2 Bonus</b>.</span></li>
-          <li><span>Das beste Meme des Spiels landet in der <b>Ruhmeshalle</b>.</span></li>
+          <li><span>Am Ende siehst du die <b>5 besten Memes</b>, kannst alle Memes nochmal durchblättern und als Bild <b>speichern</b>.</span></li>
         </ol>
-        <p class="hint">Modi: <b>Klassisch</b> (jeder eigenes GIF), <b>Duell</b> (alle dasselbe GIF), <b>Mix</b> (abwechselnd). Topf: alle, nur deutsche Memes (Bernd das Brot, Heinz, Dittsche …), nur internationale oder klassische Meme-Vorlagen (Drake, This Is Fine …). Derbe Memes (ab 16) schaltet der Host extra an. Kein Plan? Drück auf 💡 Idee.</p>
+        <p class="hint">Modi: <b>Klassisch</b> (jeder eigenes GIF), <b>Duell</b> (alle dasselbe GIF), <b>Mix</b> (abwechselnd). Topf: alle, nur deutsche Memes (Bernd das Brot, Heinz, Dittsche …), nur internationale oder klassische Meme-Vorlagen (Drake, This Is Fine …). Derbe Memes (ab 16) schaltet der Host extra an. Kein Plan? Drück auf 💡 Idee.<br><b>Zuschauer:</b> Wer „nur zuschauen“ wählt, gibt den Spielern beim Bauen Tipps und stimmt bei den Memes mit ab. Die Ergebnisse sieht er erst, wenn abgestimmt wird.</p>
         <button class="linkish" id="soloBtn" type="button">Alleine üben →</button>
       </section>
     </div>
@@ -243,6 +270,7 @@ footer a { color: var(--sun); }
           <button class="btn small" id="copyBtn" type="button">Kopieren</button>
           <button class="btn small" id="shareBtn" type="button" hidden>Teilen</button></div>
         <button class="btn small" id="leaveBtn" type="button">Verlassen</button>
+        <button class="btn small" id="specLinkBtn" type="button" hidden>👀 Zuschauer-Link</button>
         <button class="btn small" id="muteBtn" type="button" aria-label="Ton an oder aus">🔊</button>
       </div>
       <div class="timer" id="timer" hidden>60</div>
@@ -257,6 +285,8 @@ footer a { color: var(--sun); }
         <div class="stack" style="gap:6px"><span class="label">Modus</span><div class="seg" id="segMode"></div></div>
         <div class="stack wide" style="gap:6px"><span class="label">GIFs &amp; Bilder</span><div class="seg" id="segPool"></div></div>
         <div class="stack" style="gap:6px"><span class="label">Derbe Memes (ab 16)</span><div class="seg" id="segDerb"></div></div>
+        <div class="stack" style="gap:6px"><span class="label">Neu würfeln pro Runde</span><div class="seg" id="segDice"></div></div>
+        <div class="stack" style="gap:6px"><span class="label">Zuschauer-Stimmen zählen</span><div class="seg" id="segSv"></div></div>
       </div>
       <p class="hint" id="modeHint"></p>
       <p class="hint" id="poolHint"></p>
@@ -270,9 +300,10 @@ footer a { color: var(--sun); }
       <div class="sticker stack">
         <div class="row" style="justify-content:space-between">
           <span class="label" id="makeLabel">Wähle dein GIF</span>
-          <button class="btn small" id="rerollBtn" type="button">🎲 Neu würfeln (2)</button>
+          <button class="btn small" id="rerollBtn" type="button">🎲 Neu würfeln</button>
         </div>
         <div class="opts" id="opts"></div>
+        <div class="tips" id="tipsBox" hidden><span class="label">💡 Tipps vom Publikum</span><div class="stack" id="tipsList" style="gap:6px"></div></div>
         <div class="row" style="justify-content:space-between"><label class="label" for="topInput">Oben</label>
           <button class="btn small" id="ideaBtn" type="button">💡 Idee</button></div>
         <input type="text" id="topInput" maxlength="60" placeholder="Wenn der Lehrer sagt …" autocomplete="off">
@@ -299,6 +330,18 @@ footer a { color: var(--sun); }
       </div>
     </section>
 
+    <section id="pWatch" class="sticker stack" hidden>
+      <h3 style="font-size:24px">Die Spieler bauen gerade ihre Memes</h3>
+      <p class="hint" id="watchStatus"></p>
+      <p class="hint">Die Ergebnisse siehst du erst, wenn abgestimmt wird. Bis dahin kannst du den Spielern einen Tipp geben, zum Beispiel eine Caption-Idee.</p>
+      <form class="row" id="tipForm" autocomplete="off">
+        <input type="text" id="tipInput" maxlength="60" placeholder="Dein Tipp an die Spieler …" aria-label="Tipp an die Spieler" style="flex:1 1 220px;width:auto">
+        <button class="btn mint" id="tipBtn" type="submit">Tipp senden</button>
+      </form>
+      <p class="hint" id="tipHint"></p>
+      <div class="tips" id="watchTips" hidden><span class="label">Bisherige Tipps</span><div class="stack" id="watchTipsList" style="gap:6px"></div></div>
+    </section>
+
     <section id="pVote" class="vote-stage" hidden>
       <div class="vote-note" id="voteNote">Meme 1 von 3</div>
       <div id="voteMeme" style="width:min(560px,100%)"></div>
@@ -312,17 +355,18 @@ footer a { color: var(--sun); }
 
     <section id="pEnd" class="stack" hidden>
       <div class="podium" id="podium"></div>
-      <div class="sticker best-wrap">
-        <div id="bestMeme"></div>
-        <div class="stack">
-          <span class="label">Meme des Spiels</span>
-          <h3 id="bestBy" style="font-size:26px"></h3>
-          <div class="row">
-            <button class="btn sun" id="fameBtn" type="button" hidden>In die Ruhmeshalle</button>
-            <button class="btn pink big" id="againBtn" type="button" hidden>Nochmal spielen</button>
-          </div>
-          <p class="hint" id="endHint"></p>
+      <div class="sticker stack">
+        <div class="row" style="justify-content:space-between">
+          <h3 style="font-size:26px">Die 5 besten Memes</h3>
+          <button class="btn small" id="galleryBtn" type="button" hidden>Alle Memes ansehen</button>
         </div>
+        <div class="top5" id="top5"></div>
+        <p class="hint" id="topHint"></p>
+        <div class="row">
+          <button class="btn sun" id="fameBtn" type="button" hidden>Bestes Meme in die Ruhmeshalle</button>
+          <button class="btn pink big" id="againBtn" type="button" hidden>Nochmal spielen</button>
+        </div>
+        <p class="hint" id="endHint"></p>
       </div>
     </section>
   </main>
@@ -362,6 +406,15 @@ footer a { color: var(--sun); }
   </main>
 
   <footer>GIFs von <a href="https://giphy.com" target="_blank" rel="noopener">GIPHY</a>. <span id="footNote">Alle Mitspieler brauchen Zugriff auf diese Seite. Teile sie über „Teilen“ in Claude.</span></footer>
+</div>
+
+<div class="overlay" id="gallery" role="dialog" aria-modal="true" aria-label="Alle Memes" hidden>
+  <div class="head"><h2>Alle Memes</h2><button class="btn small" id="galleryClose" type="button">Schließen ✕</button></div>
+  <div id="galleryBody" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:22px"></div>
+</div>
+<div class="overlay" id="viewer" role="dialog" aria-modal="true" aria-label="Meme ansehen" hidden>
+  <div class="head"><span></span><button class="btn small" id="viewerClose" type="button">Schließen ✕</button></div>
+  <div class="viewer-stage" id="viewerStage"></div>
 </div>
 
 <script>
@@ -467,6 +520,11 @@ function entryFor(v) {
 }
 function ensureIndex(id) { entryFor(id); return idxOf(safeId(id)); }
 // Hochgeladene Memes aus der Datenbank (Admin-Seite) dazunehmen.
+// Vom Admin aus dem Spiel genommene eingebaute Bilder werden nicht mehr verteilt (bleiben aber anzeigbar, falls jemand sie schon hat).
+function excludeRemoved(ids) {
+  for (const id of ids || []) { const i = idxOf(safeId(id)); if (i >= 0) GIFS[i][3] = true; }
+  rebuildCatalog();
+}
 function mergeCatalog(rows) {
   for (const r of rows || []) {
     if (!r || typeof r.file !== "string" || !UPLOAD_OK.test(r.file)) continue;
@@ -514,7 +572,7 @@ const MODE_HINTS = {
   same: "Duell: Alle bekommen dasselbe GIF. Nur die Caption entscheidet.",
   mix: "Mix: Abwechselnd Klassisch und Duell."
 };
-const MAX_PLAYERS = 8, VOTE_MS = 15000, VOTE_MIN_MS = 3500, RES_MS = 11000, GRACE_MS = 9000, HOST_WAIT_MS = 2600;
+const MAX_PLAYERS = 8, VOTE_MS = 15000, VOTE_MIN_MS = 3500, SPEC_WAIT_MS = 7000, RES_MS = 14000, GRACE_MS = 9000, HOST_WAIT_MS = 2600;
 
 // ---------- helpers ----------
 const $ = (s) => document.querySelector(s);
@@ -524,6 +582,7 @@ const ls = { get: (k) => safe(() => localStorage.getItem(k)), set: (k, v) => saf
 const ss = { get: (k) => safe(() => sessionStorage.getItem(k)), set: (k, v) => safe(() => sessionStorage.setItem(k, v)) };
 const rid = (n) => Array.from({ length: n }, () => "abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 32)]).join("");
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const cleanMeme = (s) => ({ p: clampStr(s && s.p, 8), g: safeId(s && s.g), t: clampStr(s && s.t, 60), b: clampStr(s && s.b, 60), s: styleOf(s && s.s), tp: posOf(s && s.tp), bp: posOf(s && s.bp) });
 const posOf = (v) => (Array.isArray(v) && v.length === 2 && v.every((n) => typeof n === "number" && isFinite(n)) ? v.map((n) => Math.round(Math.max(0, Math.min(100, n)) * 10) / 10) : null);
 const clampStr = (v, n) => (typeof v === "string" ? v.slice(0, n) : "");
 const styleOf = (v) => (v === "u" || v === "p" ? v : "k");
@@ -670,7 +729,10 @@ async function boot() {
     const a = el("a", null, "Giffig online öffnen"); a.href = ONLINE_URL; a.target = "_blank"; a.rel = "noopener"; a.style.fontWeight = "800";
     statusEl.append(a);
   }
-  if (lobby && lobby.catalog) { try { mergeCatalog(await lobby.catalog()); } catch (e) { console.warn("Katalog nicht geladen", e); } }
+  if (lobby && lobby.catalog) {
+    try { const cat = await lobby.catalog(); mergeCatalog(Array.isArray(cat) ? cat : cat.rows); if (cat && cat.removed) excludeRemoved(cat.removed); }
+    catch (e) { console.warn("Katalog nicht geladen", e); }
+  }
   if (db) subscribeFame();
 }
 boot();
@@ -731,7 +793,7 @@ let game = null, code = null, joinedAt = 0, myJa = 0;
 let G = null, lastG = null, amHost = false, hostDeadline = 0, hostMin = 0;
 let seenSeq = -1, localDeadline = 0, builtKey = "";
 
-function defaultG() { return { ph: "lobby", seq: 1, rem: 0, R: 5, T: 60, mode: "own", pool: "all", derb: false, bon: [], r: 0, seed: 0, ord: [], gi: "", subs: [], sp: [], vi: 0, sc: {}, nm: {}, best: null }; }
+function defaultG() { return { ph: "lobby", seq: 1, rem: 0, R: 5, T: 60, mode: "own", pool: "all", derb: false, rr: 3, sv: true, bon: [], r: 0, seed: 0, ord: [], gi: "", subs: [], sp: [], sa: [], top: [], vi: 0, sc: {}, nm: {}, best: null }; }
 
 function rawPlayers() {
   if (!game) return [];
@@ -744,9 +806,14 @@ function rawPlayers() {
   }
   return [...byPid.values()].sort((a, b) => (Number(a.ja) || 0) - (Number(b.ja) || 0));
 }
-function players() { return rawPlayers().slice(0, MAX_PLAYERS).map((p) => ({ pid: p.pid, name: clampStr(p.name, 16) || "Jemand", av: clampStr(p.av, 4) || "🙂", ja: p.ja, sub: p.sub, ready: !!p.ready, vote: p.vote, react: p.react, g: p.g, isMe: p.pid === myPid })); }
+const asPerson = (p) => ({ pid: p.pid, name: clampStr(p.name, 16) || "Jemand", av: clampStr(p.av, 4) || "🙂", ja: p.ja, sub: p.sub, ready: !!p.ready, vote: p.vote, react: p.react, tips: p.tips, g: p.g, isMe: p.pid === myPid });
+// Spieler: die ersten 8, die nicht "nur zuschauen" gewählt haben. Alle anderen im Raum sind Zuschauer.
+function players() { return rawPlayers().filter((p) => !p.spec).slice(0, MAX_PLAYERS).map(asPerson); }
+function spectators() { const ids = new Set(players().map((p) => p.pid)); return rawPlayers().filter((p) => !ids.has(p.pid)).map(asPerson); }
+const iAmSpec = () => !!game && !players().some((p) => p.pid === myPid);
 
-async function enterRoom(c, create, keep) {
+let mySpec = false;
+async function enterRoom(c, create, keep, spec) {
   if (!me.name) { $("#homeErr").textContent = "Gib zuerst einen Spitznamen ein."; nameInput.focus(); return "error"; }
   if (!lobby) { $("#homeErr").textContent = "Mehrspieler ist hier nicht verfügbar. Spiel ohne Konto auf " + ONLINE_URL + " oder probier den Übungsmodus."; return "error"; }
   c = c.toUpperCase();
@@ -763,8 +830,9 @@ async function enterRoom(c, create, keep) {
   code = c; joinedAt = Date.now(); myJa = joinedAt; G = null; lastG = null; amHost = false; seenSeq = -1; builtKey = "";
   if (!keep) resetMake();
   $("#codeText").textContent = code;
-  const pres = { pid: myPid, name: me.name, av: me.av, ja: myJa, sub: null, ready: false, vote: null, react: null, g: null };
-  if (keep && mk.key !== -1) { pres.sub = { k: mk.key, g: gid(mk.g), t: mk.t, b: mk.b, s: mk.s, tp: mk.tp, bp: mk.bp }; pres.ready = mk.ready; }
+  mySpec = !!spec && !create;
+  const pres = { pid: myPid, name: me.name, av: me.av, ja: myJa, sub: null, ready: false, vote: null, react: null, g: null, spec: mySpec, tips: [] };
+  if (keep && !mySpec && mk.key !== -1) { pres.sub = { k: mk.key, g: gid(mk.g), t: mk.t, b: mk.b, s: mk.s, tp: mk.tp, bp: mk.bp }; pres.ready = mk.ready; }
   if (create) { const g = defaultG(); g.seq = Math.floor(Math.random() * 1e6); pres.g = g; amHost = true; G = g; lastG = g; }
   await game.presence(pres).catch(() => {});
   const myGame = game;
@@ -774,12 +842,12 @@ async function enterRoom(c, create, keep) {
   pushLobbyPresence();
   keepAwake(true);
   safe(() => history.replaceState(null, "", "#" + code));
-  $("#copyBtn").textContent = lobby.local ? "Link kopieren" : "Kopieren";
+  $("#copyBtn").textContent = lobby.local ? "Link kopieren" : "Kopieren"; $("#specLinkBtn").hidden = !lobby.local;
   return "ok";
 }
 
 async function onRoomLost() {
-  const c = code, wasHost = amHost, old = game;
+  const c = code, wasHost = amHost, old = game, wasSpec = mySpec;
   game = null;
   if (old) old.leave().catch(() => {});
   if (lobby && lobby.local && !wasHost && c) {
@@ -787,7 +855,7 @@ async function onRoomLost() {
       toast("Verbindung weg. Verbinde neu …");
       await new Promise((r) => setTimeout(r, 1500 * (i + 1)));
       if (code !== c) return;
-      if ((await enterRoom(c, false, true)) === "ok") { toast("Wieder drin!"); return; }
+      if ((await enterRoom(c, false, true, wasSpec)) === "ok") { toast("Wieder drin!"); return; }
     }
   }
   toast(wasHost ? "Verbindung zum Raum verloren." : "Das Spiel ist vorbei: Der Host ist nicht mehr da.");
@@ -815,7 +883,7 @@ function resolveHost() {
     return;
   }
   if (Date.now() - joinedAt < HOST_WAIT_MS) return;
-  const first = all[0];
+  const first = all.find((p) => !p.spec);  // Zuschauer werden nie Host
   if (first && first.pid === myPid && !amHost) becomeHost();
 }
 function becomeHost() {
@@ -833,12 +901,15 @@ function sanitizeG(g) {
   o.mode = MODES[g.mode] ? g.mode : "own"; o.pool = POOL_TEST[g.pool] ? g.pool : "all"; o.derb = g.derb === true; o.bon = Array.isArray(g.bon) ? g.bon.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : []; o.r = Number(g.r) || 0; o.seed = Number(g.seed) || 0;
   o.ord = Array.isArray(g.ord) ? g.ord.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : [];
   o.gi = safeId(g.gi);
-  o.subs = Array.isArray(g.subs) ? g.subs.slice(0, MAX_PLAYERS).map((s) => ({ p: clampStr(s && s.p, 8), g: safeId(s && s.g), t: clampStr(s && s.t, 60), b: clampStr(s && s.b, 60), s: styleOf(s && s.s), tp: posOf(s && s.tp), bp: posOf(s && s.bp) })) : [];
+  o.rr = [3, 5, 7].includes(g.rr) ? g.rr : 3; o.sv = g.sv !== false;
+  o.subs = Array.isArray(g.subs) ? g.subs.slice(0, MAX_PLAYERS).map(cleanMeme) : [];
+  o.sa = Array.isArray(g.sa) ? g.sa.slice(0, MAX_PLAYERS).map((x) => (Array.isArray(x) ? [Number(x[0]) || 0, Number(x[1]) || 0] : [0, 0])) : [];
+  o.top = Array.isArray(g.top) ? g.top.slice(0, 5).map((x) => ({ ...cleanMeme(x), v: Number(x && x.v) || 0, r: Number(x && x.r) || 0 })) : [];
   o.sp = Array.isArray(g.sp) ? g.sp.map((x) => Number(x) || 0) : [];
   o.vi = Math.max(0, Math.min(Number(g.vi) || 0, Math.max(0, o.subs.length - 1)));
   o.sc = g.sc && typeof g.sc === "object" ? g.sc : {};
   o.nm = g.nm && typeof g.nm === "object" ? g.nm : {};
-  o.best = g.best && typeof g.best === "object" ? { p: clampStr(g.best.p, 8), g: safeId(g.best.g), t: clampStr(g.best.t, 60), b: clampStr(g.best.b, 60), s: styleOf(g.best.s), tp: posOf(g.best.tp), bp: posOf(g.best.bp), v: Number(g.best.v) || 0 } : null;
+  o.best = g.best && typeof g.best === "object" ? { ...cleanMeme(g.best), v: Number(g.best.v) || 0 } : null;
   return o;
 }
 
@@ -846,7 +917,7 @@ function sanitizeG(g) {
 function fit(g) {
   const enc = new TextEncoder();
   let size = enc.encode(JSON.stringify(g)).length, cut = 60;
-  while (size > 3600 && cut > 10) { cut -= 10; for (const s of g.subs) { s.t = s.t.slice(0, cut); s.b = s.b.slice(0, cut); } size = enc.encode(JSON.stringify(g)).length; }
+  while (size > 3600 && cut > 10) { cut -= 10; for (const s of [...g.subs, ...(g.top || [])]) { s.t = s.t.slice(0, cut); s.b = s.b.slice(0, cut); } size = enc.encode(JSON.stringify(g)).length; }
   return g;
 }
 function pushG(g) {
@@ -863,12 +934,12 @@ function isDuel(g) { return g.mode === "same" || (g.mode === "mix" && g.r % 2 ==
 function nextRound(g) {
   g.r += 1; g.ph = "make"; g.seed = 1 + Math.floor(Math.random() * 2e9);
   g.ord = players().map((p) => p.pid); g.gi = isDuel(g) ? gid(pick(poolFor(g))) : ""; g.bon = [];
-  g.subs = []; g.sp = []; g.vi = 0;
+  g.subs = []; g.sp = []; g.sa = []; g.vi = 0;
   setPhase(g, g.T * 1000);
 }
 function hostStart() {
   if (!amHost || !G) return;
-  const g = clone(G); g.r = 0; g.sc = {}; g.best = null; g.nm = {};
+  const g = clone(G); g.r = 0; g.sc = {}; g.best = null; g.top = []; g.nm = {};
   for (const p of players()) g.nm[p.pid] = [p.name, p.av];
   nextRound(g);
 }
@@ -883,7 +954,7 @@ function hostTick() {
     if (now >= hostDeadline || allReady) {
       const subs = pl.filter((p) => mine(p) && (clampStr(p.sub.t, 60).trim() || clampStr(p.sub.b, 60).trim()))
         .map((p) => ({ p: p.pid, g: g.gi || safeId(p.sub.g), t: clampStr(p.sub.t, 60).trim(), b: clampStr(p.sub.b, 60).trim(), s: styleOf(p.sub.s), tp: posOf(p.sub.tp), bp: posOf(p.sub.bp) }));
-      g.subs = shuffle(subs); g.sp = g.subs.map(() => 0); g.vi = 0;
+      g.subs = shuffle(subs); g.sp = g.subs.map(() => 0); g.sa = g.subs.map(() => [0, 0]); g.vi = 0;
       g.ph = g.subs.length ? "vote" : "res";
       setPhase(g, g.subs.length ? VOTE_MS : 5000);
       return;
@@ -893,10 +964,17 @@ function hostTick() {
     if (!s) { g.ph = "res"; setPhase(g, RES_MS); return; }
     const voters = pl.filter((p) => p.pid !== s.p);
     const voted = voters.filter((p) => p.vote && p.vote.k === g.seq);
-    const done = now >= hostMin && voted.length === voters.length;
-    if (now >= hostDeadline || done) {
-      const pts = voted.reduce((a, p) => a + Math.max(1, Math.min(5, Math.round(Number(p.vote.v) || 1))), 0);
-      g.sp[g.vi] = pts; g.sc[s.p] = (Number(g.sc[s.p]) || 0) + pts;
+    // Zuschauer stimmen mit ab (wenn der Host es erlaubt), halten das Spiel aber nur kurz auf.
+    const aud = g.sv ? spectators() : [];
+    const audVoted = aud.filter((p) => p.vote && p.vote.k === g.seq);
+    const playersDone = now >= hostMin && voted.length === voters.length;
+    const audDone = !aud.length || audVoted.length === aud.length || now >= hostDeadline - VOTE_MS + SPEC_WAIT_MS;
+    if (now >= hostDeadline || (playersDone && audDone)) {
+      const rate = (p) => Math.max(1, Math.min(5, Math.round(Number(p.vote.v) || 1)));
+      const audSum = audVoted.reduce((a, p) => a + rate(p), 0);
+      const pts = voted.reduce((a, p) => a + rate(p), 0) + audSum;
+      g.sp[g.vi] = pts; g.sa[g.vi] = [audVoted.length, audVoted.length ? Math.round((audSum / audVoted.length) * 10) : 0];
+      g.sc[s.p] = (Number(g.sc[s.p]) || 0) + pts;
       if (!g.best || pts > g.best.v) g.best = { ...s, v: pts };
       if (g.vi < g.subs.length - 1) { g.vi += 1; setPhase(g, VOTE_MS); }
       else {
@@ -909,7 +987,8 @@ function hostTick() {
     }
   } else if (g.ph === "res") {
     if (now >= hostDeadline) {
-      if (g.r < g.R) nextRound(g); else { g.ph = "end"; setPhase(g, 0); }
+      if (g.r < g.R) nextRound(g);
+      else { g.top = topFromHistory(5); g.ph = "end"; g.subs = []; g.sp = []; g.sa = []; setPhase(g, 0); }
       return;
     }
   }
@@ -919,7 +998,24 @@ function hostSetting(key, val) {
   if (!amHost || !G || G.ph !== "lobby") return;
   const g = clone(G); g[key] = val; pushG(g);
 }
-function hostAgain() { if (!amHost || !G) return; const g = clone(G); g.ph = "lobby"; g.r = 0; g.subs = []; g.sp = []; g.sc = {}; g.best = null; setPhase(g, 0); }
+function hostAgain() { if (!amHost || !G) return; const g = clone(G); g.ph = "lobby"; g.r = 0; g.subs = []; g.sp = []; g.sa = []; g.top = []; g.sc = {}; g.best = null; setPhase(g, 0); }
+
+// ---------- Verlauf des Spiels (für Top 5 und Galerie) ----------
+// Jeder Client merkt sich die Memes, die er in der Ergebnis-Phase gesehen hat.
+let history = [], recorded = new Set(), histSeed = null, firstRoundSeen = 0;
+function recordRound() {
+  if (!G) return;
+  if (G.ph === "make" && G.r === 1 && histSeed !== G.seed) { history = []; recorded = new Set(); histSeed = G.seed; firstRoundSeen = 1; }
+  if (!firstRoundSeen && G.r) firstRoundSeen = G.r;
+  if (G.ph !== "res") return;
+  G.subs.forEach((s, i) => {
+    const k = G.r + ":" + s.p; if (recorded.has(k)) return; recorded.add(k);
+    history.push({ ...s, v: G.sp[i] || 0, r: G.r, aud: G.sa[i] || [0, 0] });
+  });
+}
+function topFromHistory(n) {
+  return history.slice().sort((a, b) => b.v - a.v || a.r - b.r).slice(0, n).map((h) => ({ p: h.p, g: h.g, t: h.t, b: h.b, s: h.s, tp: h.tp, bp: h.bp, v: h.v, r: h.r }));
+}
 
 // ---------- client: peers & reactions ----------
 const lastReact = new Map(); let reactBaseline = false;
@@ -943,10 +1039,11 @@ function floatEmoji(e) {
 
 // ---------- client: make phase state ----------
 let mk = null, presTimer = 0, reactN = 0;
-function resetMake() { mk = { key: -1, opts: [], g: 0, t: "", b: "", s: "k", ready: false, rr: 2, tp: null, bp: null }; $("#topInput").value = ""; $("#botInput").value = ""; }
+function resetMake() { mk = { key: -1, opts: [], g: 0, t: "", b: "", s: "k", ready: false, rr: 3, tp: null, bp: null }; $("#topInput").value = ""; $("#botInput").value = ""; }
 function setupMake() {
   if (mk.key === G.seed) return;
-  mk = { key: G.seed, opts: [], g: 0, t: "", b: "", s: mk.s || "k", ready: false, rr: 2, tp: null, bp: null };
+  mk = { key: G.seed, opts: [], g: 0, t: "", b: "", s: mk.s || "k", ready: false, rr: G.rr || 3, tp: null, bp: null };
+  seenTips = 0; $("#tipsBox").dataset.sig = "";
   if (G.gi) { const ix = ensureIndex(G.gi); mk.opts = [ix]; mk.g = ix; }
   else {
     const pool = poolFor(G);
@@ -961,7 +1058,7 @@ function setupMake() {
 }
 function pushSub(now) {
   clearTimeout(presTimer);
-  const send = () => { if (game && G) game.presence({ sub: { k: G.seed, g: gid(mk.g), t: mk.t, b: mk.b, s: mk.s, tp: mk.tp, bp: mk.bp }, ready: mk.ready }).catch(() => {}); };
+  const send = () => { if (game && G && !iAmSpec()) game.presence({ sub: { k: G.seed, g: gid(mk.g), t: mk.t, b: mk.b, s: mk.s, tp: mk.tp, bp: mk.bp }, ready: mk.ready }).catch(() => {}); };
   if (now) send(); else presTimer = setTimeout(send, 350);
 }
 function wireEditor(prefix, state, onChange) {
@@ -1013,11 +1110,61 @@ $("#posReset").onclick = () => { mk.tp = mk.bp = null; drawPreview(); pushSub(fa
 // ---------- client: voting ----------
 let myVoteSeq = -1, myVote = 0;
 function castVote(v, e) {
-  if (!G || G.ph !== "vote") return;
-  const s = G.subs[G.vi]; if (!s || s.p === myPid) return;
-  myVoteSeq = G.seq; myVote = v; reactN += 1;
-  game.presence({ vote: { k: G.seq, v }, react: { e, n: reactN } }).catch(() => {});
+  if (!G || G.ph !== "vote" || !game) return;
+  const s = G.subs[G.vi], spec = iAmSpec();
+  if (!s || (!spec && s.p === myPid)) return;
+  const counts = !spec || G.sv;  // Zuschauer-Stimmen zählen nur, wenn der Host es erlaubt hat
+  reactN += 1;
+  if (counts) { myVoteSeq = G.seq; myVote = v; }
+  game.presence({ ...(counts ? { vote: { k: G.seq, v } } : {}), react: { e, n: reactN } }).catch(() => {});
   floatEmoji(e); sfx("pop"); render();
+}
+
+// ---------- Zuschauer: Tipps an die Spieler ----------
+let myTips = [], lastTipAt = 0, seenTips = 0;
+function tipsNow() {  // alle Tipps dieser Bauphase, neueste zuletzt
+  if (!G || G.ph !== "make") return [];
+  const out = [];
+  for (const p of spectators()) for (const t of Array.isArray(p.tips) ? p.tips : []) {
+    if (t && t.k === G.seed && typeof t.t === "string") out.push({ by: p.name, av: p.av, mine: p.isMe, t: clampStr(t.t, 60), at: Number(t.at) || 0 });
+  }
+  return out.sort((a, b) => a.at - b.at).slice(-8);
+}
+function sendTip(text) {
+  text = String(text || "").replace(/\s+/g, " ").trim().slice(0, 60);
+  if (!text || !G || G.ph !== "make" || !game || !iAmSpec()) return false;
+  if (myTips.filter((t) => t.k === G.seed).length >= 5) { toast("Das waren schon 5 Tipps in dieser Runde."); return false; }
+  if (Date.now() - lastTipAt < 2500) { toast("Kurz warten, dann der nächste Tipp."); return false; }
+  lastTipAt = Date.now(); myTips = [...myTips.filter((t) => t.k === G.seed), { k: G.seed, t: text, at: Date.now() }].slice(-5);
+  game.presence({ tips: myTips }).catch(() => {});
+  render(); return true;
+}
+$("#tipForm").addEventListener("submit", (e) => { e.preventDefault(); if (sendTip($("#tipInput").value)) { $("#tipInput").value = ""; sfx("pop"); } });
+function useTip(text, which) {
+  const inp = $(which === "t" ? "#topInput" : "#botInput"); if (inp.disabled) return;
+  inp.value = text; inp.dispatchEvent(new Event("input")); inp.focus();
+}
+function renderTips() {  // für Spieler: Tipps des Publikums neben dem Bauen
+  const tips = tipsNow(), box = $("#tipsBox"); box.hidden = !tips.length;
+  if (!tips.length) { box.dataset.sig = ""; return; }
+  const sig = tips.map((t) => t.at + t.t).join("|") + mk.ready;
+  if (box.dataset.sig === sig) return; box.dataset.sig = sig;
+  const list = $("#tipsList"); list.textContent = "";
+  for (const t of tips.slice().reverse()) {
+    const d = el("div", "tip"); d.append(el("q", null, t.t), el("span", "who", t.av + " " + t.by));
+    for (const [w, label] of [["t", "oben"], ["b", "unten"]]) { const b = el("button", null, "→ " + label); b.type = "button"; b.disabled = mk.ready; b.onclick = () => useTip(t.t, w); d.append(b); }
+    list.append(d);
+  }
+  if (tips.length > seenTips && seenTips >= 0) { toast("💡 Neuer Tipp vom Publikum"); sfx("pop"); }
+  seenTips = tips.length;
+}
+function renderWatch(pl) {  // für Zuschauer: nur der Stand, keine Ergebnisse
+  const readyN = pl.filter((p) => p.ready && p.sub && p.sub.k === G.seed).length;
+  $("#watchStatus").textContent = readyN + " von " + pl.length + " Spielern sind fertig.";
+  const tips = tipsNow(), box = $("#watchTips"), list = $("#watchTipsList"); box.hidden = !tips.length; list.textContent = "";
+  for (const t of tips) { const d = el("div", "tip"); d.append(el("q", null, t.t), el("span", "who", t.mine ? "von dir" : t.av + " " + t.by)); list.append(d); }
+  const left = 5 - myTips.filter((t) => t.k === G.seed).length;
+  $("#tipBtn").disabled = left <= 0; $("#tipHint").textContent = left > 0 ? "Noch " + left + " Tipp" + (left === 1 ? "" : "s") + " in dieser Runde." : "Du hast alle Tipps dieser Runde verbraucht.";
 }
 
 // ---------- rendering ----------
@@ -1029,18 +1176,20 @@ function render() {
   const pl = players();
   if (!G) {
     $("#phaseTitle").textContent = "Suche Host …";
-    for (const id of ["pLobby", "pMake", "pVote", "pRes", "pEnd"]) $("#" + id).hidden = true;
+    for (const id of ["pLobby", "pMake", "pWatch", "pVote", "pRes", "pEnd"]) $("#" + id).hidden = true;
     renderPlayers(pl); $("#timer").hidden = true; return;
   }
-  if (G.seq !== seenSeq) { if (seenSeq !== -1 && (G.ph === "make" || G.ph === "vote")) sfx("phase"); seenSeq = G.seq; localDeadline = Date.now() + G.rem; builtKey = ""; }
-  const spectator = !pl.some((p) => p.pid === myPid);
+  if (G.seq !== seenSeq) { if (seenSeq !== -1 && (G.ph === "make" || G.ph === "vote")) sfx("phase"); seenSeq = G.seq; localDeadline = Date.now() + G.rem; builtKey = ""; if (G.ph === "make") closeOverlays(); }
+  recordRound();
+  const spectator = iAmSpec();
   $("#phaseTitle").textContent = (PHASE_TITLE[G.ph] || "") + (G.ph !== "lobby" && G.ph !== "end" ? " · Runde " + G.r + "/" + G.R : "") + (spectator ? " (Zuschauer)" : "");
   renderPlayers(pl);
   for (const [id, ph] of [["pLobby", "lobby"], ["pMake", "make"], ["pVote", "vote"], ["pRes", "res"], ["pEnd", "end"]]) $("#" + id).hidden = G.ph !== ph;
+  $("#pMake").hidden = !(G.ph === "make" && !spectator); $("#pWatch").hidden = !(G.ph === "make" && spectator);
   $("#timer").hidden = !(G.ph === "make" || G.ph === "vote" || G.ph === "res");
   tickTimer();
   if (G.ph === "lobby") renderLobby(pl);
-  else if (G.ph === "make") renderMake(pl, spectator);
+  else if (G.ph === "make") { if (spectator) renderWatch(pl); else renderMake(pl, false); }
   else if (G.ph === "vote") renderVote(pl);
   else if (G.ph === "res") renderRes();
   else if (G.ph === "end") renderEnd();
@@ -1056,6 +1205,11 @@ function renderPlayers(pl) {
     if (G && G.ph !== "lobby") c.append(el("span", "pts", String(Number(G.sc[p.pid]) || 0)));
     if (G && G.ph === "make" && p.ready && p.sub && p.sub.k === G.seed) c.append(el("span", "ok", "✓"));
     box.append(c);
+  }
+  const sp = spectators();
+  if (sp.length) {
+    const c = el("div", "pl spec" + (sp.some((x) => x.isMe) ? " me" : "")); c.title = sp.map((x) => x.av + " " + x.name).join(", ");
+    c.append(el("span", "av", "👀"), el("span", null, sp.length + " Zuschauer")); box.append(c);
   }
 }
 
@@ -1073,6 +1227,8 @@ function renderLobby(pl) {
   renderSeg($("#segMode"), Object.entries(MODES), G.mode, (v) => hostSetting("mode", v), amHost);
   renderSeg($("#segPool"), Object.entries(POOL_NAMES), G.pool, (v) => hostSetting("pool", v), amHost);
   renderSeg($("#segDerb"), [[false, "Aus"], [true, "🌶️ An"]], G.derb, (v) => hostSetting("derb", v), amHost);
+  renderSeg($("#segDice"), [[3, "3"], [5, "5"], [7, "7"]], G.rr, (v) => hostSetting("rr", v), amHost);
+  renderSeg($("#segSv"), [[true, "Ja"], [false, "Nein"]], G.sv, (v) => hostSetting("sv", v), amHost);
   $("#poolHint").textContent = poolFor(G).length + " GIFs und Bilder im Topf" + (G.derb ? ", inklusive derber Memes." : ".");
   $("#modeHint").textContent = MODE_HINTS[G.mode];
   $("#startBtn").hidden = !amHost;
@@ -1084,6 +1240,7 @@ $("#startBtn").onclick = hostStart;
 
 function renderMake(pl, spectator) {
   setupMake();
+  renderTips();
   const duel = !!G.gi;
   const key = "make" + G.seed + ":" + mk.opts.join(",") + ":" + mk.ready;
   $("#makeLabel").textContent = duel ? "Duell: Alle haben dieses GIF" : "Wähle dein GIF";
@@ -1109,8 +1266,8 @@ function renderMake(pl, spectator) {
 
 function renderVote(pl) {
   const s = G.subs[G.vi]; if (!s) return;
-  const key = "vote" + G.seq;
-  const own = s.p === myPid;
+  const spec = iAmSpec(), key = "vote" + G.seq + (spec ? "s" : "p");
+  const own = !spec && s.p === myPid;
   if (builtKey !== key) {
     builtKey = key;
     $("#voteNote").textContent = "Meme " + (G.vi + 1) + " von " + G.subs.length;
@@ -1122,28 +1279,149 @@ function renderVote(pl) {
       b.onclick = () => castVote(v, e); box.append(b);
     }
   }
-  const voted = myVoteSeq === G.seq;
-  for (const b of $("#ratings").querySelectorAll(".rate")) { b.disabled = own; b.setAttribute("aria-pressed", String(voted && Number(b.dataset.v) === myVote)); }
+  const voted = myVoteSeq === G.seq, counts = !spec || G.sv;
+  for (const b of $("#ratings").querySelectorAll(".rate")) { b.disabled = own; b.setAttribute("aria-pressed", String(voted && counts && Number(b.dataset.v) === myVote)); }
   const voters = pl.filter((p) => p.pid !== s.p);
   const n = voters.filter((p) => p.vote && p.vote.k === G.seq).length;
-  $("#voteProgress").textContent = own ? "Das ist dein Meme. Lehn dich zurück." : n + " von " + voters.length + " haben bewertet";
+  const aud = G.sv ? spectators() : [], na = aud.filter((p) => p.vote && p.vote.k === G.seq).length;
+  let txt;
+  if (spec) txt = G.sv ? "Du stimmst als Zuschauer mit ab. " + n + " von " + voters.length + " Spielern haben bewertet." : "Zuschauer-Stimmen zählen in diesem Spiel nicht. Emojis kannst du trotzdem schicken.";
+  else txt = own ? "Das ist dein Meme. Lehn dich zurück." : n + " von " + voters.length + " haben bewertet";
+  if (!spec && aud.length) txt += " · 👀 " + na + "/" + aud.length + " Zuschauer";
+  $("#voteProgress").textContent = txt;
 }
+
+// Meme als Bild speichern (nur auf der eigenen Webseite, im Claude-Fenster sind Downloads gesperrt)
+const canSave = () => !!(lobby && lobby.local);
+function wrapLines(ctx, text, maxW) {
+  const words = String(text).split(/\s+/).filter(Boolean), lines = []; let cur = "";
+  for (const w of words) { const t = cur ? cur + " " + w : w; if (cur && ctx.measureText(t).width > maxW) { lines.push(cur); cur = w; } else cur = t; }
+  if (cur) lines.push(cur);
+  return lines.length ? lines : [""];
+}
+async function memeBlob(m) {
+  const e = entryFor(m.g), style = styleOf(m.s);
+  try { await Promise.all([document.fonts.load("40px Anton"), document.fonts.load('800 40px "Bricolage Grotesque"'), document.fonts.load('600 40px "Bricolage Grotesque"')]); } catch {}
+  const img = new Image(); img.crossOrigin = "anonymous";
+  await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error("Bild nicht geladen")); img.src = imgSrc(e[0]); });
+  const W = 720, H = Math.max(1, Math.round((img.naturalHeight * W) / img.naturalWidth));
+  const t = clampStr(m.t, 60), b = clampStr(m.b, 60);
+  const postPx = Math.round(W * 0.034), postFont = "600 " + postPx + 'px "Bricolage Grotesque", "Segoe UI", sans-serif';
+  const probe = document.createElement("canvas").getContext("2d");
+  let bar = 0, barLines = [];
+  if (style === "p") { probe.font = postFont; barLines = wrapLines(probe, [t, b].filter(Boolean).join(" "), W - 28); bar = Math.round(barLines.length * postPx * 1.3 + 24); }
+  const c = document.createElement("canvas"); c.width = W; c.height = H + bar;
+  const x = c.getContext("2d");
+  if (bar) { x.fillStyle = "#fff"; x.fillRect(0, 0, W, bar); x.fillStyle = "#111"; x.font = postFont; x.textBaseline = "top"; x.textAlign = "left"; barLines.forEach((ln, i) => x.fillText(ln, 14, 12 + i * postPx * 1.3)); }
+  x.drawImage(img, 0, bar, W, H);
+  if (style !== "p") {
+    const sub = style === "u";
+    for (const [which, text, pos] of [["t", t, posOf(m.tp)], ["b", b, posOf(m.bp)]]) {
+      if (!text) continue;
+      const n = text.length, pct = sub ? (n > 32 ? 5.4 : 7) : n > 46 ? 5.2 : n > 32 ? 6.4 : n > 18 ? 8 : 10, fs = Math.round((W * pct) / 100);
+      x.font = sub ? "800 " + fs + 'px "Bricolage Grotesque", "Segoe UI", sans-serif' : fs + 'px Anton, Impact, "Arial Narrow", sans-serif';
+      const lines = wrapLines(x, sub ? text : text.toUpperCase(), W * 0.92), lh = fs * 1.02, bh = lines.length * lh;
+      const mw = Math.min(W, Math.max(...lines.map((ln) => x.measureText(ln).width)));
+      let cx = W / 2, cy = which === "t" ? bar + H * 0.03 + bh / 2 : bar + H * 0.97 - bh / 2;
+      if (pos) { cx = (pos[0] / 100) * W; cy = bar + (pos[1] / 100) * H; }
+      cx = Math.max(mw / 2, Math.min(W - mw / 2, cx)); cy = Math.max(bar + bh / 2, Math.min(bar + H - bh / 2, cy));
+      x.textAlign = "center"; x.textBaseline = "middle"; x.lineJoin = "round";
+      lines.forEach((ln, i) => {
+        const ly = cy - bh / 2 + (i + 0.5) * lh;
+        if (sub) { x.shadowColor = "#000"; x.shadowBlur = W * 0.01; x.shadowOffsetY = W * 0.003; x.fillStyle = "#ffd23f"; x.fillText(ln, cx, ly); x.shadowColor = "transparent"; }
+        else { x.lineWidth = W * 0.007; x.strokeStyle = "#000"; x.strokeText(ln, cx, ly); x.fillStyle = "#fff"; x.fillText(ln, cx, ly); }
+      });
+    }
+  }
+  return await new Promise((res, rej) => c.toBlob((bl) => (bl ? res(bl) : rej(new Error("leer"))), "image/png"));
+}
+async function saveMeme(m, label, btn) {
+  const old = btn ? btn.textContent : ""; if (btn) { btn.disabled = true; btn.textContent = "…"; }
+  try {
+    const blob = await memeBlob(m);
+    const slug = String(label || "meme").toLowerCase().replace(/[^a-z0-9äöüß]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30) || "meme";
+    const file = new File([blob], "giffig-" + slug + ".png", { type: "image/png" });
+    if (/Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "Giffig" }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000); toast("Gespeichert. Bei animierten GIFs ist es ein Standbild.");
+  } catch (e) { toast("Speichern hat bei diesem Bild nicht geklappt."); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = old; } }
+}
+
+// Große Ansicht zum Durchblättern
+let viewerList = [], viewerIdx = 0;
+const labelOf = (it) => { const [nm] = nameOf(it.m.p); return nm + "-" + (it.r ? "runde" + it.r : "meme"); };
+function drawViewer() {
+  const it = viewerList[viewerIdx], st = $("#viewerStage"); st.textContent = ""; if (!it) return;
+  st.append(renderMeme(it.m, { credit: true }));
+  const [nm, av] = nameOf(it.m.p);
+  st.append(el("div", "line", av + " " + nm + " · " + it.pts + " Punkte" + (it.r ? " · Runde " + it.r : "") + " (" + (viewerIdx + 1) + "/" + viewerList.length + ")"));
+  const row = el("div", "row"); row.style.justifyContent = "center";
+  const prev = el("button", "btn small", "◀ Zurück"), next = el("button", "btn small", "Weiter ▶"); prev.type = next.type = "button";
+  prev.disabled = viewerIdx <= 0; next.disabled = viewerIdx >= viewerList.length - 1;
+  prev.onclick = () => { viewerIdx--; drawViewer(); }; next.onclick = () => { viewerIdx++; drawViewer(); };
+  row.append(prev);
+  if (canSave()) { const sv = el("button", "btn small sun", "💾 Speichern"); sv.type = "button"; sv.onclick = () => saveMeme(it.m, labelOf(it), sv); row.append(sv); }
+  row.append(next); st.append(row);
+}
+function openViewer(list, i) { viewerList = list; viewerIdx = i; drawViewer(); $("#viewer").hidden = false; $("#viewerClose").focus(); }
+$("#viewerClose").onclick = () => { $("#viewer").hidden = true; };
+document.addEventListener("keydown", (e) => {
+  const v = !$("#viewer").hidden, g = !$("#gallery").hidden;
+  if (!v && !g) return;
+  if (e.key === "Escape") { if (v) $("#viewer").hidden = true; else $("#gallery").hidden = true; }
+  else if (v && e.key === "ArrowLeft" && viewerIdx > 0) { viewerIdx--; drawViewer(); }
+  else if (v && e.key === "ArrowRight" && viewerIdx < viewerList.length - 1) { viewerIdx++; drawViewer(); }
+});
+// Kleine Karte für Ergebnis, Top 5 und Galerie
+function miniCard(it, list, idx, rank) {
+  const c = el("div", "mini");
+  if (rank) c.append(el("div", "rank", "#" + rank));
+  const mm = renderMeme(it.m, { credit: true, lazy: true }); mm.addEventListener("click", () => openViewer(list, idx)); c.append(mm);
+  const [nm, av] = nameOf(it.m.p), line = el("div", "line");
+  line.append(el("span", null, av + " " + nm), el("span", "pts-badge", it.pts + (it.r ? " · R" + it.r : ""))); c.append(line);
+  if (it.aud && it.aud[0] > 0) { const h = el("div", "hint", "👀 Publikum Ø " + (it.aud[1] / 10).toFixed(1).replace(".", ",") + " (" + it.aud[0] + " Stimme" + (it.aud[0] === 1 ? "" : "n") + ")"); h.style.color = "inherit"; c.append(h); }
+  const acts = el("div", "acts");
+  const big = el("button", "btn small", "🔍 Groß"); big.type = "button"; big.onclick = () => openViewer(list, idx); acts.append(big);
+  if (canSave()) { const sv = el("button", "btn small sun", "💾 Speichern"); sv.type = "button"; sv.onclick = () => saveMeme(it.m, labelOf(it), sv); acts.append(sv); }
+  c.append(acts); return c;
+}
+function openGallery() {
+  const body = $("#galleryBody"); body.textContent = "";
+  if (!history.length) body.append(el("p", "vote-note", "Noch keine Memes gesehen."));
+  const rounds = [...new Set(history.map((h) => h.r))].sort((a, b) => a - b), secs = rounds.map((r) => history.filter((h) => h.r === r).sort((a, b) => b.v - a.v));
+  const flat = secs.flat().map((h) => ({ m: h, pts: h.v, r: h.r, aud: h.aud }));
+  let k = 0;
+  secs.forEach((items, si) => {
+    const wrap = el("section", "gal-round"), grid = el("div", "gal-grid"); wrap.append(el("h3", null, "Runde " + rounds[si])); wrap.append(grid);
+    for (const _ of items) { grid.append(miniCard(flat[k], flat, k)); k++; } body.append(wrap);
+  });
+  $("#gallery").hidden = false; $("#galleryClose").focus();
+}
+$("#galleryBtn").onclick = openGallery; $("#galleryClose").onclick = () => { $("#gallery").hidden = true; };
 
 function renderRes() {
   const key = "res" + G.seq; if (builtKey === key) return; builtKey = key;
   const box = $("#results"); box.textContent = "";
   if (!G.subs.length) { box.append(el("p", "vote-note", "Diese Runde hat niemand ein Meme abgegeben.")); return; }
-  const order = G.subs.map((s, i) => ({ s, pts: G.sp[i] || 0 })).sort((a, b) => b.pts - a.pts);
+  const order = G.subs.map((s, i) => ({ m: s, pts: G.sp[i] || 0, r: G.r, aud: G.sa[i] || [0, 0] })).sort((a, b) => b.pts - a.pts);
   const top = order[0].pts;
   if (top > 0) { burst(); sfx("win"); }
-  order.forEach(({ s, pts }) => {
-    const win = pts > 0 && pts === top;
+  order.forEach((it, i) => {
+    const win = it.pts > 0 && it.pts === top;
     const c = el("div", "res-card" + (win ? " win" : ""));
     if (win) c.append(el("div", "winner-flag", "Rundensieg +" + ROUND_BONUS));
-    c.append(renderMeme(s, { credit: true }));
-    const [nm, av] = nameOf(s.p);
-    const line = el("div", "who-line"); line.append(el("span", null, av + " " + nm), el("span", "pts-badge", "+" + pts));
-    c.append(line); box.append(c);
+    const mm = renderMeme(it.m, { credit: true }); mm.style.cursor = "zoom-in"; mm.addEventListener("click", () => openViewer(order, i)); c.append(mm);
+    const [nm, av] = nameOf(it.m.p);
+    const line = el("div", "who-line"); line.append(el("span", null, av + " " + nm), el("span", "pts-badge", "+" + it.pts));
+    c.append(line);
+    if (it.aud[0] > 0) { const h = el("div", "hint", "👀 Publikum Ø " + (it.aud[1] / 10).toFixed(1).replace(".", ",") + " (" + it.aud[0] + ")"); h.style.color = "var(--paper)"; c.append(h); }
+    const acts = el("div", "acts"); acts.style.cssText = "display:flex;gap:6px;flex-wrap:wrap";
+    const big = el("button", "btn small", "🔍 Groß"); big.type = "button"; big.onclick = () => openViewer(order, i); acts.append(big);
+    if (canSave()) { const sv = el("button", "btn small sun", "💾 Speichern"); sv.type = "button"; sv.onclick = () => saveMeme(it.m, labelOf(it), sv); acts.append(sv); }
+    c.append(acts); box.append(c);
   });
 }
 function burst() { for (let i = 0; i < 12; i++) setTimeout(() => floatEmoji(pick(["🎉", "🔥", "💀", "⭐"])), i * 90); }
@@ -1154,6 +1432,7 @@ function renderEnd() {
   $("#againBtn").hidden = !amHost;
   const canFame = (amHost || (lobby && lobby.local)) && db && canWriteFame !== false && G.best && famedSeq !== G.seq;
   $("#fameBtn").hidden = !canFame;
+  $("#galleryBtn").hidden = !history.length; $("#galleryBtn").textContent = "Alle Memes ansehen (" + history.length + ")";
   if (builtKey === key) return; builtKey = key;
   const ranking = Object.entries(G.sc).map(([pid, pts]) => ({ pid, pts: Number(pts) || 0 })).sort((a, b) => b.pts - a.pts);
   const pod = $("#podium"); pod.textContent = "";
@@ -1166,12 +1445,14 @@ function renderEnd() {
     const blk = el("div", "block", String(idx + 1)); p.append(blk); pod.append(p);
   }
   if (!ranking.length) pod.append(el("p", "vote-note", "Keine Punkte in diesem Spiel."));
-  const bm = $("#bestMeme"); bm.textContent = "";
-  if (G.best) {
-    bm.append(renderMeme(G.best, { credit: true }));
-    const [nm, av] = nameOf(G.best.p);
-    $("#bestBy").textContent = av + " " + nm + " · " + G.best.v + " Punkte";
-  } else $("#bestBy").textContent = "Kein Meme abgegeben";
+  const t5 = $("#top5"); t5.textContent = "";
+  const items = (G.top && G.top.length ? G.top : topFromHistory(5)).map((x) => {
+    const h = history.find((y) => y.r === x.r && y.p === x.p);
+    return { m: x, pts: x.v, r: x.r, aud: h && h.aud };
+  });
+  items.forEach((it, i) => t5.append(miniCard(it, items, i, i + 1)));
+  if (!items.length) t5.append(el("p", "vote-note", "In diesem Spiel wurde kein Meme abgegeben."));
+  $("#topHint").textContent = firstRoundSeen > 1 ? "Du bist erst in Runde " + firstRoundSeen + " dazugekommen und siehst deshalb nur die Memes ab dann." : "";
   $("#endHint").textContent = amHost ? "Du bist Host. Starte eine neue Runde, wenn alle bereit sind." : "Warte auf den Host für eine neue Runde.";
   burst(); sfx("win");
 }
@@ -1197,6 +1478,8 @@ function tickTimer() {
 }
 setInterval(() => { if (!game) return; resolveHost(); hostTick(); tickTimer(); }, 400);
 
+function closeOverlays() { for (const id of ["gallery", "viewer"]) { const o = $("#" + id); if (o) o.hidden = true; } }
+
 // ---------- Verbindungstest ----------
 $("#diagBtn").onclick = async () => {
   if (!lobby || !lobby.diagnose) return;
@@ -1220,7 +1503,7 @@ $("#createBtn").onclick = async () => {
     }
   } finally { btn.disabled = false; }
 };
-$("#joinBtn").onclick = () => enterRoom($("#codeInput").value.trim(), false);
+$("#joinBtn").onclick = () => enterRoom($("#codeInput").value.trim(), false, false, $("#specChk").checked);
 $("#codeInput").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#joinBtn").click(); });
 $("#codeInput").addEventListener("input", (e) => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, ""); });
 $("#leaveBtn").onclick = leaveRoom;
@@ -1238,17 +1521,22 @@ if (navigator.share) {
     if (p && p.catch) p.catch(() => {});
   };
 }
+$("#specLinkBtn").onclick = () => {
+  const text = location.href.split("#")[0] + "#" + code + "-z";
+  let pr = null; try { pr = navigator.clipboard && navigator.clipboard.writeText(text); } catch {}
+  if (pr) pr.then(() => toast("Zuschauer-Link kopiert."), () => toast(text)); else toast(text);
+};
 $("#muteBtn").onclick = () => { muted = !muted; ls.set("giffig-mute", muted ? "1" : "0"); $("#muteBtn").textContent = muted ? "🔇" : "🔊"; if (!muted) sfx("pop"); };
 $("#muteBtn").textContent = muted ? "🔇" : "🔊";
 
 // Einladung per Link (#CODE)
 function applyInvite() {
   if (game) return;
-  const invite = (location.hash.match(/^#([A-Za-z]{4})$/) || [])[1];
+  const m = location.hash.match(/^#([A-Za-z]{4})(-z)?$/), invite = m && m[1], asSpec = !!(m && m[2]);
   if (!invite) return;
-  $("#codeInput").value = invite.toUpperCase();
+  $("#codeInput").value = invite.toUpperCase(); $("#specChk").checked = asSpec;
   $("#inviteNote").hidden = false;
-  $("#inviteNote").textContent = "Du wurdest zu Spiel " + invite.toUpperCase() + " eingeladen. Gib deinen Namen ein und tipp auf Beitreten.";
+  $("#inviteNote").textContent = "Du wurdest zu Spiel " + invite.toUpperCase() + (asSpec ? " als Zuschauer" : "") + " eingeladen. Gib deinen Namen ein und tipp auf Beitreten.";
   $("#joinBtn").classList.add("sun"); $("#createBtn").classList.remove("sun");
 }
 applyInvite();

@@ -136,13 +136,16 @@
     });
   }
 
-  // Liste der über die Admin-Seite hochgeladenen Memes (nur sichtbare, ohne Anmeldung lesbar).
+  // Hochgeladene Memes (nur sichtbare) und die vom Admin entfernten eingebauten Bilder. Beides ist ohne Anmeldung lesbar.
   async function catalog() {
     const c = sb();
-    if (!c) return [];
-    const { data, error } = await c.from("memes").select("file,name,tags").order("created_at", { ascending: true }).limit(2000);
-    if (error) throw error;
-    return data || [];
+    if (!c) return { rows: [], removed: [] };
+    const [m, r] = await Promise.all([
+      c.from("memes").select("file,name,tags").order("created_at", { ascending: true }).limit(2000),
+      c.from("catalog_hidden").select("id").limit(2000),
+    ]);
+    if (m.error) throw m.error;
+    return { rows: m.data || [], removed: (r.data || []).map((x) => x.id) };
   }
 
   // Verbindungstest: erreichen wir den Spielserver, und wie schnell?

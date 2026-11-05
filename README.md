@@ -15,7 +15,7 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
   - Derbe Memes (Mittelfinger, „Fuck you“, „Scheiß drauf“ …) nur, wenn der Host „Derbe Memes (ab 16)“ einschaltet
 - Topf wählbar: Alle, nur Deutsch, nur International oder nur Vorlagen
 - Modi: Klassisch (jeder eigene GIFs), Duell (alle dasselbe GIF), Mix
-- 2 Neu-Würfe pro Runde, 3 Textstile, „💡 Idee“-Knopf mit deutschen Meme-Situationen (derbe Ideen bei Derb-Modus)
+- Neu-Würfe pro Runde einstellbar (3, 5 oder 7), 3 Textstile, „💡 Idee“-Knopf mit deutschen Meme-Situationen (derbe Ideen bei Derb-Modus)
 - Rundensieger bekommen +2 Bonuspunkte, Podium und Meme des Spiels am Ende
 - Einladungslink (`…/Makeitmeme/#CODE`) füllt den Code automatisch aus
 - Automatisches Neuverbinden, wenn die Verbindung kurz weg ist; Bildschirm bleibt im Spiel an
@@ -41,7 +41,8 @@ Hinweise:
 | Datei | Zweck |
 |---|---|
 | `src/giffig.html` | Die Spielseite (läuft auch als Claude-Artifact mit den Fähigkeiten `room`, `db`, `user`) |
-| `admin.html` | Admin-Seite: Bilder hochladen und verwalten |
+| `admin.html` | Admin-Seite: hochladen, aussortieren (Tinder), Personen verwalten |
+| `catalog.json` | Generiert von `build.py`: Liste der eingebauten Bilder für die Admin-Seite |
 | `supabase/functions/giffig-admin/` | Geschützter Admin-Server (Supabase Edge Function) |
 | `memes.js` | Eigene Memes von Hand (Liste), siehe oben |
 | `add_meme.py` | Hilfsskript zum Hinzufügen eigener Bilder |
@@ -54,23 +55,51 @@ Nach Änderungen an `src/giffig.html`: `python3 build.py`
 
 ## Admin-Seite (nur für dich)
 
-`admin.html` (online unter `…/Makeitmeme/admin.html`) ist deine Verwaltung: Bilder per Drag & Drop hochladen,
-Namen und Tags ändern, Bilder ausblenden oder löschen. Hochgeladene Bilder erscheinen nach dem Neuladen im Spiel.
+`admin.html` (online unter `…/Makeitmeme/admin.html`) ist deine Verwaltung. Die Seite selbst kann jeder aufrufen, ohne Passwort
+geht aber nichts: Jede Änderung prüft der Server (`supabase/functions/giffig-admin`), nicht der Browser.
 
-- **Zugang:** nur mit deinem Admin-Passwort. Die Seite selbst ist für jeden aufrufbar, aber ohne Passwort kann man
-  nichts hochladen, ändern oder löschen. Das prüft der Server (`supabase/functions/giffig-admin`), nicht der Browser.
-- **Ersteinrichtung:** Beim ersten Öffnen fragt die Seite nach einem Einrichtungs-Code. Den erzeugt man in Supabase (SQL-Editor):
+**Bilder** (Tab „Bilder“)
+- Mehrere Bilder per Drag & Drop (oder Strg+V) hochladen, Namen und Tags pro Bild oder für alle setzen.
+- Du siehst **alle** Bilder im Spiel: hochgeladene und eingebaute. Filter nach Art, Person und Suche.
+- Hochgeladene Bilder kannst du ausblenden, umbenennen und löschen. Eingebaute Bilder kannst du „aus dem Spiel nehmen“ (für alle Spieler,
+  jederzeit rückgängig; die Dateien bleiben im Repo).
+
+**Tinder** (Tab „Tinder“, nur für dich)
+- Bild nach links wischen = entfernen, nach rechts = behalten (oder Knöpfe, Pfeiltasten, ↓ = später, Strg+Z = zurück).
+- Der Fortschritt liegt auf dem Server: Du machst auf jedem Gerät dort weiter, wo du aufgehört hast, geprüfte Bilder kommen nicht wieder.
+- „Behalten“ gibt auch ein auf Freigabe wartendes Bild frei.
+
+**Personen** (Tab „Personen“, nur für dich)
+- Person einladen: Name eingeben, Einladungs-Code oder -Link verschicken. Sie legt ihr eigenes Passwort fest (mindestens 12 Zeichen).
+- Eingeladene dürfen Bilder hochladen und sehen und ändern nur ihre eigenen. Du siehst alles, mit Name und Datum.
+- Optional „erst nach meiner Freigabe zeigen“: Neue Bilder dieser Person bleiben unsichtbar, bis du sie freigibst.
+- Pro Person: Bilder ansehen, sperren, Passwort zurücksetzen, entfernen (mit oder ohne ihre Bilder).
+
+**Ersteinrichtung und Sicherheit**
+- Den Einrichtungs-Code legt man in Supabase (SQL-Editor) an:
   ```sql
   insert into public.admin_setup_tokens (token_hash, expires_at)
   values (encode(sha256(convert_to('DEIN-CODE','utf8')),'hex'), now() + interval '2 hours');
   ```
-  Mit dem Code legst du dein Passwort fest (mindestens 12 Zeichen). Der Code gilt einmal. **Passwort vergessen?**
-  `delete from public.admin_config;` ausführen und einen neuen Code anlegen, dann neu einrichten.
-- **Schutz:** Das Passwort liegt nur als Hash in der Datenbank. Nach 8 Fehlversuchen pro Adresse in 15 Minuten
-  (oder 60 pro Stunde insgesamt) ist die Anmeldung kurz gesperrt. Anmeldungen laufen nach 8 Stunden ab.
-- **Dateien:** Fotos und PNGs werden im Browser auf höchstens 480 Pixel verkleinert und als WebP gespeichert.
-  GIFs und animierte WebPs bleiben unverändert (bis 6 MB). Alles liegt im öffentlichen Supabase-Speicher `memes`.
-- **Gratis-Limits:** Speicher 1 GB, Datenverkehr 5 GB pro Monat. Kleine Bilder halten das lange aus.
+  Passwort vergessen? `delete from public.admin_config;` ausführen und einen neuen Code anlegen.
+- Passwörter liegen nur als Hash in der Datenbank. Nach 8 Fehlversuchen pro Adresse in 15 Minuten (oder 60 pro Stunde insgesamt) ist die
+  Anmeldung kurz gesperrt. Anmeldungen laufen nach 8 Stunden ab.
+- Fotos und PNGs werden im Browser auf höchstens 480 Pixel verkleinert (WebP). GIFs und animierte WebPs bleiben unverändert (bis 6 MB).
+- Gratis-Limits: Speicher 1 GB, Datenverkehr 5 GB pro Monat.
+
+## Zuschauer
+
+Beim Beitreten „Nur zuschauen“ anhaken, oder den Zuschauer-Link des Hosts („👀 Zuschauer-Link“) benutzen.
+- Zuschauer **stimmen wie die Spieler ab** (😐 bis 💀). Der Host kann einstellen, ob diese Stimmen zählen (Standard: ja). Das Meme-Ergebnis
+  zeigt dann den Publikums-Durchschnitt.
+- Beim Bauen sehen Zuschauer **keine Ergebnisse**, nur wie viele Spieler fertig sind. Sie können **Tipps** schicken (bis zu 5 pro Runde),
+  die die Spieler mit einem Klick in „oben“ oder „unten“ übernehmen können.
+
+## Spielende: Top 5, Galerie, Speichern
+
+Am Ende zeigt das Spiel die **5 besten Memes** über alle Runden. „Alle Memes ansehen“ öffnet eine Galerie mit allen Memes des Spiels
+(Beitritt mitten im Spiel: nur ab da). Jedes Meme lässt sich vergrößern und mit „💾 Speichern“ als PNG sichern (am Handy über das Teilen-Menü).
+Animierte GIFs werden als Standbild gespeichert. Speichern gibt es nur auf der eigenen Webseite.
 
 ## Texte im Bild verschieben
 
