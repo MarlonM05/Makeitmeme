@@ -101,9 +101,12 @@ input[type=text]::placeholder { color: #9a9187; font-weight: 400; }
 .meme .post:empty { display: none; }
 .frame { position: relative; container-type: inline-size; line-height: 0; }
 .frame img { width: 100%; height: auto; display: block; aspect-ratio: auto; }
-.mt { position: absolute; left: 4%; right: 4%; text-align: center; line-height: 1.02; font-family: var(--font-meme); text-transform: uppercase; color: #fff;
+.mt { position: absolute; left: 50%; transform: translateX(-50%); width: max-content; max-width: 92%; text-align: center; line-height: 1.02; font-family: var(--font-meme); text-transform: uppercase; color: #fff;
   -webkit-text-stroke: .7cqw #000; paint-order: stroke fill; text-shadow: 0 0 .6cqw #000; font-size: 10cqw; overflow-wrap: anywhere; letter-spacing: .01em; }
 .mt.top { top: 3%; } .mt.bot { bottom: 3%; }
+.mt.drag { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; outline: 2px dashed rgba(255,255,255,.75); outline-offset: 4px; }
+.mt.drag:hover, .mt.drag:focus-visible { outline-color: var(--sun); }
+.mt.dragging { cursor: grabbing; outline-style: solid; outline-color: var(--sun); }
 .mt.l2 { font-size: 8cqw; } .mt.l3 { font-size: 6.4cqw; } .mt.l4 { font-size: 5.2cqw; }
 .meme.s-u .mt { text-transform: none; font-family: var(--font-body); font-weight: 800; color: var(--sun); -webkit-text-stroke: 0; text-shadow: 0 .3cqw 0 #000, 0 0 1cqw #000, 0 0 .4cqw #000; font-size: 7cqw; }
 .meme.s-u .mt.l3, .meme.s-u .mt.l4 { font-size: 5.4cqw; }
@@ -291,6 +294,10 @@ footer a { color: var(--sun); }
       </div>
       <div class="stack" style="align-items:center">
         <div class="preview" id="preview"></div>
+        <div class="row" style="justify-content:center">
+          <span class="hint" style="color:var(--paper)" id="posHint">Tipp: Zieh die Texte im Bild an eine andere Stelle.</span>
+          <button class="btn small" id="posReset" type="button" hidden>Texte zurücksetzen</button>
+        </div>
         <p class="hint" style="color:var(--paper)" id="makeStatus"></p>
       </div>
     </section>
@@ -349,7 +356,11 @@ footer a { color: var(--sun); }
           </div>
         </div>
       </div>
-      <div class="stack" style="align-items:center"><div class="preview" id="soloPreview"></div></div>
+      <div class="stack" style="align-items:center"><div class="preview" id="soloPreview"></div>
+        <div class="row" style="justify-content:center">
+          <span class="hint" style="color:var(--paper)" id="soloHint">Tipp: Zieh die Texte im Bild an eine andere Stelle.</span>
+          <button class="btn small" id="soloReset" type="button" hidden>Texte zurücksetzen</button>
+        </div></div>
     </div>
   </main>
 
@@ -441,14 +452,37 @@ if (Array.isArray(window.GIFFIG_EXTRA)) {
     known.add(e[0]); GIFS.push([e[0], e[1].slice(0, 40), typeof e[2] === "string" ? e[2] : ""]);
   }
 }
-const N = GIFS.length;
-const imgSrc = (id) => "g/" + (id.includes(".") ? id : id + ".webp");
+const imgSrc = (id) => (id.startsWith("up-") && window.GIFFIG_STORAGE_BASE ? window.GIFFIG_STORAGE_BASE + id : "g/" + (id.includes(".") ? id : id + ".webp"));
 const ONLINE_URL = "https://marlonm05.github.io/Makeitmeme/";
-const ALL_IDX = [...Array(N).keys()];
+const ID_OK = /^[A-Za-z0-9._-]{1,80}$/, UPLOAD_OK = /^up-[a-z0-9]{8}\.(webp|gif|png|jpg)$/;
+const safeId = (v) => (typeof v === "string" && ID_OK.test(v) ? v : "");
+const idxOf = (id) => GIFS.findIndex((x) => x[0] === id);
+const gid = (i) => (GIFS[i] ? GIFS[i][0] : "");
+const poolCache = new Map();
+let ALL_IDX = [];
+// Einträge mit vierter Stelle = true sind nur "geliehen" (ein Spieler kennt ein Bild, das hier nicht im Katalog ist).
+function rebuildCatalog() { ALL_IDX = GIFS.map((x, i) => i).filter((i) => !GIFS[i][3]); poolCache.clear(); }
+function entryFor(v) {
+  if (typeof v === "number") return GIFS[v] || GIFS[0];
+  const id = safeId(v); if (!id) return ["", "?", ""];
+  let i = idxOf(id); if (i < 0) { GIFS.push([id, "Meme", "", true]); i = GIFS.length - 1; }
+  return GIFS[i];
+}
+function ensureIndex(id) { entryFor(id); return idxOf(safeId(id)); }
+// Hochgeladene Memes aus der Datenbank (Admin-Seite) dazunehmen.
+function mergeCatalog(rows) {
+  for (const r of rows || []) {
+    if (!r || typeof r.file !== "string" || !UPLOAD_OK.test(r.file)) continue;
+    const name = String(r.name || "Meme").slice(0, 40), tags = String(r.tags || "").replace(/[^dxv]/g, "");
+    const i = idxOf(r.file);
+    if (i >= 0) { GIFS[i][1] = name; GIFS[i][2] = tags; GIFS[i][3] = false; } else GIFS.push([r.file, name, tags]);
+  }
+  rebuildCatalog();
+}
+rebuildCatalog();
 const tagsOf = (i) => (typeof GIFS[i][2] === "string" ? GIFS[i][2] : "");
 const POOL_NAMES = { all: "Alle", de: "🇩🇪 Deutsch", int: "International", tpl: "🖼️ Vorlagen" };
 const POOL_TEST = { all: () => true, de: (t) => t.includes("d"), int: (t) => !t.includes("d") && !t.includes("v"), tpl: (t) => t.includes("v") };
-const poolCache = new Map();
 function poolFor(g) {
   const pool = g && POOL_TEST[g.pool] ? g.pool : "all", derb = !!(g && g.derb), key = pool + derb;
   if (!poolCache.has(key)) {
@@ -493,7 +527,7 @@ const ls = { get: (k) => safe(() => localStorage.getItem(k)), set: (k, v) => saf
 const ss = { get: (k) => safe(() => sessionStorage.getItem(k)), set: (k, v) => safe(() => sessionStorage.setItem(k, v)) };
 const rid = (n) => Array.from({ length: n }, () => "abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 32)]).join("");
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
-const gifIdx = (v) => (Number.isInteger(v) && v >= 0 && v < N ? v : 0);
+const posOf = (v) => (Array.isArray(v) && v.length === 2 && v.every((n) => typeof n === "number" && isFinite(n)) ? v.map((n) => Math.round(Math.max(0, Math.min(100, n)) * 10) / 10) : null);
 const clampStr = (v, n) => (typeof v === "string" ? v.slice(0, n) : "");
 const styleOf = (v) => (v === "u" || v === "p" ? v : "k");
 const clone = (o) => JSON.parse(JSON.stringify(o));
@@ -503,8 +537,42 @@ function toast(msg) { const t = el("div", "toast", msg); document.body.append(t)
 
 // ---------- meme rendering ----------
 function sizeClass(t) { const n = t.length; return n > 46 ? " l4" : n > 32 ? " l3" : n > 18 ? " l2" : ""; }
+function placeText(node, pos) { node.style.left = pos[0] + "%"; node.style.top = pos[1] + "%"; node.style.bottom = "auto"; node.style.transform = "translate(-50%, -50%)"; }
+// Macht einen Text im Bild verschiebbar (Maus, Finger, Pfeiltasten). Positionen in Prozent der Bildfläche, Mitte des Textes.
+function makeDraggable(node, frame, which, onMove) {
+  node.classList.add("drag"); node.tabIndex = 0; node.setAttribute("role", "button");
+  node.setAttribute("aria-label", (which === "t" ? "Oberen" : "Unteren") + " Text verschieben: ziehen oder Pfeiltasten benutzen");
+  const place = (x, y) => {
+    const fr = frame.getBoundingClientRect(), nr = node.getBoundingClientRect();
+    const hw = Math.min(50, (nr.width / fr.width) * 50), hh = Math.min(50, (nr.height / fr.height) * 50);
+    x = Math.max(hw, Math.min(100 - hw, x)); y = Math.max(hh, Math.min(100 - hh, y));
+    placeText(node, [x, y]); return [Math.round(x * 10) / 10, Math.round(y * 10) / 10];
+  };
+  let drag = null;
+  node.addEventListener("pointerdown", (e) => {
+    if (e.button) return; e.preventDefault();
+    const fr = frame.getBoundingClientRect(), nr = node.getBoundingClientRect();
+    drag = { fr, dx: e.clientX - (nr.left + nr.width / 2), dy: e.clientY - (nr.top + nr.height / 2), pos: null };
+    try { node.setPointerCapture(e.pointerId); } catch {}
+    node.classList.add("dragging");
+  });
+  node.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    drag.pos = place(((e.clientX - drag.dx - drag.fr.left) / drag.fr.width) * 100, ((e.clientY - drag.dy - drag.fr.top) / drag.fr.height) * 100);
+    onMove && onMove(which, drag.pos, false);
+  });
+  const end = () => { if (!drag) return; const p = drag.pos; drag = null; node.classList.remove("dragging"); if (p && onMove) onMove(which, p, true); };
+  node.addEventListener("pointerup", end); node.addEventListener("pointercancel", end);
+  node.addEventListener("keydown", (e) => {
+    const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (!k) return;
+    e.preventDefault();
+    const fr = frame.getBoundingClientRect(), nr = node.getBoundingClientRect(), st = e.shiftKey ? 5 : 1;
+    const pos = place(((nr.left + nr.width / 2 - fr.left) / fr.width) * 100 + k[0] * st, ((nr.top + nr.height / 2 - fr.top) / fr.height) * 100 + k[1] * st);
+    onMove && onMove(which, pos, true);
+  });
+}
 function renderMeme(m, opts = {}) {
-  const s = styleOf(m.s), g = GIFS[gifIdx(m.g)];
+  const s = styleOf(m.s), g = entryFor(m.g);
   const fig = el("figure", "meme s-" + s);
   const t = clampStr(m.t, 60), b = clampStr(m.b, 60);
   if (s === "p") fig.append(el("div", "post", [t, b].filter(Boolean).join(" ")));
@@ -512,8 +580,14 @@ function renderMeme(m, opts = {}) {
   const img = el("img"); img.src = imgSrc(g[0]); img.alt = g[1]; img.loading = opts.lazy ? "lazy" : "eager"; img.decoding = "async";
   fr.append(img);
   if (s !== "p") {
-    if (t) fr.append(el("span", "mt top" + sizeClass(t), t));
-    if (b) fr.append(el("span", "mt bot" + sizeClass(b), b));
+    const tp = posOf(m.tp), bp = posOf(m.bp);
+    for (const [which, text, cls, pos] of [["t", t, "top", tp], ["b", b, "bot", bp]]) {
+      if (!text) continue;
+      const n = el("span", "mt " + cls + sizeClass(text), text);
+      if (pos) placeText(n, pos);
+      fr.append(n);
+      if (opts.editable) makeDraggable(n, fr, which, opts.onMove);
+    }
   }
   fig.append(fr);
   if (opts.credit) {
@@ -599,6 +673,7 @@ async function boot() {
     const a = el("a", null, "Giffig online öffnen"); a.href = ONLINE_URL; a.target = "_blank"; a.rel = "noopener"; a.style.fontWeight = "800";
     statusEl.append(a);
   }
+  if (lobby && lobby.catalog) { try { mergeCatalog(await lobby.catalog()); } catch (e) { console.warn("Katalog nicht geladen", e); } }
   if (db) subscribeFame();
 }
 boot();
@@ -640,7 +715,7 @@ function subscribeFame() {
       const m = d.data(); if (!m) continue;
       const idx = GIFS.findIndex((x) => x[0] === m.g); if (idx < 0) continue;
       const card = el("div", "fame-card");
-      card.append(renderMeme({ g: idx, t: m.t, b: m.b, s: m.s }, { lazy: true, credit: true }));
+      card.append(renderMeme({ g: idx, t: m.t, b: m.b, s: m.s, tp: m.tp, bp: m.bp }, { lazy: true, credit: true }));
       const meta = el("div", "fame-meta");
       meta.append(el("span", null, clampStr(m.av, 4) + " " + clampStr(m.n, 16)), el("b", null, (Number(m.pts) || 0) + " Pkt"));
       card.append(meta);
@@ -659,7 +734,7 @@ let game = null, code = null, joinedAt = 0, myJa = 0;
 let G = null, lastG = null, amHost = false, hostDeadline = 0, hostMin = 0;
 let seenSeq = -1, localDeadline = 0, builtKey = "";
 
-function defaultG() { return { ph: "lobby", seq: 1, rem: 0, R: 5, T: 60, mode: "own", pool: "all", derb: false, bon: [], r: 0, seed: 0, ord: [], gi: -1, subs: [], sp: [], vi: 0, sc: {}, nm: {}, best: null }; }
+function defaultG() { return { ph: "lobby", seq: 1, rem: 0, R: 5, T: 60, mode: "own", pool: "all", derb: false, bon: [], r: 0, seed: 0, ord: [], gi: "", subs: [], sp: [], vi: 0, sc: {}, nm: {}, best: null }; }
 
 function rawPlayers() {
   if (!game) return [];
@@ -692,7 +767,7 @@ async function enterRoom(c, create, keep) {
   if (!keep) resetMake();
   $("#codeText").textContent = code;
   const pres = { pid: myPid, name: me.name, av: me.av, ja: myJa, sub: null, ready: false, vote: null, react: null, g: null };
-  if (keep && mk.key !== -1) { pres.sub = { k: mk.key, g: mk.g, t: mk.t, b: mk.b, s: mk.s }; pres.ready = mk.ready; }
+  if (keep && mk.key !== -1) { pres.sub = { k: mk.key, g: gid(mk.g), t: mk.t, b: mk.b, s: mk.s, tp: mk.tp, bp: mk.bp }; pres.ready = mk.ready; }
   if (create) { const g = defaultG(); g.seq = Math.floor(Math.random() * 1e6); pres.g = g; amHost = true; G = g; lastG = g; }
   await game.presence(pres).catch(() => {});
   const myGame = game;
@@ -760,13 +835,13 @@ function sanitizeG(g) {
   o.R = [3, 5, 7].includes(g.R) ? g.R : 5; o.T = [45, 60, 90].includes(g.T) ? g.T : 60;
   o.mode = MODES[g.mode] ? g.mode : "own"; o.pool = POOL_TEST[g.pool] ? g.pool : "all"; o.derb = g.derb === true; o.bon = Array.isArray(g.bon) ? g.bon.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : []; o.r = Number(g.r) || 0; o.seed = Number(g.seed) || 0;
   o.ord = Array.isArray(g.ord) ? g.ord.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : [];
-  o.gi = Number.isInteger(g.gi) ? g.gi : -1;
-  o.subs = Array.isArray(g.subs) ? g.subs.slice(0, MAX_PLAYERS).map((s) => ({ p: clampStr(s && s.p, 8), g: gifIdx(s && s.g), t: clampStr(s && s.t, 60), b: clampStr(s && s.b, 60), s: styleOf(s && s.s) })) : [];
+  o.gi = safeId(g.gi);
+  o.subs = Array.isArray(g.subs) ? g.subs.slice(0, MAX_PLAYERS).map((s) => ({ p: clampStr(s && s.p, 8), g: safeId(s && s.g), t: clampStr(s && s.t, 60), b: clampStr(s && s.b, 60), s: styleOf(s && s.s), tp: posOf(s && s.tp), bp: posOf(s && s.bp) })) : [];
   o.sp = Array.isArray(g.sp) ? g.sp.map((x) => Number(x) || 0) : [];
   o.vi = Math.max(0, Math.min(Number(g.vi) || 0, Math.max(0, o.subs.length - 1)));
   o.sc = g.sc && typeof g.sc === "object" ? g.sc : {};
   o.nm = g.nm && typeof g.nm === "object" ? g.nm : {};
-  o.best = g.best && typeof g.best === "object" ? { p: clampStr(g.best.p, 8), g: gifIdx(g.best.g), t: clampStr(g.best.t, 60), b: clampStr(g.best.b, 60), s: styleOf(g.best.s), v: Number(g.best.v) || 0 } : null;
+  o.best = g.best && typeof g.best === "object" ? { p: clampStr(g.best.p, 8), g: safeId(g.best.g), t: clampStr(g.best.t, 60), b: clampStr(g.best.b, 60), s: styleOf(g.best.s), tp: posOf(g.best.tp), bp: posOf(g.best.bp), v: Number(g.best.v) || 0 } : null;
   return o;
 }
 
@@ -790,7 +865,7 @@ function setPhase(g, ms) {
 function isDuel(g) { return g.mode === "same" || (g.mode === "mix" && g.r % 2 === 0); }
 function nextRound(g) {
   g.r += 1; g.ph = "make"; g.seed = 1 + Math.floor(Math.random() * 2e9);
-  g.ord = players().map((p) => p.pid); g.gi = isDuel(g) ? pick(poolFor(g)) : -1; g.bon = [];
+  g.ord = players().map((p) => p.pid); g.gi = isDuel(g) ? gid(pick(poolFor(g))) : ""; g.bon = [];
   g.subs = []; g.sp = []; g.vi = 0;
   setPhase(g, g.T * 1000);
 }
@@ -810,7 +885,7 @@ function hostTick() {
     const allReady = pl.length > 0 && pl.every((p) => mine(p) && p.ready);
     if (now >= hostDeadline || allReady) {
       const subs = pl.filter((p) => mine(p) && (clampStr(p.sub.t, 60).trim() || clampStr(p.sub.b, 60).trim()))
-        .map((p) => ({ p: p.pid, g: g.gi >= 0 ? g.gi : gifIdx(p.sub.g), t: clampStr(p.sub.t, 60).trim(), b: clampStr(p.sub.b, 60).trim(), s: styleOf(p.sub.s) }));
+        .map((p) => ({ p: p.pid, g: g.gi || safeId(p.sub.g), t: clampStr(p.sub.t, 60).trim(), b: clampStr(p.sub.b, 60).trim(), s: styleOf(p.sub.s), tp: posOf(p.sub.tp), bp: posOf(p.sub.bp) }));
       g.subs = shuffle(subs); g.sp = g.subs.map(() => 0); g.vi = 0;
       g.ph = g.subs.length ? "vote" : "res";
       setPhase(g, g.subs.length ? VOTE_MS : 5000);
@@ -871,11 +946,11 @@ function floatEmoji(e) {
 
 // ---------- client: make phase state ----------
 let mk = null, presTimer = 0, reactN = 0;
-function resetMake() { mk = { key: -1, opts: [], g: 0, t: "", b: "", s: "k", ready: false, rr: 2 }; $("#topInput").value = ""; $("#botInput").value = ""; }
+function resetMake() { mk = { key: -1, opts: [], g: 0, t: "", b: "", s: "k", ready: false, rr: 2, tp: null, bp: null }; $("#topInput").value = ""; $("#botInput").value = ""; }
 function setupMake() {
   if (mk.key === G.seed) return;
-  mk = { key: G.seed, opts: [], g: 0, t: "", b: "", s: mk.s || "k", ready: false, rr: 2 };
-  if (G.gi >= 0) { mk.opts = [G.gi]; mk.g = G.gi; }
+  mk = { key: G.seed, opts: [], g: 0, t: "", b: "", s: mk.s || "k", ready: false, rr: 2, tp: null, bp: null };
+  if (G.gi) { const ix = ensureIndex(G.gi); mk.opts = [ix]; mk.g = ix; }
   else {
     const pool = poolFor(G);
     const deck = shuffle(pool, seeded(G.seed));
@@ -889,7 +964,7 @@ function setupMake() {
 }
 function pushSub(now) {
   clearTimeout(presTimer);
-  const send = () => { if (game && G) game.presence({ sub: { k: G.seed, g: mk.g, t: mk.t, b: mk.b, s: mk.s }, ready: mk.ready }).catch(() => {}); };
+  const send = () => { if (game && G) game.presence({ sub: { k: G.seed, g: gid(mk.g), t: mk.t, b: mk.b, s: mk.s, tp: mk.tp, bp: mk.bp }, ready: mk.ready }).catch(() => {}); };
   if (now) send(); else presTimer = setTimeout(send, 350);
 }
 function wireEditor(prefix, state, onChange) {
@@ -909,7 +984,7 @@ wireEditor({ top: "#topInput", bot: "#botInput", style: "#segStyle" }, () => mk,
   drawPreview(); pushSub(false);
 });
 $("#rerollBtn").onclick = () => {
-  if (!mk || mk.rr <= 0 || mk.ready || G.gi >= 0) return;
+  if (!mk || mk.rr <= 0 || mk.ready || G.gi) return;
   mk.rr -= 1;
   const pool = shuffle(poolFor(G).filter((i) => !mk.opts.includes(i)));
   mk.opts = pool.slice(0, 3); mk.g = mk.opts[0];
@@ -928,7 +1003,15 @@ function drawOpts(container, state, onPick) {
     container.append(b);
   }
 }
-function drawPreview() { const p = $("#preview"); p.textContent = ""; p.append(renderMeme({ g: mk.g, t: mk.t, b: mk.b, s: mk.s }, { credit: true })); }
+function drawPreview() {
+  const p = $("#preview"); p.textContent = "";
+  p.append(renderMeme({ g: mk.g, t: mk.t, b: mk.b, s: mk.s, tp: mk.tp, bp: mk.bp }, {
+    credit: true, editable: !mk.ready,
+    onMove: (w, pos, fin) => { mk[w === "t" ? "tp" : "bp"] = pos; $("#posReset").hidden = false; if (fin) pushSub(false); },
+  }));
+  $("#posHint").hidden = mk.s === "p" || mk.ready; $("#posReset").hidden = !(mk.tp || mk.bp) || mk.s === "p" || mk.ready;
+}
+$("#posReset").onclick = () => { mk.tp = mk.bp = null; drawPreview(); pushSub(false); };
 
 // ---------- client: voting ----------
 let myVoteSeq = -1, myVote = 0;
@@ -1004,7 +1087,7 @@ $("#startBtn").onclick = hostStart;
 
 function renderMake(pl, spectator) {
   setupMake();
-  const duel = G.gi >= 0;
+  const duel = !!G.gi;
   const key = "make" + G.seed + ":" + mk.opts.join(",") + ":" + mk.ready;
   $("#makeLabel").textContent = duel ? "Duell: Alle haben dieses GIF" : "Wähle dein GIF";
   $("#rerollBtn").hidden = duel;
@@ -1099,7 +1182,7 @@ $("#againBtn").onclick = hostAgain;
 $("#fameBtn").onclick = async () => {
   if (!db || !G || !G.best) return;
   const [nm, av] = nameOf(G.best.p);
-  const doc = { g: GIFS[G.best.g][0], t: G.best.t, b: G.best.b, s: G.best.s, n: nm, av, pts: G.best.v, at: Date.now() };
+  const doc = { g: G.best.g, t: G.best.t, b: G.best.b, s: G.best.s, tp: G.best.tp, bp: G.best.bp, n: nm, av, pts: G.best.v, at: Date.now() };
   $("#fameBtn").disabled = true;
   try { await db.collection("fame").doc(code.toLowerCase() + "-" + Date.now()).set(doc); famedSeq = G.seq; $("#fameBtn").hidden = true; toast("In der Ruhmeshalle gespeichert."); }
   catch (e) { canWriteFame = false; $("#fameBtn").hidden = true; toast("Speichern ist für dich hier nicht erlaubt."); }
@@ -1176,9 +1259,14 @@ window.addEventListener("hashchange", applyInvite);
 window.addEventListener("beforeunload", (e) => { if (game && lobby && lobby.local && amHost && players().length > 1) { e.preventDefault(); e.returnValue = ""; } });
 
 // ---------- solo practice ----------
-const solo = { opts: [], g: 0, t: "", b: "", s: "k" };
+const solo = { opts: [], g: 0, t: "", b: "", s: "k", tp: null, bp: null };
 function soloDeal() { solo.opts = shuffle(poolFor({ pool: "all", derb: false })).slice(0, 3); solo.g = solo.opts[0]; drawOpts($("#soloOpts"), solo, soloPreview); soloPreview(); }
-function soloPreview() { const p = $("#soloPreview"); p.textContent = ""; p.append(renderMeme(solo, { credit: true })); }
+function soloPreview() {
+  const p = $("#soloPreview"); p.textContent = "";
+  p.append(renderMeme(solo, { credit: true, editable: true, onMove: (w, pos) => { solo[w === "t" ? "tp" : "bp"] = pos; $("#soloReset").hidden = false; } }));
+  $("#soloHint").hidden = solo.s === "p"; $("#soloReset").hidden = !(solo.tp || solo.bp) || solo.s === "p";
+}
+$("#soloReset").onclick = () => { solo.tp = solo.bp = null; soloPreview(); };
 wireEditor({ top: "#soloTop", bot: "#soloBot", style: "#soloStyle" }, () => solo, soloPreview);
 $("#soloReroll").onclick = soloDeal;
 function wireIdea(btnSel, inputSel) {

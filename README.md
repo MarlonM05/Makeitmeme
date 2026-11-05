@@ -41,7 +41,9 @@ Hinweise:
 | Datei | Zweck |
 |---|---|
 | `src/giffig.html` | Die Spielseite (läuft auch als Claude-Artifact mit den Fähigkeiten `room`, `db`, `user`) |
-| `memes.js` | Deine eigenen Memes (Liste), siehe oben |
+| `admin.html` | Admin-Seite: Bilder hochladen und verwalten |
+| `supabase/functions/giffig-admin/` | Geschützter Admin-Server (Supabase Edge Function) |
+| `memes.js` | Eigene Memes von Hand (Liste), siehe oben |
 | `add_meme.py` | Hilfsskript zum Hinzufügen eigener Bilder |
 | `online.js` | Ersetzt die Claude-Fähigkeiten durch Supabase Realtime und eine lokale Ruhmeshalle |
 | `index.html` | Generiert von `build.py`, das ist die Seite auf GitHub Pages |
@@ -50,7 +52,33 @@ Hinweise:
 
 Nach Änderungen an `src/giffig.html`: `python3 build.py`
 
-## Eigene Memes, Fotos und GIFs hinzufügen
+## Admin-Seite (nur für dich)
+
+`admin.html` (online unter `…/Makeitmeme/admin.html`) ist deine Verwaltung: Bilder per Drag & Drop hochladen,
+Namen und Tags ändern, Bilder ausblenden oder löschen. Hochgeladene Bilder erscheinen nach dem Neuladen im Spiel.
+
+- **Zugang:** nur mit deinem Admin-Passwort. Die Seite selbst ist für jeden aufrufbar, aber ohne Passwort kann man
+  nichts hochladen, ändern oder löschen. Das prüft der Server (`supabase/functions/giffig-admin`), nicht der Browser.
+- **Ersteinrichtung:** Beim ersten Öffnen fragt die Seite nach einem Einrichtungs-Code. Den erzeugt man in Supabase (SQL-Editor):
+  ```sql
+  insert into public.admin_setup_tokens (token_hash, expires_at)
+  values (encode(sha256(convert_to('DEIN-CODE','utf8')),'hex'), now() + interval '2 hours');
+  ```
+  Mit dem Code legst du dein Passwort fest (mindestens 12 Zeichen). Der Code gilt einmal. **Passwort vergessen?**
+  `delete from public.admin_config;` ausführen und einen neuen Code anlegen, dann neu einrichten.
+- **Schutz:** Das Passwort liegt nur als Hash in der Datenbank. Nach 8 Fehlversuchen pro Adresse in 15 Minuten
+  (oder 60 pro Stunde insgesamt) ist die Anmeldung kurz gesperrt. Anmeldungen laufen nach 8 Stunden ab.
+- **Dateien:** Fotos und PNGs werden im Browser auf höchstens 480 Pixel verkleinert und als WebP gespeichert.
+  GIFs und animierte WebPs bleiben unverändert (bis 6 MB). Alles liegt im öffentlichen Supabase-Speicher `memes`.
+- **Gratis-Limits:** Speicher 1 GB, Datenverkehr 5 GB pro Monat. Kleine Bilder halten das lange aus.
+
+## Texte im Bild verschieben
+
+Im Spiel (und im Übungsmodus) kannst du beide Texte im Vorschaubild mit Maus oder Finger an eine andere Stelle ziehen,
+oder mit den Pfeiltasten verschieben (Umschalt = größere Schritte). „Texte zurücksetzen“ stellt die Standardposition her.
+Die anderen Spieler sehen die Texte an genau deiner Position. Positionen werden in Prozent der Bildfläche gespeichert.
+
+## Eigene Memes, Fotos und GIFs von Hand hinzufügen (ohne Admin-Seite)
 
 **Ohne Programmieren, nur im Browser auf GitHub:**
 1. Öffne im Repo den Ordner `g/`, klick auf **Add file → Upload files** und lade dein Bild hoch

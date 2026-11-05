@@ -16,6 +16,9 @@
   const isObj = (o) => o && typeof o === "object" && !Array.isArray(o);
   const rid = (n) => Array.from({ length: n }, () => "abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 32)]).join("");
 
+  // Hochgeladene Memes liegen im öffentlichen Speicher; das Spiel baut daraus die Bildadressen.
+  window.GIFFIG_STORAGE_BASE = SUPABASE_URL + "/storage/v1/object/public/memes/";
+
   let client = null;
   function sb() {
     if (client) return client;
@@ -133,6 +136,15 @@
     });
   }
 
+  // Liste der über die Admin-Seite hochgeladenen Memes (nur sichtbare, ohne Anmeldung lesbar).
+  async function catalog() {
+    const c = sb();
+    if (!c) return [];
+    const { data, error } = await c.from("memes").select("file,name,tags").order("created_at", { ascending: true }).limit(2000);
+    if (error) throw error;
+    return data || [];
+  }
+
   // Verbindungstest: erreichen wir den Spielserver, und wie schnell?
   async function diagnose() {
     const out = { online: navigator.onLine !== false, server: false, ms: 0, error: "" };
@@ -186,6 +198,7 @@
   const lobby = {
     local: true,
     diagnose,
+    catalog,
     presence: () => Promise.resolve(),
     peers: () => [],
     onPeers: () => () => {},
