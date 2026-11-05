@@ -22,18 +22,26 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
 - Soundeffekte (abschaltbar), fliegende Emoji-Reaktionen, bis zu 8 Spieler
 - Ruhmeshalle für die besten Memes, Übungsmodus für alleine
 
-## Wie es ohne Server funktioniert
+## Wie das Mehrspielen funktioniert
 
-Der Browser, der ein Spiel erstellt, ist der Spielserver. Die anderen verbinden sich direkt mit ihm
-(WebRTC über [PeerJS](https://peerjs.com) und dessen kostenlosen Vermittlungsserver). Deshalb reicht
-statisches Hosting wie GitHub Pages. Der Host muss sein Fenster offen lassen.
+Die Seite liegt auf GitHub Pages (reines Frontend). Die Spieler sprechen über **Supabase Realtime**
+(WebSocket über Port 443, funktioniert auch in Schul-, Firmen- und Handy-Netzen). Es gibt keine
+eigene Datenbank und keine Tabellen: jedes Spiel ist ein Kanal `giffig-<CODE>`, über den alle ihren
+Zustand per Broadcast teilen. Der Spieler, der das Spiel erstellt, führt die Spiellogik aus
+(Host-Wechsel passiert automatisch, wenn er geht). Der Schlüssel in `online.js` ist ein öffentlicher
+Browser-Schlüssel und darf im Code stehen.
+
+Hinweise:
+- Wer den 4-Buchstaben-Code kennt, kann mitlesen. Das Spiel ist für Freundesrunden gedacht.
+- Gratis-Tarif: 200 gleichzeitige Verbindungen, 100 Nachrichten pro Sekunde.
+- Gratis-Projekte pausiert Supabase nach einer Woche ohne Aktivität. Dann im Supabase-Dashboard auf „Restore“ klicken.
 
 ## Dateien
 
 | Datei | Zweck |
 |---|---|
 | `src/giffig.html` | Die Spielseite (läuft auch als Claude-Artifact mit den Fähigkeiten `room`, `db`, `user`) |
-| `p2p.js` | Ersetzt die Claude-Fähigkeiten durch PeerJS und eine lokale Ruhmeshalle |
+| `online.js` | Ersetzt die Claude-Fähigkeiten durch Supabase Realtime und eine lokale Ruhmeshalle |
 | `index.html` | Generiert von `build.py`, das ist die Seite auf GitHub Pages |
 | `g/` | GIFs (200px-WebP von GIPHY) und Vorlagen (`if-*.webp`, von Imgflip) |
 | `fetch_gifs.sh` | Lädt fehlende GIPHY-GIFs neu (Vorlagen liegen fest im Repo) |

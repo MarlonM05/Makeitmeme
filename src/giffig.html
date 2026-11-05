@@ -205,7 +205,7 @@ footer a { color: var(--sun); }
         </div>
         <p class="hint" id="roomStatus"></p>
         <div class="stack" id="diagWrap" style="gap:8px" hidden>
-          <button class="linkish" id="diagBtn" type="button" style="align-self:flex-start">🔧 Verbindungstest: Klappt es in meinem Netz?</button>
+          <button class="linkish" id="diagBtn" type="button" style="align-self:flex-start">🔧 Verbindungstest: Erreiche ich den Spielserver?</button>
           <div class="hint" id="diagOut" style="color:var(--ink)" hidden></div>
         </div>
       </section>
@@ -980,7 +980,7 @@ function renderLobby(pl) {
   $("#modeHint").textContent = MODE_HINTS[G.mode];
   $("#startBtn").hidden = !amHost;
   $("#lobbyHint").textContent = amHost
-    ? (pl.length < 2 ? (lobby && lobby.local ? "Wichtig: Lass diese Seite im Vordergrund offen, bis alle drin sind. Wer zu WhatsApp wechselt, trennt am Handy oft die Verbindung. Nutz „Teilen“ und komm gleich zurück." : "Teile den Code " + code + ". Ab 3 Leuten macht's am meisten Spaß.") : pl.length + " Spieler bereit.")
+    ? (pl.length < 2 ? (lobby && lobby.local ? "Wichtig: Lass diese Seite im Vordergrund offen, bis alle drin sind. Wenn du zu WhatsApp wechselst, pausiert das Handy die Seite. Nutz „Teilen“ und komm gleich zurück." : "Teile den Code " + code + ". Ab 3 Leuten macht's am meisten Spaß.") : pl.length + " Spieler bereit.")
     : "Warte, bis der Host startet …";
 }
 $("#startBtn").onclick = hostStart;
@@ -1108,11 +1108,8 @@ $("#diagBtn").onclick = async () => {
   btn.disabled = false; out.textContent = "";
   const line = (ok, yes, no) => { const d = el("div", null, (ok ? "✅ " : "❌ ") + (ok ? yes : no)); out.append(d); };
   line(r.online, "Du bist online.", "Dein Gerät meldet: offline.");
-  line(r.signaling, "Vermittlungsserver erreichbar.", "Vermittlungsserver nicht erreichbar (peerjs.com). Ohne ihn kann niemand ein Spiel erstellen oder beitreten. Probier ein anderes Netz oder schalte Werbeblocker und VPN aus.");
-  line(r.stun, "Direktverbindung möglich (STUN).", "Keine Direktverbindung möglich. In diesem Netz brauchst du den Relay-Weg.");
-  line(r.turn, "Relay-Server erreichbar" + (r.turnTcp ? " (auch über TCP)." : "."), "Kein Relay-Server erreichbar. Mit Spielern in einem anderen Netz klappt es hier wahrscheinlich nicht. Wechsle auf dasselbe WLAN oder auf andere Mobilfunkdaten.");
-  const good = r.online && r.signaling && (r.stun || r.turn);
-  out.append(el("div", null, good ? (r.turn ? "Sieht gut aus." : "Im selben WLAN klappt es. Mit Spielern in einem anderen Netz könnte es haken.") : "Hier wird es schwierig. Schick mir dieses Ergebnis, dann finden wir den Grund."));
+  line(r.server, "Spielserver erreichbar (" + r.ms + " ms).", "Spielserver nicht erreichbar" + (r.error ? " (" + r.error + ")" : "") + ". Probier ein anderes Netz oder schalte VPN, Werbeblocker und Schul- oder Firmenfilter aus.");
+  out.append(el("div", null, r.online && r.server ? (r.ms > 2500 ? "Läuft, aber langsam. Das Spiel sollte trotzdem gehen." : "Sieht gut aus. Du kannst Spiele erstellen und beitreten.") : "Hier wird es schwierig. Schick mir dieses Ergebnis, dann finden wir den Grund."));
   out.firstChild && (out.style.display = "flex", out.style.flexDirection = "column", out.style.gap = "4px");
 };
 
