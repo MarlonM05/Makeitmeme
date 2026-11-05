@@ -12,6 +12,7 @@
 //   ["boese.png", "Böser Blick", "dx"],
 //
 // Wichtig: Nach dem Speichern die Seite neu laden. Alle Spieler brauchen dieselbe Version.
-window.GIFFIG_EXTRA = ["Mittel-_Gemini_Generated_Image_sbkfxksbkfxksbkf_.webp", "Fett", ""]
-window.GIFFIG_EXTRA = ["Mittel-_Gemini_Generated_Image_iaby3wiaby3wiaby_.webp", "Dicke", ""]
+window.GIFFIG_EXTRA = [
+  ["Mittel-_Gemini_Generated_Image_sbkfxksbkfxksbkf_.webp", "Fett", ""],
+  ["Mittel-_Gemini_Generated_Image_iaby3wiaby3wiaby_.webp", "Dicke", ""],
 ];
