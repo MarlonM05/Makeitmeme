@@ -12,6 +12,7 @@
   const SEND_GAP_MS = 120;      // Updates bündeln (Limit im Gratis-Tarif: 100 Nachrichten/s)
   const MSG_NO_SERVER = "Der Spielserver ist nicht erreichbar. Prüf deine Internetverbindung, schalte VPN oder Werbeblocker aus oder probier ein anderes Netz.";
   const MSG_NOT_FOUND = "Kein Spiel mit diesem Code gefunden. Prüf den Code und ob der Host die Seite noch offen hat.";
+  const MAX_PRESENCE = 48000;  // Broadcast verträgt viel mehr als die 4 KB im Claude-Fenster; 16 Spieler brauchen mehr Platz
   const bytes = (o) => new TextEncoder().encode(JSON.stringify(o)).length;
   const isObj = (o) => o && typeof o === "object" && !Array.isArray(o);
   const rid = (n) => Array.from({ length: n }, () => "abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 32)]).join("");
@@ -72,7 +73,7 @@
           if (closed) return Promise.resolve();
           const next = { ...myPres };
           for (const [k, v] of Object.entries(patch || {})) { if (v === null) delete next[k]; else next[k] = JSON.parse(JSON.stringify(v)); }
-          if (bytes(next) > 4096) return Promise.reject({ code: "invalid_argument", message: "presence too large" });
+          if (bytes(next) > MAX_PRESENCE) return Promise.reject({ code: "invalid_argument", message: "presence too large" });
           myPres = next; setPeer(label, myPres);
           if (!sendTimer) sendTimer = setTimeout(() => { sendTimer = 0; sendMine(); }, SEND_GAP_MS);
           return Promise.resolve();
@@ -87,12 +88,12 @@
       };
 
       ch.on("broadcast", { event: "p" }, ({ payload }) => {
-        if (!isObj(payload) || typeof payload.peer !== "string" || payload.peer === label || !isObj(payload.p) || bytes(payload.p) > 4096) return;
+        if (!isObj(payload) || typeof payload.peer !== "string" || payload.peer === label || !isObj(payload.p) || bytes(payload.p) > MAX_PRESENCE) return;
         setPeer(payload.peer, payload.p);
       });
       ch.on("broadcast", { event: "hi" }, ({ payload }) => {
         if (!isObj(payload) || payload.peer === label) return;
-        setTimeout(sendMine, Math.random() * 250);
+        setTimeout(sendMine, Math.random() * (300 + peers.size * 100));  // Antworten streuen, damit viele Spieler den Server nicht auf einmal fluten
       });
       ch.on("presence", { event: "leave" }, ({ key }) => { if (typeof key === "string") dropPeer(key); });
       ch.on("presence", { event: "sync" }, () => {

@@ -188,6 +188,10 @@ footer a { color: var(--sun); }
 .tip .who { font-size: 12px; color: var(--muted); font-weight: 700; }
 .tip button { border: 2px solid var(--ink); border-radius: 999px; background: var(--sun); font-weight: 800; font-size: 12px; padding: 2px 10px; min-height: 28px; }
 .pl.spec { background: #dfe4ff; }
+#pMake.submitted:not(.peek) :is(.preview, #opts, #topInput, #botInput, #tipsBox, .count) { filter: blur(14px); user-select: none; -webkit-user-select: none; pointer-events: none; }
+#pMake .preview, #pMake #opts, #pMake #topInput, #pMake #botInput { transition: filter .2s; }
+.blur-note { background: var(--paper); border: 3px solid var(--ink); border-radius: 12px; padding: 8px 12px; font-size: 14px; text-align: center; box-shadow: var(--shadow); }
+#peekBtn { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .rank { position: absolute; top: -12px; left: -8px; z-index: 2; background: var(--sun); border: 2.5px solid var(--ink); border-radius: 999px; min-width: 40px; height: 40px; display: grid; place-items: center; font-family: var(--font-display); font-size: 18px; box-shadow: 3px 3px 0 var(--ink); }
 .top5 { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px 18px; padding-top: 10px; }
 .mini { display: flex; flex-direction: column; gap: 6px; position: relative; min-width: 0; }
@@ -212,7 +216,7 @@ footer a { color: var(--sun); }
 <div class="wrap">
   <header class="brand">
     <h1 class="logo">Gif<span>fig</span></h1>
-    <p class="tag">Das Meme-Partyspiel mit über 270 <b>GIFs und Meme-Vorlagen</b>, international, deutsch und auf Wunsch richtig derb. Schreib die lustigste Caption, deine Freunde stimmen ab.</p>
+    <p class="tag">Das Meme-Partyspiel mit über 500 <b>GIFs und Meme-Vorlagen</b>, international, deutsch und auf Wunsch richtig derb. Schreib die lustigste Caption, deine Freunde stimmen ab.</p>
   </header>
 
   <!-- HOME -->
@@ -246,7 +250,7 @@ footer a { color: var(--sun); }
       <section class="sticker stack" aria-labelledby="h-how">
         <h2 id="h-how" style="font-size:24px">So spielt ihr</h2>
         <ol class="steps">
-          <li><span>Einer startet ein Spiel und teilt den <b>Code</b> oder den <b>Einladungslink</b>. Bis zu 8 Leute spielen mit.</span></li>
+          <li><span>Einer startet ein Spiel und teilt den <b>Code</b> oder den <b>Einladungslink</b>. Bis zu <span id="maxP">16</span> Leute spielen mit.</span></li>
           <li><span>Jede Runde bekommst du <b>3 GIFs zur Auswahl</b> und ein paar Neu-Würfe (der Host stellt 3, 5 oder 7 ein). Schreib oben und unten deine Caption und zieh die Texte an die richtige Stelle.</span></li>
           <li><span>Alle Memes laufen anonym durch. Ihr bewertet von 😐 bis 💀. Der Rundensieger bekommt <b>+2 Bonus</b>.</span></li>
           <li><span>Am Ende siehst du die <b>5 besten Memes</b>, kannst alle Memes nochmal durchblättern und als Bild <b>speichern</b>.</span></li>
@@ -325,6 +329,8 @@ footer a { color: var(--sun); }
       </div>
       <div class="stack" style="align-items:center">
         <div class="preview" id="preview"></div>
+        <div class="blur-note" id="blurNote" hidden><b>🔒 Abgeschickt.</b> Dein Meme ist verdeckt, damit niemand mitliest. Mit „Doch noch ändern“ kommst du jederzeit zurück.</div>
+        <button class="btn small" id="peekBtn" type="button" hidden>👁 Kurz ansehen (gedrückt halten)</button>
         <div class="row" style="justify-content:center">
           <span class="hint" style="color:var(--paper)" id="posHint">Tipp: Zieh die Texte im Bild an eine andere Stelle.</span>
           <button class="btn small" id="posReset" type="button" hidden>Texte zurücksetzen</button>
@@ -494,7 +500,77 @@ const GIFS = [
 ["if-5v6gwj","Two guys on a bus","v"],["if-5youx3","whe i'm in a competition and my opponent is","v"],["if-64sz4u","Megamind peeking","v"],["if-72epa9","0 days without (Lenny, Simpsons)","v"],
 ["if-8d317n","Absolute Cinema","v"],["if-8k0sa","Star Wars Yoda","v"],["if-8tw3vb","Bell Curve","v"],["if-9ehk","Batman Slapping Robin","v"],
 ["if-bwu6w","c'mon do something","v"],["if-gk5el","Hide the Pain Harold","v"],["if-grr","The Rock Driving","v"],["if-gtj5t","Oprah You Get A","v"],
-["if-hlmst","I'm The Captain Now","v"],["if-hmt3v","Look At Me","v"],["if-wxica","This Is Fine","v"]
+["if-hlmst","I'm The Captain Now","v"],["if-hmt3v","Look At Me","v"],["if-wxica","This Is Fine","v"],
+["0XtJuBBNBbq7B53jVM","Freitag Abend Trinken"],["0xWNLoR5PTR80X3XmS","Verdächtiger Blick"],["10UUe8ZsLnaqwo","Shaq küsst"],["10kxE34bJPaUO4","Tobias Funke"],
+["119i1S64KnIhyM","Garfield isst"],["11rM5aob6aybu","Prost Public Morals"],["11uoNyauChZR16","Spaghetti mit zwei Gabeln"],["12de9tl9XSNNNC","Dicker Skater"],
+["12uXi1GXBibALC","Patrick Backen voll"],["1AIfvnUTNOMx0gdEtB","Feuerwehrmann Sam","d"],["1BXa2alBjrCXC","Will Ferrell Wein"],["1BeZZ7SJ1Tphd2DfuE","Margarita Kitty"],
+["1OOcxF7nERNCfYKwcU","Rallye OMG"],["1SDN6kC0PLTlAvnftg","Hund verdächtig"],["1cjYPNLvodoBO","Im Horny","x"],["1gWSeqXwmOtopMjdbo","Sturz Fail 4"],
+["1n4iuWZFnTeN6qvdpD","This is fine Feuer"],["1nbwLWThMxTjNvUMAT","Feuerwehrmann Sam lächelt","d"],["1xONIE9kieqf4VTX50","Bulldogge fällt vom Sessel"],["21VTFJTEr1x9ortvO3","Dexter verdächtig"],
+["22HZyXo5EocWA","Katze isst"],["26xBPncFx3h3MQd8s","Flirt"],["2Faz8ivWT0UEQRWPC","Skateboard Fail"],["2deuLkuUPJuXfeKZ0o","Sturz Fail 6"],
+["2h26RrZ0H6XjYzT08i","Burger Wow"],["3CQA4cPx7UDkY","Grinsen Yes"],["3HYYdvgHyoBL9an0Vj","Odd Couple Sturz"],["3KVcFEmdDl9NYaFTtx","Cast Away Feuer"],
+["3NXVpo0XoZOqx7ijNF","Milo verdächtig"],["3OBdQiXR9IC66inRZO","Skate Fail"],["3SkIJWwlISfGE","Pizza-Maske"],["3d1vYpj10Fcgo","SpongeBob Pizza"],
+["3o6nV6vtwdyvYoHWMg","Goldbergs Fail"],["3o6nV9aT2ZnGatdqH6","Hey Arnold Autoscooter"],["3o7TKBcK5ywsaeBm4U","Darryl schwankt"],["3o7TKGVVeQK1j0fbe8","Betrunken Bier","dx"],
+["3o7TKKdv1vyUpyFLva","Bier trinken","d"],["3o7TKVmIIEFg62RWk8","Bayern Tanzen","d"],["3o7TKsD5sJObtqhgze","Bayern Tanz","d"],["3o7aCPbznb29hgOgG4","Will Ferrell Schmerz"],
+["3oEduLrkS2EVPVHtLi","Montag Faceplant"],["3ohzdGGI4dHoEh0Nry","Looney Tunes Hunger"],["3orieKA26RFA4pwL2U","Hungrig Simpsons"],["3xz2BPaejjldad6bMk","Hochzeit Fail 5"],
+["3xz2BYtto0bavjpr8s","Hochzeit Fail"],["3zfox4LvqnIas","Wein einschenken"],["4A1am1JlzkJj2","Epic Fail Glückwunsch"],["4I7z3PaB3MyQbKSmW7","Große Katze Monty"],
+["4NkauRxhkaoLhqBVrX","Schnee Fail"],["4ayiIWaq2VULC","Regenbogen-Pizza"],["4qBfizkfyX9oA","Trixie Keks"],["52ZxM4GhEBB1AwskQ6","Berlin Fast Food","d"],
+["5ZZbMGV6EQANO","Pizza-Katzen"],["5ev3alRsskWA0","Om Nom isst"],["5mlfqdiGdUaVW","Katze Fail 2"],["5qPTdxtadktUTPsXxI","Peter Griffin"],
+["5tmuujxkVoAR8PZOfE","Chicago Fire Daumen"],["696Y24Ar1ktZmf7Qe3","Katze will Essen"],["6aaIRCqYyJyA8","Boom Crash"],["79mW5NqDZUb62Rcr6U","Kleiner Feigling Prost","d"],
+["7fQNlU4zHZx4s","Hilf mir"],["7rp0WSajAOqw8","Burger Cartoon"],["82x3geaY3SyYSHmYPc","Feuerwehr tanzt"],["8JCwuk8n2Y6iI","Depp trinkt"],
+["8mz69c49zcLf9Yhu21","Hunger Sturz"],["9cV0GAtXYwhQLv8TeH","Feuerwehr Dresden","d"],["9jZSZx6BGq5fq","Tier Fail WTF"],["9p3AVg1KYfgwU","Verfolgungsjagd"],
+["AHeTfHgVFPHgs","Feuer-Animation"],["ANbD1CCdA3iI8","Fry misstrauisch"],["BSbLUudIVPQz1f011h","Feuerwehr Paderborn","d"],["Bm57WGNYHSb0k","Weirdo"],
+["CoIinzv94petG","Hungriger Gosling"],["D1vnQm7XkjuqGRJ65z","Du bist böse"],["D4mFxzEEGguAM","Rolly Hunger"],["D8Np5R9JLbZt7KUbtc","Sam Hilfe","d"],
+["DfLwM9kttDFEQ","DiCaprio Prost"],["EDV30lQQ9VW5q","Martin Steak"],["EFnV02XHwNeIX65Gc7","Dicke Katze 3"],["EJmPcWDtAlQgs39jnl","Hungrig Yummy"],
+["ENRT11c9DSf51c4FnN","Böse Katze Oops"],["EQRgN1hTnd7RC","Hotdog Hund"],["F2YKAu2jIVaIo","Party Hard Shots","x"],["FZuRP6WaW5qg","Moppel-Katze schnauft"],
+["FyKfqRxVbzciY","Oliver Twist"],["FyhpCmmQEkYlq","Arrested Development Knast"],["GAIyKbdCGnWDkSvV5G","Hund isst"],["GRtSaXqmHKFAA","Bart sabbert"],
+["GbIHIHhkgfpAs","Weitsprung Fail"],["GiuIuz92E6GbsJd16C","Dicke Katze 2"],["Gl2BYl485CW4pcxXZG","Naughty or nice","x"],["GyJ8p0Um850ic","Dicke Katze Sonnenbrille"],
+["H5C8CevNMbpBqNqFjl","Affenpuppe nervös"],["HEkBXK8qnIRuo","Om nom nom"],["HFpU6ykvMDCR3NqOzW","Martin Lawrence isst"],["HGCXnrhcJuCKA","Happy Hour"],
+["HV3PuBsOqu784","Essen"],["HZLNy57L3xmpi","Faceplant Cartoon"],["Hw76qJDwtW0EwU1x1T","Dicke Katze rollt Treppe"],["ITiCeFwijhqUp9ZyJC","Feuerwehr Hamburg","d"],
+["IcifS1qG3YFlS","Klo Err"],["IgOEWPOgK6uVa","Patrick Burger-Flut"],["J5f9W48uQqv7y","Fallen"],["JNKy9CJSsCmiY","Tim und Eric flirten","x"],
+["JfLdIahamXQI0","Katze fällt"],["K6WXi03cXfpfearoto","Dirty Mind Bonk"],["K7PqIgLkFmrPNAq7of","Monster Lol"],["KGTTNpVuGVhN6","Epic Fail 2"],
+["KkkS5G3MNldja","Housewives trinken"],["L7Nnb9j5NU48g","Hund Fail 7"],["LNBapjeWZmVRHDbViR","Crash Frauen"],["LpEkd4DikUvDdorClo","Schitts verdächtig"],
+["M95vuA6klGiizvkWu3","Dicke Katze 6"],["MAW9CH0CaX26tNUGLe","Slow Motion Lol"],["MCNGWHxuI44mVvhJu5","Löschzug","d"],["MU3M6lcjgVVHizBK3z","Bier Prost","d"],
+["MVQLSJt38RKJG","Pusheen dick"],["MmiLN85agRcTtJAXE1","Alles gut"],["MnEqKdZEerEiuAYAHG","Oktoberfest Prost","d"],["MxHkbVTsmkPTEebefb","Tom Ellis flirtet"],
+["NPANyguG8Om18PzhHc","Dickes Tier mampft"],["NPF4KKIGlxJl0zyoiO","Feuerwehr Alarm","d"],["NQ3SGAMneQ920","Riesenkatze tanzt Bauch"],["Ndix8CxQFi479E5mNp","Doakes verdächtig"],
+["OCXH5jVZRkqUvYPtS0","Katze Döner","d"],["OPKZzfBWJMpNQQ6uKP","Dicke Katze"],["OvbkSLU1f2ZTwTtz85","Garfield Spaghetti"],["P9cVQuJXU1dIxRRsS9","Auto Burger"],
+["PKjTJU8MYGFfLefdHE","Döner essen","d"],["POZ61mhTVLjRrmwdDA","Austin Powers isst"],["PcnUjSEMBlpgk","Happy Hour 2"],["PkAZ1JzOu4QH6","Baymax Bauch"],
+["Q5bEJQgv4kheOhlMXs","SpongeBob verdächtig"],["QA7mCVjoqDXZCTp8zm","Bayern Prost","d"],["QLzwaviGnd2OapXYW4","Feuerwehr Willi","d"],["QYpBCwr5tBu5eBL9aX","Party Wein"],
+["QrKRsPlBdwsrm","Schildkröte Fail"],["REJ88Ck4a18IvrzavS","Beavis Feuer"],["RJiOGQL5n1toEfypA1","Rallye Crash 5"],["RhQjxUwsmNF8k","Family Guy Aufgeregt"],
+["RodyInaeK9W3EZNaoB","Bonk Cartoon"],["Rq8GXOsZLtiOQE9R9P","Pervers","x"],["SasDDqOSRclNu","Mr. Bean Hähnchen"],["TGT7oJIktYCGK2AIgt","Sesamstraße Feuer"],
+["TNfFy13UB00KupeAsL","Parks verdächtig"],["TNm494uhRQwonnOvXq","GTA-Crash"],["TPAg9OdrIrqcFDThnE","Rallye Crash 6"],["U1w5Cjg5oI6jQ9dnpJ","Hulk Hogan Was"],
+["U29yUGtUNDYpWGIGKS","Family Guy Auto"],["U5cQqUbePYzsoMIWqE","Hund Prost"],["U8lwJoe7aTF6xvi1uY","Bottoms Up"],["UAmFmzHqoknw4","Dicke Katze 5"],
+["UKHK0Smf0QruxBiWrc","Feuerwehr Rettung"],["UTkm6euG3wabBiUeQu","Nibbles"],["UgR7YDf93zK568bbwI","Burger 2"],["VCDSo9xqCJOjC","Glückliche Pizza"],
+["W6R4OGT4kYKstEkfG6","Döner Sport","d"],["WRuBiZKB6xgsS9DrFA","Affe verdächtig"],["WguK5geoDKbJVjffwD","Betrunkener Hund","x"],["WiVvi66FqT2bpym6R8","Gru verdächtig"],
+["XPbLFnAUqlyFTJOuEr","Rick und Morty Feuer"],["XtUPfbJIltIaY","Hangover Alan"],["XyJ5bNle0Gp0IOb8Cp","Katze Fail"],["Y1BJJB7k2THjuFZfUq","Dalmatiner Feuerwehr"],
+["Y1ggBG6wpBdwA","Crashtest-Dummy klopft"],["Y5RADXnAcWIvKHWPe6","Hingefallen Oops"],["YRoAscZS6DRJ3q2r7S","Flammen löschen"],["YnlDIRURz80erNGv7I","Dicke Katze Tierheim"],
+["Yp8GKgfytxQVq","Mr. Bean Kelch"],["ZFZLIuWWkr29y","Hund Fail 8"],["ZT7iz3vrS8jGccrAsG","Hase auf der Waage"],["ZgULzq4qhqafhSCBA0","Garfield Gabel"],
+["Ztw0p2RGR36E0","Bier Hunde","d"],["Zu6AATBpCeUzm","Große Katze Erfolg"],["Zw3oBUuOlDJ3W","Shaun Prost"],["a7ZxXrkxd7S9eAl1Mr","Hände reiben","x"],
+["aY1owXKEdvozmPq2Mh","Hund Fail 3"],["bPNMAMT0IzUBSWTHFK","Robbe hüpft"],["bguSbMBFt3JHa","Deep Dish Pizza"],["brYjDJ2FUjn1KL3Pzw","Verdächtig"],
+["buWJ4V8cHZg88","Downey isst"],["cOd2FsYUiRzWkaA2DX","Dicke Katze setzt sich"],["cRztNwQgvG80H1Cpdt","Rallye Crash"],["dZRlFW1sbFEpG","Bieber Essen"],
+["daLw3QnTCkDjG","Homer Magen knurrt"],["dvNhxLVlSeOGfs6C0u","Feuerwehr Löschen","d"],["eFuBP6rjqSW3rvAl69","Deutschland Trinken","d"],["eTDYLDNOpp4Yw","Faceplant 4"],
+["eg4q97C9e0ugX72ycM","Skate Crash"],["ensLRi1D2wRXMR4Gnr","Daisy flirtet"],["eroScTnthmrn2","Katze Fail 7"],["f2jmSnFFSC3vnTNshV","Betrunken Neujahr","x"],
+["f61XhrlzeCDSZ5xK8t","Looney Tunes Rennen"],["f74WDV59cP0NArh8gu","Oh nein Montag"],["fQ4neZmCTGnhC","Amerika isst"],["fSD3yT23GL0SPqEIqF","Hungriges Monster"],
+["g25vIEbSCshC8","Bar Shots","x"],["g9M5tnnQTJcgE","Faceplant 2"],["gFP318Ouj5x2U","Dicke Katze 4"],["hBSgGOTLG5yJW","Burger"],
+["hWgeMEUncId9u","Fahrrad Sturz"],["hfOpEzz3SaaiHnUCDb","Rallye Crash 4"],["htlMZqhE4QU6S1u4Va","Autocrash 2"],["iF0J8RlEJamCQ","Küchen-Fail"],
+["iH2IldVkqeLuJ7eJ0L","Haus brennt"],["iNLyKccqVmiBy","Lahme Seite"],["iZ0tdFLjCgE3Y9wAvi","Haus löschen"],["iixdMr6cSURW","One Piece isst"],
+["inAeEKMJ2CkdW","Faceplant"],["iqzp1pBJtNQUU","Katzen Sprung Fail"],["iunOJqxV98YY59QiaG","Chonker"],["iviU5Hwac8f04","Katze Fail 9"],
+["j5yCs7H372Oso6fCKO","Meryl trinkt"],["jKaFXbKyZFja0","Pooh Abendessen"],["jekB5w7Z3LliSLgPNZ","Verdächtiger Blick 2"],["jsIa0hyKnzhQRDYObr","Katze fällt von der Theke"],
+["kN8P8JcB64fja","Pizzazeit"],["kq1KSSLxmvlzG","Sexy Pizza","x"],["l0ExbsgDhgGYuL7Lq","Feuerwehrauto"],["l0MYwONBGDS7aPGOk","Frau isst Teller"],
+["l0NwOXR4jAjrCO3nO","Mario Fail"],["l14qxlCgJ0zUk","Will Smith skeptisch"],["l3ZVEg7tDBVcxfgb7n","Wasser Feuerwehr"],["li0dswKqIZNpm","Fail Schwarzweiß"],
+["lkdaFuPif9NeJ80OYQ","Benimm dich Bonk"],["m225vjrXFvEevNormi","Rafiki Pizza"],["mZQhT9Ey4tpgA","Parks trinken"],["mcCuxy50RELsI","Garfield Nermal"],
+["mf9ljFWWc8O4","Creep","x"],["mjORAqVKYtW7e","Feuer"],["nOP2M0hCXtKaIjj1TP","Einsatz Kall","d"],["nTE6nHdPzsO26VbrYh","Tyler verdächtig"],
+["ng6NcNAvohN6M","Rotwein 2"],["nrXif9YExO9EI","Krosse Krabbe brennt"],["pVkmGyqYRt4qY","Sehr dicke Katze Sofa"],["pbuHOqN3N6swg","Pizza"],
+["pfzql1rXvfHTX1ZWV0","Feuerwehr Willi 2"],["ptYLsNTabJemI","Wein trinken"],["puOukoEvH4uAw","Kenan skeptisch"],["q2OyUwyJ7ydiM","Couch Potato Katze"],
+["qgVnduXSn5Hy7DbW3r","Bonk Horni"],["quO0X65yj6gw0","Katze Fail 5"],["rMS89RxHOzjGw","Hunger-Wutanfall"],["rUtGqjHbEXQc6Xuq1H","Fast Food Burger"],
+["rW6CpFhDj9lkc","Epic Fail"],["rbT5XxnbMuyi5h2Icv","Pizza Shaq"],["rtoviz0sWLM0PXCdlK","Shots Wow","x"],["rvasIXgTtFkze","Rennen Sturz"],
+["rxFjL90VGRogAGPCnq","SpongeBob Burger"],["s3XzZtV5d0wPS","Baby Fail"],["s7LrWWLeWLumc","Platz da Unfall"],["sCBGZzD1DssidYHGOe","Office verdächtig"],
+["tEQVq5ASc6CcM","Verliebt in Pizza"],["tNIWX7mpsYcW4","Strohhalm verfehlt"],["tn0NYX7dJkM3iiztID","Autocrash 2 2"],["uX1jByJtYoy0vNkPH6","Cheers"],
+["ufMBMFr7nwN78U1WYU","Lil Jon Shots","x"],["uk746NM22sIbC","Rotwein"],["unh4MejnFUnzaCTBhW","Feuerwehr WDR","d"],["vCPKJlbLQiV0c","Abnehmen"],
+["vdbrUjzrUEGly","Homer Bauch wackelt"],["vwFuxizsjsWX0ECl0S","Stolpern Oops"],["w8xvymsStCpQA","Crash Fail 2"],["wayIsQY5itxRe","Fail My Life"],
+["wjuXuDSQU0sOfJIHS1","Ab in den Knast"],["wrBURfbZmqqXu","Franco zwinkert"],["x3Y2FMbk7BLW5n0dtE","Dicke Katze sitzt"],["xT8qAY0x5MzUaMwaYg","Snoopy trinkt"],
+["xTiQyvXUIpaTGq44F2","Hochzeit Fail 2"],["xTiTnLJ2x3f2Q6LhCw","Autocrash 3"],["xTiTnwLP3dudqPVams","AFV Epic Fail"],["yEXiCwXfpANbBFr2p4","Dicke Ratte"],
+["yYK6UetfIJoX6tpekB","Blaulicht","d"],["yfEjNtvqFBfTa","Beaker Feuer"],["yx3NnPB7lHEU0Yj6oc","Sperr mich ein"],["z5XqADIr92Dw4","Zeit zum Essen"],
+["z5lVG1hfn4GUIOaPzB","Feuerwehr Einsatz","d"],["zNsrnGVpCJMOc","Plankton Burger"]
 ];
 // Eigene Memes: Einträge aus memes.js (siehe README), ohne Build-Schritt.
 if (Array.isArray(window.GIFFIG_EXTRA)) {
@@ -575,7 +651,10 @@ const MODE_HINTS = {
   same: "Duell: Alle bekommen dasselbe GIF. Nur die Caption entscheidet.",
   mix: "Mix: Abwechselnd Klassisch und Duell."
 };
-const MAX_PLAYERS = 8, VOTE_MS = 15000, VOTE_MIN_MS = 3500, SPEC_WAIT_MS = 7000, RES_MS = 14000, GRACE_MS = 9000, HOST_WAIT_MS = 2600;
+// Online (eigener Spielserver) bis zu 16 Spieler. Im Claude-Fenster begrenzt die Raumgröße (4 KB) auf 8.
+const maxPlayers = () => (lobby && lobby.local ? 16 : 8);
+const fitBytes = () => (lobby && lobby.local ? 40000 : 3600);
+const VOTE_MS = 15000, VOTE_MIN_MS = 3500, SPEC_WAIT_MS = 7000, RES_MS = 14000, GRACE_MS = 9000, HOST_WAIT_MS = 2600;
 
 // ---------- helpers ----------
 const $ = (s) => document.querySelector(s);
@@ -717,6 +796,7 @@ async function boot() {
     canModerate = !!safe(() => user.canEdit());
     try { canWriteFame = await user.can("data.write"); } catch { canWriteFame = null; }
   }
+  $("#maxP").textContent = String(maxPlayers());
   if (lobby && lobby.local) {
     $("#openWrap").hidden = true;
     $("#footNote").textContent = "Schick deinen Freunden den Link zu dieser Seite und den Spielcode. Lass das Fenster offen, solange du Host bist.";
@@ -758,7 +838,7 @@ function renderOpenGames() {
     seen.add(h.c);
     const row = el("div", "open-game");
     const info = el("div");
-    info.append(el("b", null, h.c), document.createTextNode("  " + clampStr(p.presence.av, 4) + " " + clampStr(p.presence.name, 16) + " · " + Math.min(Number(h.n) || 1, MAX_PLAYERS) + " Spieler"));
+    info.append(el("b", null, h.c), document.createTextNode("  " + clampStr(p.presence.av, 4) + " " + clampStr(p.presence.name, 16) + " · " + Math.min(Number(h.n) || 1, maxPlayers()) + " Spieler"));
     const btn = el("button", "btn small sun", "Mitmachen"); btn.type = "button"; btn.onclick = () => enterRoom(h.c, false);
     row.append(info, btn); list.append(row);
   }
@@ -811,7 +891,7 @@ function rawPlayers() {
 }
 const asPerson = (p) => ({ pid: p.pid, name: clampStr(p.name, 16) || "Jemand", av: clampStr(p.av, 4) || "🙂", ja: p.ja, sub: p.sub, ready: !!p.ready, vote: p.vote, react: p.react, tips: p.tips, g: p.g, isMe: p.pid === myPid });
 // Spieler: die ersten 8, die nicht "nur zuschauen" gewählt haben. Alle anderen im Raum sind Zuschauer.
-function players() { return rawPlayers().filter((p) => !p.spec).slice(0, MAX_PLAYERS).map(asPerson); }
+function players() { return rawPlayers().filter((p) => !p.spec).slice(0, maxPlayers()).map(asPerson); }
 function spectators() { const ids = new Set(players().map((p) => p.pid)); return rawPlayers().filter((p) => !ids.has(p.pid)).map(asPerson); }
 const iAmSpec = () => !!game && !players().some((p) => p.pid === myPid);
 
@@ -901,12 +981,12 @@ function sanitizeG(g) {
   o.ph = ["lobby", "make", "vote", "res", "end"].includes(g.ph) ? g.ph : "lobby";
   o.seq = Number(g.seq) || 0; o.rem = Math.max(0, Math.min(Number(g.rem) || 0, 200000));
   o.R = [3, 5, 7].includes(g.R) ? g.R : 5; o.T = [45, 60, 90].includes(g.T) ? g.T : 60;
-  o.mode = MODES[g.mode] ? g.mode : "own"; o.pool = POOL_TEST[g.pool] ? g.pool : "all"; o.derb = g.derb === true; o.bon = Array.isArray(g.bon) ? g.bon.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : []; o.r = Number(g.r) || 0; o.seed = Number(g.seed) || 0;
-  o.ord = Array.isArray(g.ord) ? g.ord.filter((x) => typeof x === "string").slice(0, MAX_PLAYERS) : [];
+  o.mode = MODES[g.mode] ? g.mode : "own"; o.pool = POOL_TEST[g.pool] ? g.pool : "all"; o.derb = g.derb === true; o.bon = Array.isArray(g.bon) ? g.bon.filter((x) => typeof x === "string").slice(0, maxPlayers()) : []; o.r = Number(g.r) || 0; o.seed = Number(g.seed) || 0;
+  o.ord = Array.isArray(g.ord) ? g.ord.filter((x) => typeof x === "string").slice(0, maxPlayers()) : [];
   o.gi = safeId(g.gi);
   o.rr = [3, 5, 7].includes(g.rr) ? g.rr : 3; o.sv = g.sv !== false;
-  o.subs = Array.isArray(g.subs) ? g.subs.slice(0, MAX_PLAYERS).map(cleanMeme) : [];
-  o.sa = Array.isArray(g.sa) ? g.sa.slice(0, MAX_PLAYERS).map((x) => (Array.isArray(x) ? [Number(x[0]) || 0, Number(x[1]) || 0] : [0, 0])) : [];
+  o.subs = Array.isArray(g.subs) ? g.subs.slice(0, maxPlayers()).map(cleanMeme) : [];
+  o.sa = Array.isArray(g.sa) ? g.sa.slice(0, maxPlayers()).map((x) => (Array.isArray(x) ? [Number(x[0]) || 0, Number(x[1]) || 0] : [0, 0])) : [];
   o.top = Array.isArray(g.top) ? g.top.slice(0, 5).map((x) => ({ ...cleanMeme(x), v: Number(x && x.v) || 0, r: Number(x && x.r) || 0 })) : [];
   o.sp = Array.isArray(g.sp) ? g.sp.map((x) => Number(x) || 0) : [];
   o.vi = Math.max(0, Math.min(Number(g.vi) || 0, Math.max(0, o.subs.length - 1)));
@@ -920,7 +1000,7 @@ function sanitizeG(g) {
 function fit(g) {
   const enc = new TextEncoder();
   let size = enc.encode(JSON.stringify(g)).length, cut = 60;
-  while (size > 3600 && cut > 10) { cut -= 10; for (const s of [...g.subs, ...(g.top || [])]) { s.t = s.t.slice(0, cut); s.b = s.b.slice(0, cut); } size = enc.encode(JSON.stringify(g)).length; }
+  while (size > fitBytes() && cut > 10) { cut -= 10; for (const s of [...g.subs, ...(g.top || [])]) { s.t = s.t.slice(0, cut); s.b = s.b.slice(0, cut); } size = enc.encode(JSON.stringify(g)).length; }
   return g;
 }
 function pushG(g) {
@@ -1062,7 +1142,7 @@ function setupMake() {
 function pushSub(now) {
   clearTimeout(presTimer);
   const send = () => { if (game && G && !iAmSpec()) game.presence({ sub: { k: G.seed, g: gid(mk.g), t: mk.t, b: mk.b, s: mk.s, tp: mk.tp, bp: mk.bp }, ready: mk.ready }).catch(() => {}); };
-  if (now) send(); else presTimer = setTimeout(send, 350);
+  if (now) send(); else presTimer = setTimeout(send, Math.max(350, Math.min(2800, players().length * 160)));
 }
 function wireEditor(prefix, state, onChange) {
   const top = $(prefix.top), bot = $(prefix.bot), seg = $(prefix.style);
@@ -1109,6 +1189,15 @@ function drawPreview() {
   $("#posHint").hidden = mk.s === "p" || mk.ready; $("#posReset").hidden = !(mk.tp || mk.bp) || mk.s === "p" || mk.ready;
 }
 $("#posReset").onclick = () => { mk.tp = mk.bp = null; drawPreview(); pushSub(false); };
+// Kurz nachschauen, solange der Knopf gedrückt bleibt
+{
+  const peek = (on) => $("#pMake").classList.toggle("peek", on), btn = $("#peekBtn");
+  btn.addEventListener("pointerdown", (e) => { e.preventDefault(); peek(true); });
+  for (const ev of ["pointerup", "pointerleave", "pointercancel", "blur"]) btn.addEventListener(ev, () => peek(false));
+  btn.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); peek(true); } });
+  btn.addEventListener("keyup", () => peek(false));
+  btn.addEventListener("contextmenu", (e) => e.preventDefault());
+}
 
 // ---------- client: voting ----------
 let myVoteSeq = -1, myVote = 0;
@@ -1256,6 +1345,8 @@ function renderMake(pl, spectator) {
     $("#opts").hidden = duel;
     drawPreview();
   }
+  $("#pMake").classList.toggle("submitted", !!mk.ready); if (!mk.ready) $("#pMake").classList.remove("peek");
+  $("#blurNote").hidden = !mk.ready; $("#peekBtn").hidden = !mk.ready;
   const lock = mk.ready || spectator;
   $("#topInput").disabled = lock; $("#botInput").disabled = lock;
   for (const b of $("#segStyle").querySelectorAll("button")) { b.disabled = lock; b.setAttribute("aria-pressed", String(b.dataset.s === mk.s)); }

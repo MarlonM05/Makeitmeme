@@ -8,8 +8,8 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
 
 ## Features
 
-- Über 270 GIFs und Bilder:
-  - 120 internationale Reaktions-GIFs von [GIPHY](https://giphy.com) (WTF, Bruh, Cringe, Fails, Tiere …)
+- Über 500 GIFs und Bilder:
+  - rund 400 internationale Reaktions-GIFs von [GIPHY](https://giphy.com) (WTF, Bruh, Cringe, Fails, Crashs, Essen, Trinken, Feuerwehr, dicke Tiere, Creepy …)
   - 55 deutsche Memes (Bernd das Brot, Heinz Comedy, Dittsche, Tagesschau, „Bruder muss los“, Deutsche Bahn …)
   - 81 klassische Meme-Vorlagen von [Imgflip](https://imgflip.com/memetemplates) (Drake, This Is Fine, Distracted Boyfriend …)
   - Derbe Memes (Mittelfinger, „Fuck you“, „Scheiß drauf“ …) nur, wenn der Host „Derbe Memes (ab 16)“ einschaltet
@@ -17,9 +17,10 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
 - Modi: Klassisch (jeder eigene GIFs), Duell (alle dasselbe GIF), Mix
 - Neu-Würfe pro Runde einstellbar (3, 5 oder 7), 3 Textstile, „💡 Idee“-Knopf mit deutschen Meme-Situationen (derbe Ideen bei Derb-Modus)
 - Rundensieger bekommen +2 Bonuspunkte, Podium und Meme des Spiels am Ende
+- Nach dem Abschicken ist dein Meme unscharf, damit niemand mitliest; mit „👁 Kurz ansehen“ (gedrückt halten) schaust du nach, mit „Doch noch ändern“ kommst du jederzeit zurück
 - Einladungslink (`…/Makeitmeme/#CODE`) füllt den Code automatisch aus
 - Automatisches Neuverbinden, wenn die Verbindung kurz weg ist; Bildschirm bleibt im Spiel an
-- Soundeffekte (abschaltbar), fliegende Emoji-Reaktionen, bis zu 8 Spieler
+- Soundeffekte (abschaltbar), fliegende Emoji-Reaktionen, bis zu 16 Spieler (plus beliebig viele Zuschauer)
 - Ruhmeshalle für die besten Memes, Übungsmodus für alleine
 
 ## Wie das Mehrspielen funktioniert
