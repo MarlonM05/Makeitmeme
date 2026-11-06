@@ -8,9 +8,9 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
 
 ## Features
 
-- Über 500 GIFs und Bilder:
-  - rund 400 internationale Reaktions-GIFs von [GIPHY](https://giphy.com) (WTF, Bruh, Cringe, Fails, Crashs, Essen, Trinken, Feuerwehr, dicke Tiere, Creepy …)
-  - 55 deutsche Memes (Bernd das Brot, Heinz Comedy, Dittsche, Tagesschau, „Bruder muss los“, Deutsche Bahn …)
+- Über 700 GIFs und Bilder:
+  - rund 550 internationale Reaktions-GIFs von [GIPHY](https://giphy.com) (WTF, Bruh, Cringe, Fails, Crashs, Essen, Trinken, Feuerwehr, dicke Tiere, Meerestiere, Kulturen, Creepy …)
+  - rund 150 deutsche Memes und Regionales (Norddeutschland: Moin, Hafen, Möwen, Robben; Karneval, Bayern, Schwaben, Ruhrpott, Bernd das Brot, Heinz Comedy, Dittsche, Tagesschau, „Bruder muss los“, Deutsche Bahn …)
   - 81 klassische Meme-Vorlagen von [Imgflip](https://imgflip.com/memetemplates) (Drake, This Is Fine, Distracted Boyfriend …)
   - Derbe Memes (Mittelfinger, „Fuck you“, „Scheiß drauf“ …) nur, wenn der Host „Derbe Memes (ab 16)“ einschaltet
 - Topf wählbar: Alle, nur Deutsch, nur International oder nur Vorlagen
