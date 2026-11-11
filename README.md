@@ -8,8 +8,8 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
 
 ## Features
 
-- Über 700 GIFs und Bilder:
-  - rund 550 internationale Reaktions-GIFs von [GIPHY](https://giphy.com) (WTF, Bruh, Cringe, Fails, Crashs, Essen, Trinken, Feuerwehr, dicke Tiere, Meerestiere, Kulturen, Creepy …)
+- Über 800 GIFs und Bilder:
+  - rund 650 internationale Reaktions-GIFs von [GIPHY](https://giphy.com) (WTF, Bruh, Cringe, Fails, Crashs, Essen, Trinken, Feuerwehr, dicke Tiere, Meerestiere, Kulturen, lustige Rentner, besoffen, Blasmusik, Creepy …)
   - rund 150 deutsche Memes und Regionales (Norddeutschland: Moin, Hafen, Möwen, Robben; Karneval, Bayern, Schwaben, Ruhrpott, Bernd das Brot, Heinz Comedy, Dittsche, Tagesschau, „Bruder muss los“, Deutsche Bahn …)
   - 81 klassische Meme-Vorlagen von [Imgflip](https://imgflip.com/memetemplates) (Drake, This Is Fine, Distracted Boyfriend …)
   - Derbe Memes (Mittelfinger, „Fuck you“, „Scheiß drauf“ …) nur, wenn der Host „Derbe Memes (ab 16)“ einschaltet
@@ -18,6 +18,8 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
 - Neu-Würfe pro Runde einstellbar (3, 5 oder 7), 3 Textstile, „💡 Idee“-Knopf mit deutschen Meme-Situationen (derbe Ideen bei Derb-Modus)
 - Rundensieger bekommen +2 Bonuspunkte, Podium und Meme des Spiels am Ende
 - Nach dem Abschicken ist dein Meme unscharf, damit niemand mitliest; mit „👁 Kurz ansehen“ (gedrückt halten) schaust du nach, mit „Doch noch ändern“ kommst du jederzeit zurück
+- Zuschauer: wechseln oben im Raum jederzeit mit einem Knopf zwischen Mitspielen und Zuschauen (auch der Host). Beim Bauen sehen sie jeden Spieler mit dem gewählten GIF, aber ohne Caption, und können Tipps an alle oder nur an einen Spieler schicken
+- 💬 Chat für alle im Raum (Spieler und Zuschauer), mit Zähler für ungelesene Nachrichten
 - Einladungslink (`…/Makeitmeme/#CODE`) füllt den Code automatisch aus
 - Automatisches Neuverbinden, wenn die Verbindung kurz weg ist; Bildschirm bleibt im Spiel an
 - Soundeffekte (abschaltbar), fliegende Emoji-Reaktionen, bis zu 16 Spieler (plus beliebig viele Zuschauer)

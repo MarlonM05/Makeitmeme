@@ -185,6 +185,25 @@ footer a { color: var(--sun); }
 .tip .who { font-size: 12px; color: var(--muted); font-weight: 700; }
 .tip button { border: 2px solid var(--ink); border-radius: 999px; background: var(--sun); font-weight: 800; font-size: 12px; padding: 2px 10px; min-height: 28px; }
 .pl.spec { background: #dfe4ff; }
+.badge { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; margin-left: 6px; border-radius: 999px; background: var(--pink); border: 2px solid var(--ink); font-size: 12px; font-weight: 800; }
+.watch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.wcard { border: 3px solid var(--ink); border-radius: 12px; background: #fff; box-shadow: 3px 3px 0 var(--ink); padding: 6px; display: flex; flex-direction: column; gap: 4px; align-items: stretch; text-align: left; min-width: 0; }
+.wcard[aria-pressed=true] { outline: 4px solid var(--pink); outline-offset: 2px; background: var(--sun); }
+.wcard .thumb { aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: var(--ink); display: grid; place-items: center; color: var(--paper); font-size: 12px; }
+.wcard .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wcard .nm { font-weight: 800; font-size: 14px; overflow-wrap: anywhere; line-height: 1.15; }
+.wcard .st { font-size: 12px; color: var(--muted); font-weight: 700; }
+.wcard .st.ok { color: #0f8a55; }
+.chat { position: fixed; right: max(12px, env(safe-area-inset-right, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); width: min(360px, calc(100% - 24px)); max-height: 42vh; z-index: 70;
+  background: var(--paper); border: 3px solid var(--ink); border-radius: 16px; box-shadow: var(--shadow-lg); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.chat h3 { font-size: 18px; }
+body.chat-open { padding-bottom: calc(44vh + 24px); }
+.chat-log { overflow-y: auto; min-height: 90px; flex: 1 1 auto; background: #fff; border: 2.5px solid var(--ink); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; overscroll-behavior: contain; }
+.chat-log .msg { overflow-wrap: anywhere; line-height: 1.3; }
+.chat-log .msg b { font-weight: 800; }
+.chat-log .msg.me { text-align: right; }
+.chat-log .msg .sp { font-size: 11px; color: var(--muted); font-weight: 700; margin-left: 4px; }
+.chat-log .empty { margin: auto; }
 #pMake.submitted:not(.peek) :is(.preview, #opts, #topInput, #botInput, #tipsBox, .count) { filter: blur(14px); user-select: none; -webkit-user-select: none; pointer-events: none; }
 #pMake .preview, #pMake #opts, #pMake #topInput, #pMake #botInput { transition: filter .2s; }
 .blur-note { background: var(--paper); border: 3px solid var(--ink); border-radius: 12px; padding: 8px 12px; font-size: 14px; text-align: center; box-shadow: var(--shadow); }
@@ -213,7 +232,7 @@ footer a { color: var(--sun); }
 <div class="wrap">
   <header class="brand">
     <h1 class="logo">Gif<span>fig</span></h1>
-    <p class="tag">Das Meme-Partyspiel mit über 700 <b>GIFs und Meme-Vorlagen</b>, international, deutsch und auf Wunsch richtig derb. Schreib die lustigste Caption, deine Freunde stimmen ab.</p>
+    <p class="tag">Das Meme-Partyspiel mit über 800 <b>GIFs und Meme-Vorlagen</b>, international, deutsch und auf Wunsch richtig derb. Schreib die lustigste Caption, deine Freunde stimmen ab.</p>
   </header>
 
   <!-- HOME -->
@@ -252,7 +271,7 @@ footer a { color: var(--sun); }
           <li><span>Alle Memes laufen anonym durch. Ihr bewertet von 😐 bis 💀. Der Rundensieger bekommt <b>+2 Bonus</b>.</span></li>
           <li><span>Am Ende siehst du die <b>5 besten Memes</b>, kannst alle Memes nochmal durchblättern und als Bild <b>speichern</b>.</span></li>
         </ol>
-        <p class="hint">Modi: <b>Klassisch</b> (jeder eigenes GIF), <b>Duell</b> (alle dasselbe GIF), <b>Mix</b> (abwechselnd). Topf: alle, nur deutsche Memes (Bernd das Brot, Heinz, Dittsche …), nur internationale oder klassische Meme-Vorlagen (Drake, This Is Fine …). Derbe Memes (ab 16) schaltet der Host extra an. Kein Plan? Drück auf 💡 Idee.<br><b>Zuschauer:</b> Wer „nur zuschauen“ wählt, gibt den Spielern beim Bauen Tipps und stimmt bei den Memes mit ab. Die Ergebnisse sieht er erst, wenn abgestimmt wird.</p>
+        <p class="hint">Modi: <b>Klassisch</b> (jeder eigenes GIF), <b>Duell</b> (alle dasselbe GIF), <b>Mix</b> (abwechselnd). Topf: alle, nur deutsche Memes (Bernd das Brot, Heinz, Dittsche …), nur internationale oder klassische Meme-Vorlagen (Drake, This Is Fine …). Derbe Memes (ab 16) schaltet der Host extra an. Kein Plan? Drück auf 💡 Idee.<br><b>Zuschauer:</b> Wer „nur zuschauen“ wählt, sieht beim Bauen, welches GIF jeder gewählt hat (aber nicht die Caption), gibt Tipps und stimmt bei den Memes mit ab. Die Ergebnisse sieht er erst, wenn abgestimmt wird. Oben im Raum wechselst du jederzeit zwischen Mitspielen und Zuschauen, und im 💬 Chat schreiben alle zusammen.</p>
         <button class="linkish" id="soloBtn" type="button">Alleine üben →</button>
       </section>
     </div>
@@ -275,6 +294,8 @@ footer a { color: var(--sun); }
           <button class="btn small" id="shareBtn" type="button" hidden>Teilen</button></div>
         <button class="btn small" id="leaveBtn" type="button">Verlassen</button>
         <button class="btn small" id="specLinkBtn" type="button" hidden>👀 Zuschauer-Link</button>
+        <button class="btn small" id="roleBtn" type="button" title="Zwischen Mitspielen und Zuschauen wechseln">👀 Zuschauen</button>
+        <button class="btn small" id="chatBtn" type="button" aria-expanded="false" aria-controls="chatBox">💬 Chat<span class="badge" id="chatBadge" hidden>0</span></button>
         <button class="btn small" id="muteBtn" type="button" aria-label="Ton an oder aus">🔊</button>
       </div>
       <div class="timer" id="timer" hidden>60</div>
@@ -339,9 +360,11 @@ footer a { color: var(--sun); }
     <section id="pWatch" class="sticker stack" hidden>
       <h3 style="font-size:24px">Die Spieler bauen gerade ihre Memes</h3>
       <p class="hint" id="watchStatus"></p>
-      <p class="hint">Die Ergebnisse siehst du erst, wenn abgestimmt wird. Bis dahin kannst du den Spielern einen Tipp geben, zum Beispiel eine Caption-Idee.</p>
+      <p class="hint">Du siehst, welches GIF jeder gewählt hat, aber nicht, was er schreibt. Tipp auf einen Spieler, dann geht dein Tipp nur an ihn. Die Ergebnisse siehst du erst bei der Abstimmung. Zum Quatschen gibt es oben den 💬 Chat.</p>
+      <div class="watch-grid" id="watchGrid"></div>
+      <div class="label" id="tipTo">Tipp an: alle Spieler</div>
       <form class="row" id="tipForm" autocomplete="off">
-        <input type="text" id="tipInput" maxlength="60" placeholder="Dein Tipp an die Spieler …" aria-label="Tipp an die Spieler" style="flex:1 1 220px;width:auto">
+        <input type="text" id="tipInput" maxlength="60" placeholder="Dein Tipp …" aria-label="Tipp an die Spieler" style="flex:1 1 220px;width:auto">
         <button class="btn mint" id="tipBtn" type="submit">Tipp senden</button>
       </form>
       <p class="hint" id="tipHint"></p>
@@ -376,6 +399,16 @@ footer a { color: var(--sun); }
       </div>
     </section>
   </main>
+
+  <!-- CHAT (für alle im Raum) -->
+  <section class="chat" id="chatBox" role="dialog" aria-label="Chat" hidden>
+    <div class="row" style="justify-content:space-between"><h3>💬 Chat für alle</h3><button class="btn small" id="chatClose" type="button">Schließen ✕</button></div>
+    <div class="chat-log" id="chatLog" aria-live="polite"></div>
+    <form class="row" id="chatForm" autocomplete="off">
+      <input type="text" id="chatInput" maxlength="100" placeholder="Nachricht …" aria-label="Chat-Nachricht" style="flex:1 1 150px;width:auto">
+      <button class="btn mint small" type="submit">Senden</button>
+    </form>
+  </section>
 
   <!-- SOLO -->
   <main id="solo" class="stack" hidden>
@@ -621,7 +654,35 @@ const GIFS = [
 ["l0HlHJGHe3yAMhdQY","Oktopus Ziegel"],["l4FB6rJP7S6wxJvKU","SpongeBob zwinkert"],["q36refUWdbIHK","Matrose"],["rUalofjEvQ1RnNcVtT","Fischer"],
 ["swjYj3eGpAOdcRrcec","Pinguin Vibe"],["tCV0TFG46bpcbvKBxm","Großer Fang"],["tsMAPZ96MHPlvP6OtE","Pinguin tanzt 2"],["u3Cq2roy2OdL35QBxK","Moin Heimat","d"],
 ["uDmPmtHOLd0TwBa9lF","Karotten-Klaps","x"],["ui1hpJSyBDWlG","Michael Scott zwinkert"],["v8pACm7D82olW","Trickfilm Wink"],["xA0cSjwwpfbhRbyidM","Pinguin Furz"],
-["xbmsybnBjSyXe","Walross"],["xkG67UPTlATOCtAfd6","Steve Brule zwinkert"],["ytILRzHMybInQPtsWc","Pinguin tanzt 3"],["yvYYEPcLKs0jdYz6l6","Sabber Capy"]
+["xbmsybnBjSyXe","Walross"],["xkG67UPTlATOCtAfd6","Steve Brule zwinkert"],["ytILRzHMybInQPtsWc","Pinguin tanzt 3"],["yvYYEPcLKs0jdYz6l6","Sabber Capy"],
+["11KibXvWPlnsOY","Besoffen Fail 2"],["149EV8wlV75ZQc","Piña Colada"],["2GrNmaGsI2ybu","Lustige Tiere"],["2WZjCWOI12jIc","Feuerwehrleute des Tages","d"],
+["33zX3zllJBGY8","Elefantenbaby rennt"],["3J4iW2ny9L39b9mPao","Brass Band"],["3o7TKBJT2KiGyrOUEg","Hüftstoß Pop","x"],["3o7btXyWGLpkoiCA48","Tim Heidecker nickt weg"],
+["3oxOCdmfrrnkNacsJa","SpongeBob Marschkapelle"],["3rgXBQIDHkFNniTNRu","Omas tanzen in der Küche"],["3zsW8tCl4TW8ai0f9h","Besoffen 4 20"],["50rJushu3URtS","Oma Deal With It"],
+["5EFvvSY5vx3EuVoEzT","Tuba"],["6UAk2UiNKDBBQn5NUX","Betty White Shimmy"],["9A5335UrvSDuHHkWdr","Blaskapelle Hallo","d"],["9JgsAvfxZE1xagiciN","Marschkapelle PBS"],
+["9c9tE5Pr0qElW","Opa Boomer 2"],["9u1nYHZYh1rzvp0woO","Trauriger Dirigent"],["9vqNgOgUz2j9MaVMjj","Meltdown"],["BgBf6pW9qOgQU","Maus auf dem Kopf"],
+["Br6uGp993cGZy","Hump Day 2","x"],["D8cddPBbHZ7Ec","Igel Akkordeon"],["DgzKulDIBDc88","Hüftstoß","x"],["EoXJra2wJMP1C","Opa tanzt"],
+["GFHJXPCoVQEec","Katze schaut Schwanz"],["HobWVQHYzD0fC","Nasim tanzt","x"],["IM6bGIGxNrJS3mX5k6","Opa Dexter"],["J4OdlAeCRtsGY","Hump Day","x"],
+["KEM3W3PN4LNoaMSaBy","Alien Hüftschwung","x"],["L9AqjFr6H4iaY","Schlafendes Schwein"],["LG3N5tk9RZT3OhIpsZ","Oma lächelt"],["LlRVisNzLNn5aExyD7","Alter Mann Comedy"],
+["MEjjxknS7VtjZyvFqc","Hund humpt"],["Mtf4QkjajcVnFlnKss","Lustiger Hund"],["MyxaayUWAZFSM","Lamm"],["N8Lfh9gWcWYIU","Jedi Tier"],
+["O41ga2Mdxb6ruvtai4","Fröhliche Kapelle"],["O6cLcNr9HD6yk","Statler und Waldorf"],["OKLB4z1zF3cUjGeEuV","Singende Katzen"],["PidhSZjIQOWNyOxwCb","Dirigent Sesamstraße"],
+["QkmZmtsFQvyZa","Opa im Treppenlift"],["QuePsg64fag5klv6uV","Wurm-Tanz","x"],["QxRc8rXFB7jmHqvcNq","Opa Boomer"],["Qxl6LilXMNIejsNFaz","Rock On Oma"],
+["RC9XehKCzSOis","Alte Leute"],["RJaUOmpBQAoE4RuWnj","Strohhalm suchen"],["RLi2oeVZiVkE8","Wasted 2"],["TKpA1Ew5zKpsNv8cLY","Oompah Band"],
+["U6dw7grjyMTpmiXV25","Besoffen und dumm"],["UFN6Uw2nLttok","Besoffen Crash"],["UmNb3MXKb1OsRzug5v","Bichon Frisé"],["UrQ9TaDOY9T5nCQUMQ","Lachende Oma"],
+["VJH5NhHkLqZgMIg6IF","Katze Grimasse"],["W5rfDvofwyNb4hCWfn","Glasige Augen"],["W9AKhbn5ojBiAotoj9","Partyband Stimmung","d"],["aFtSGmJYBQ0Nxk5zrO","Singende Katzen 2"],
+["ayQTUuGV5oMMz7Ri38","Oma Komm her"],["dyRhCAXGENobdYucFD","Grumpy Old Man"],["ewelN8qzxQqNG","Gym Fail"],["fqtyYcXoDV0X6ss8Mf","Opa Simpson Wolke"],
+["gdZQuPGVd63TahrW6S","Feuerwehr Power","d"],["hTjXT5QBsEIx6BXR8l","Marching Band Tanz"],["hZrMIVnH5DoFDzrztg","Hausmeister Krause","d"],["jrojpA10EJLFYawEB2","Rettung Hallo"],
+["kl9aZH7ojT5hfuVvao","Mood Lol"],["kreQ1pqlSzftm","Dackel auf Skateboard"],["l0IyajjbNiRvCr7RC","Opa im besten Alter"],["l0MYCvBUpJ400vBkc","Trachtenmusik","d"],
+["l2JIiVL9MjEtRc5tm","Jake Peralta Hüfte","x"],["l2JJO0D0JpgoU5OTe","Opa Strohhut"],["l2Sqc3z3QGB2MPxNS","Bob's Burgers Hüftstoß","x"],["l2YWkVsNpPeOTEMGA","Gaga Hüftstoß","x"],
+["l4FGnrNJ3aYNX3dug","Marschkapelle Fail"],["l4KibWpBGWchSqCRy","Oma verliert Gebiss"],["lXiRnORDz0JVPZcXu","Bär mit Akkordeon"],["pg3D0DkUGxBug","Lustiges Tier"],
+["qa0xvSMNC3Ltm","Simpsons Party","x"],["satnVmCFv0YA8","Rocky Horror Tanz","x"],["uuBoWq6YrAghi","Senioren"],["10A06pOVcpo6hW","Fallen 2"],
+["1rzHSymOFmy0Do1Mb0","Fette Katze glücklich"],["3OWYIUc64PFXG","Tier Fail 2"],["3o85xIFhf1yNpGyjNC","Alte Frau tanzt"],["3ohc1bM0BK2jx2iHSg","Jack Black tanzt"],
+["7YMMzcyf5Ak3C","Ausrutscher"],["7vJdtXYMOkqQ0","Welpe Fail"],["7zLGKPOnFIxSo","Bauchwackeln"],["8iR3qjwWnpurm","Omas tanzen zu dritt"],
+["APEwkvfZ7ANnErByo5","Sturz und Aufstehen"],["AbbAxpav0lWjUEnl89","Sommer Fail"],["ELPtC7diADV2o","Seekuh Fail"],["GFNMfmWXZEAEg","Winter Fail"],
+["IEmv6lFswTAWegiFmS","Tanzender Mann"],["MDlWsK8JsiqyC9xtnM","Ausrutscher 2"],["N3IvZ9yxUde3m","Bauch greifen"],["Ok4HaWlYrewuY","Tier Fail 4"],
+["RMk32NEpSgcIoljwwz","Oma tanzt 2"],["Xq2HjwfDH976E","Oma tanzt 3"],["hljrQjzJ1oBCcBOj0C","Oops Sturz"],["hvddE5FuoKdGEDljud","Hund schläft"],
+["l0Iy8jOJ7YqzW49Ow","Rock Fail"],["lQDSvhAfq1dbRCvRW2","Feuerwehr flirtet","d"],["pcJpEZuaseCSo5xaG7","Dicker Bauch"],["phFa69xSSy0CWz40XH","Ehemann rutscht die Treppe runter"],
+["qLE3u1igNgyRi","Nan"],["qwLIYdrpmg4Vy","Tier Fail 3"],["r00LEeXVOt0xG","Sturz im Supermarkt"],["wTm5MAkBaBRT2","Hase Fail"],
+["xTiTnj8hjcpWrryZQQ","Katzen Fails"]
 ];
 // Eigene Memes: Einträge aus memes.js (siehe README), ohne Build-Schritt.
 if (Array.isArray(window.GIFFIG_EXTRA)) {
@@ -961,7 +1022,7 @@ async function enterRoom(c, create, keep, spec) {
     return "error";
   }
   $("#homeErr").textContent = "";
-  code = c; joinedAt = Date.now(); myJa = joinedAt; G = null; lastG = null; amHost = false; seenSeq = -1; builtKey = "";
+  code = c; joinedAt = Date.now(); myJa = joinedAt; G = null; lastG = null; amHost = false; seenSeq = -1; builtKey = ""; watchKey = ""; tipTarget = ""; chatReset(); chatOpen = false;
   if (!keep) resetMake();
   $("#codeText").textContent = code;
   mySpec = !!spec && !create;
@@ -997,7 +1058,7 @@ async function onRoomLost() {
 }
 
 async function leaveRoom() {
-  const g = game; game = null; code = null; G = null; amHost = false;
+  const g = game; game = null; code = null; G = null; amHost = false; chatOpen = false; renderChat();
   keepAwake(false);
   safe(() => history.replaceState(null, "", location.pathname + location.search));
   if (g) await g.leave().catch(() => {});
@@ -1154,7 +1215,7 @@ function topFromHistory(n) {
 // ---------- client: peers & reactions ----------
 const lastReact = new Map(); let reactBaseline = false;
 function onGamePeers() {
-  resolveHost();
+  resolveHost(); scanChat();
   // flying reactions from others
   for (const p of rawPlayers()) {
     const r = p.react; if (!r || typeof r !== "object") continue;
@@ -1269,16 +1330,18 @@ function tipsNow() {  // alle Tipps dieser Bauphase, neueste zuletzt
   if (!G || G.ph !== "make") return [];
   const out = [];
   for (const p of spectators()) for (const t of Array.isArray(p.tips) ? p.tips : []) {
-    if (t && t.k === G.seed && typeof t.t === "string") out.push({ by: p.name, av: p.av, mine: p.isMe, t: clampStr(t.t, 60), at: Number(t.at) || 0 });
+    if (t && t.k === G.seed && typeof t.t === "string") out.push({ by: p.name, av: p.av, mine: p.isMe, t: clampStr(t.t, 60), at: Number(t.at) || 0, p: typeof t.p === "string" && /^[a-z0-9]{8}$/.test(t.p) ? t.p : "" });
   }
   return out.sort((a, b) => a.at - b.at).slice(-8);
 }
+let tipTarget = "";  // Spieler-ID, an die der nächste Tipp geht ("" = alle)
 function sendTip(text) {
   text = String(text || "").replace(/\s+/g, " ").trim().slice(0, 60);
   if (!text || !G || G.ph !== "make" || !game || !iAmSpec()) return false;
   if (myTips.filter((t) => t.k === G.seed).length >= 5) { toast("Das waren schon 5 Tipps in dieser Runde."); return false; }
   if (Date.now() - lastTipAt < 2500) { toast("Kurz warten, dann der nächste Tipp."); return false; }
-  lastTipAt = Date.now(); myTips = [...myTips.filter((t) => t.k === G.seed), { k: G.seed, t: text, at: Date.now() }].slice(-5);
+  lastTipAt = Date.now(); const tgt = tipTarget && players().some((x) => x.pid === tipTarget) ? tipTarget : "";
+  myTips = [...myTips.filter((t) => t.k === G.seed), { k: G.seed, t: text, at: Date.now(), ...(tgt ? { p: tgt } : {}) }].slice(-5);
   game.presence({ tips: myTips }).catch(() => {});
   render(); return true;
 }
@@ -1288,27 +1351,116 @@ function useTip(text, which) {
   inp.value = text; inp.dispatchEvent(new Event("input")); inp.focus();
 }
 function renderTips() {  // für Spieler: Tipps des Publikums neben dem Bauen
-  const tips = tipsNow(), box = $("#tipsBox"); box.hidden = !tips.length;
+  const tips = tipsNow().filter((t) => !t.p || t.p === myPid), box = $("#tipsBox"); box.hidden = !tips.length;
   if (!tips.length) { box.dataset.sig = ""; return; }
   const sig = tips.map((t) => t.at + t.t).join("|") + mk.ready;
   if (box.dataset.sig === sig) return; box.dataset.sig = sig;
   const list = $("#tipsList"); list.textContent = "";
   for (const t of tips.slice().reverse()) {
-    const d = el("div", "tip"); d.append(el("q", null, t.t), el("span", "who", t.av + " " + t.by));
+    const d = el("div", "tip"); d.append(el("q", null, t.t), el("span", "who", t.av + " " + t.by + (t.p ? " (nur für dich)" : "")));
     for (const [w, label] of [["t", "oben"], ["b", "unten"]]) { const b = el("button", null, "→ " + label); b.type = "button"; b.disabled = mk.ready; b.onclick = () => useTip(t.t, w); d.append(b); }
     list.append(d);
   }
   if (tips.length > seenTips && seenTips >= 0) { toast("💡 Neuer Tipp vom Publikum"); sfx("pop"); }
   seenTips = tips.length;
 }
-function renderWatch(pl) {  // für Zuschauer: nur der Stand, keine Ergebnisse
+let watchKey = "";
+function renderWatch(pl) {  // für Zuschauer: welches GIF jeder gewählt hat, aber nicht die Caption, und keine Ergebnisse
   const readyN = pl.filter((p) => p.ready && p.sub && p.sub.k === G.seed).length;
   $("#watchStatus").textContent = readyN + " von " + pl.length + " Spielern sind fertig.";
+  if (tipTarget && !pl.some((p) => p.pid === tipTarget)) tipTarget = "";
+  const cards = pl.map((p) => {
+    const mine = p.sub && typeof p.sub === "object" && p.sub.k === G.seed;
+    const id = G.gi ? G.gi : mine ? safeId(p.sub.g) : "";
+    return { p, id, ready: !!(mine && p.ready) };
+  });
+  const sig = G.seed + "|" + tipTarget + "|" + cards.map((c) => c.p.pid + c.p.name + c.id + c.ready).join(",");
+  if (watchKey !== sig) {
+    watchKey = sig;
+    const grid = $("#watchGrid"); grid.textContent = "";
+    for (const c of cards) {
+      const b = el("button", "wcard"); b.type = "button"; b.setAttribute("aria-pressed", String(tipTarget === c.p.pid));
+      const th = el("div", "thumb");
+      if (c.id) { const img = el("img"); img.src = imgSrc(c.id); img.alt = ""; img.loading = "lazy"; th.append(img); } else th.textContent = "wählt noch …";
+      b.append(th, el("div", "nm", c.p.av + " " + c.p.name), el("div", "st" + (c.ready ? " ok" : ""), c.ready ? "✓ fertig" : "baut …"));
+      b.onclick = () => { tipTarget = tipTarget === c.p.pid ? "" : c.p.pid; watchKey = ""; renderWatch(players()); };
+      grid.append(b);
+    }
+  }
+  const tp = pl.find((p) => p.pid === tipTarget);
+  $("#tipTo").textContent = tp ? "Tipp an: " + tp.av + " " + tp.name + " (nochmal tippen = alle)" : "Tipp an: alle Spieler (Spieler antippen für einen einzelnen)";
   const tips = tipsNow(), box = $("#watchTips"), list = $("#watchTipsList"); box.hidden = !tips.length; list.textContent = "";
-  for (const t of tips) { const d = el("div", "tip"); d.append(el("q", null, t.t), el("span", "who", t.mine ? "von dir" : t.av + " " + t.by)); list.append(d); }
+  for (const t of tips) { const d = el("div", "tip"); const to = t.p ? (pl.find((x) => x.pid === t.p) || { av: "", name: "?" }) : null; d.append(el("q", null, t.t), el("span", "who", (t.mine ? "von dir" : t.av + " " + t.by) + (to ? " → " + to.av + " " + to.name : ""))); list.append(d); }
   const left = 5 - myTips.filter((t) => t.k === G.seed).length;
   $("#tipBtn").disabled = left <= 0; $("#tipHint").textContent = left > 0 ? "Noch " + left + " Tipp" + (left === 1 ? "" : "s") + " in dieser Runde." : "Du hast alle Tipps dieser Runde verbraucht.";
 }
+
+// ---------- Rolle wechseln: Mitspielen <-> Zuschauen ----------
+async function setRole(toSpec) {
+  if (!game) return;
+  if (!toSpec) {
+    if (players().length >= maxPlayers()) { toast("Das Spiel ist voll (" + maxPlayers() + " Spieler)."); return; }
+    mySpec = false; myJa = Date.now(); myTips = [];
+    await game.presence({ spec: false, ja: myJa, tips: [], vote: null }).catch(() => {});
+    toast("Du spielst jetzt mit.");
+    if (G && G.ph === "make" && mk && mk.key === G.seed) pushSub(true);
+  } else {
+    mySpec = true; tipTarget = "";
+    await game.presence({ spec: true, sub: null, ready: false, vote: null }).catch(() => {});
+    toast("Du schaust jetzt zu.");
+  }
+  builtKey = ""; watchKey = "";
+}
+$("#roleBtn").onclick = () => setRole(!iAmSpec());
+
+// ---------- Chat für alle ----------
+const chatSeen = new Set(); let chatLog = [], chatOpen = false, chatUnread = 0, myChat = [], lastChatAt = 0;
+const chatKeep = () => (lobby && lobby.local ? 3 : 1), chatLen = () => (lobby && lobby.local ? 100 : 50);
+function chatReset() { chatSeen.clear(); chatLog = []; myChat = []; chatUnread = 0; renderChat(); }
+function scanChat() {
+  if (!game) return;
+  let added = false;
+  for (const p of rawPlayers()) {
+    for (const m of Array.isArray(p.ch) ? p.ch : []) {
+      if (!m || typeof m.t !== "string") continue;
+      const n = Number(m.n) || 0, key = p.pid + ":" + n; if (!n || chatSeen.has(key)) continue;
+      chatSeen.add(key);
+      if (n < joinedAt - 30000) continue;  // alte Nachrichten von vor dem Beitritt nicht nachladen
+      const mine = p.pid === myPid;
+      chatLog.push({ n, by: clampStr(p.name, 16) || "Jemand", av: clampStr(p.av, 4) || "🙂", t: clampStr(m.t, 100), mine, spec: !players().some((x) => x.pid === p.pid) });
+      if (!mine && !chatOpen) chatUnread += 1;
+      added = true;
+    }
+  }
+  if (added) { chatLog.sort((a, b) => a.n - b.n); chatLog = chatLog.slice(-60); renderChat(); }
+}
+function renderChat() {
+  const badge = $("#chatBadge"); badge.hidden = !chatUnread; badge.textContent = String(chatUnread);
+  $("#chatBtn").setAttribute("aria-expanded", String(chatOpen));
+  $("#chatBox").hidden = !(chatOpen && game); document.body.classList.toggle("chat-open", !!(chatOpen && game));
+  const log = $("#chatLog"), atEnd = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+  log.textContent = "";
+  if (!chatLog.length) log.append(el("p", "empty hint", "Noch nichts geschrieben. Hier chatten Spieler und Zuschauer zusammen."));
+  for (const m of chatLog) { const d = el("div", "msg" + (m.mine ? " me" : "")); d.append(el("b", null, m.av + " " + m.by + ": "), document.createTextNode(m.t)); if (m.spec) d.append(el("span", "sp", "👀")); log.append(d); }
+  if (atEnd || m_lastMine()) log.scrollTop = log.scrollHeight;
+}
+const m_lastMine = () => chatLog.length && chatLog[chatLog.length - 1].mine;
+function sendChat(text) {
+  text = String(text || "").replace(/\s+/g, " ").trim().slice(0, chatLen());
+  if (!text || !game) return false;
+  if (Date.now() - lastChatAt < 1200) { toast("Nicht so schnell."); return false; }
+  lastChatAt = Date.now();
+  const n = Math.max(Date.now(), (myChat.length ? myChat[myChat.length - 1].n + 1 : 0));
+  myChat = [...myChat, { n, t: text }].slice(-chatKeep());
+  chatSeen.add(myPid + ":" + n);
+  chatLog.push({ n, by: me.name, av: me.av, t: text, mine: true, spec: iAmSpec() }); chatLog = chatLog.slice(-60);
+  game.presence({ ch: myChat }).catch(() => {});
+  renderChat(); return true;
+}
+$("#chatForm").addEventListener("submit", (e) => { e.preventDefault(); if (sendChat($("#chatInput").value)) { $("#chatInput").value = ""; sfx("pop"); } });
+function toggleChat(on) { chatOpen = on == null ? !chatOpen : on; if (chatOpen) { chatUnread = 0; } renderChat(); if (chatOpen) { const l = $("#chatLog"); l.scrollTop = l.scrollHeight; $("#chatInput").focus(); } }
+$("#chatBtn").onclick = () => toggleChat();
+$("#chatClose").onclick = () => toggleChat(false);
 
 // ---------- rendering ----------
 const PHASE_TITLE = { lobby: "Lobby", make: "Bau dein Meme", vote: "Abstimmung", res: "Rundenergebnis", end: "Endstand" };
@@ -1325,6 +1477,7 @@ function render() {
   if (G.seq !== seenSeq) { if (seenSeq !== -1 && (G.ph === "make" || G.ph === "vote")) sfx("phase"); seenSeq = G.seq; localDeadline = Date.now() + G.rem; builtKey = ""; if (G.ph === "make") closeOverlays(); }
   recordRound();
   const spectator = iAmSpec();
+  $("#roleBtn").textContent = spectator ? "🎮 Mitspielen" : "👀 Zuschauen";
   $("#phaseTitle").textContent = (PHASE_TITLE[G.ph] || "") + (G.ph !== "lobby" && G.ph !== "end" ? " · Runde " + G.r + "/" + G.R : "") + (spectator ? " (Zuschauer)" : "");
   renderPlayers(pl);
   for (const [id, ph] of [["pLobby", "lobby"], ["pMake", "make"], ["pVote", "vote"], ["pRes", "res"], ["pEnd", "end"]]) $("#" + id).hidden = G.ph !== ph;
