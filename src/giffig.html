@@ -694,7 +694,7 @@ if (Array.isArray(window.GIFFIG_EXTRA)) {
   }
 }
 const imgSrc = (id) => (id.startsWith("up-") && window.GIFFIG_STORAGE_BASE ? window.GIFFIG_STORAGE_BASE + id : "g/" + (id.includes(".") ? id : id + ".webp"));
-const ONLINE_URL = "https://marlonm05.github.io/Makeitmeme/";
+const ONLINE_URL = "https://giffig.marlongames.com/";
 const ID_OK = /^[A-Za-z0-9._-]{1,80}$/, UPLOAD_OK = /^up-[a-z0-9]{8}\.(webp|gif|png|jpg)$/;
 const safeId = (v) => (typeof v === "string" && ID_OK.test(v) ? v : "");
 const idxOf = (id) => GIFS.findIndex((x) => x[0] === id);
