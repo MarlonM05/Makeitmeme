@@ -6,6 +6,11 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
 
 **Spielen:** https://marlonm05.github.io/Makeitmeme/ (sobald GitHub Pages aktiviert ist, siehe unten)
 
+**Auf Cloudflare hosten:** `wrangler.jsonc` ist schon da. Im Cloudflare-Dashboard unter *Workers & Pages* den Worker
+`makeitmeme` öffnen → *Settings → Build → Git repository → Connect* und dieses Repo wählen (Branch `main`,
+Build-Befehl leer lassen, Deploy-Befehl `npx wrangler deploy`). Danach geht jeder Push auf `main` automatisch online
+unter `https://makeitmeme.<dein-subdomain>.workers.dev`. Was nicht hochgeladen wird, steht in `.assetsignore`.
+
 ## Features
 
 - Über 800 GIFs und Bilder:

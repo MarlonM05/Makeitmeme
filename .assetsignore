@@ -1,0 +1,12 @@
+# Nicht mit hochladen (nur Quelltext und Werkzeuge, nicht Teil der Webseite)
+.git
+.git/**
+.github
+.assetsignore
+.nojekyll
+wrangler.jsonc
+README.md
+*.py
+*.sh
+src/
+supabase/
