@@ -9,7 +9,7 @@ anonym (😐 bis 💀). Am Ende gibt es ein Podium und das Meme des Spiels.
 ## Features
 
 - Über 1000 GIFs und Bilder:
-  - rund 800 internationale Reaktions-GIFs von [GIPHY](https://giphy.com) (WTF, Bruh, Cringe, Fails, Crashs, Essen, Trinken, Feuerwehr, dicke Tiere, Meerestiere, Kulturen, lustige Rentner, besoffen, Blasmusik, Creepy, Klassiker wie Rickroll, Nyan Cat, Mic Drop, Facepalm, Michael Scott, Kermit, Gandalf …)
+  - rund 800 internationale Reaktions-GIFs von [GIPHY](https://giphy.com) (WTF, Bruh, Cringe, Fails, Crashs, Essen, Trinken, Feuerwehr, dicke Tiere, Meerestiere, Kulturen, lustige Rentner, besoffen, Blasmusik, Creepy, Klassiker, Furz- und Wedgie-Humor, Rülpser, Pool-Fails, Besoffen-Tänze, Bananen und Hot Dogs, Klassiker wie Rickroll, Nyan Cat, Mic Drop, Facepalm, Michael Scott, Kermit, Gandalf …)
   - rund 150 deutsche Memes und Regionales (Norddeutschland: Moin, Hafen, Möwen, Robben; Karneval, Bayern, Schwaben, Ruhrpott, Bernd das Brot, Heinz Comedy, Dittsche, Tagesschau, „Bruder muss los“, Deutsche Bahn …)
   - rund 130 klassische Meme-Vorlagen von [Imgflip](https://imgflip.com/memetemplates) (Drake, This Is Fine, Distracted Boyfriend …)
   - Derbe Memes (Mittelfinger, „Fuck you“, „Scheiß drauf“ …) nur, wenn der Host „Derbe Memes (ab 16)“ einschaltet
