@@ -58,7 +58,7 @@ Nach Änderungen an `src/giffig.html`: `python3 build.py`
 
 ## Admin-Seite (nur für dich)
 
-`admin.html` (online unter `…/Makeitmeme/admin.html`) ist deine Verwaltung. Die Seite selbst kann jeder aufrufen, ohne Passwort
+`admin.html` ist deine Verwaltung. Sie ist erreichbar unter **https://giffig.marlongames.com/admin** und weiterhin unter `…/Makeitmeme/admin.html`. Die Admin-Funktion lässt Anfragen von `marlonm05.github.io`, `marlongames.com` und allen Unterdomains davon zu (siehe `ORIGIN_OK` in `supabase/functions/giffig-admin/index.ts`). Die Seite selbst kann jeder aufrufen, ohne Passwort
 geht aber nichts: Jede Änderung prüft der Server (`supabase/functions/giffig-admin`), nicht der Browser.
 
 **Bilder** (Tab „Bilder“)

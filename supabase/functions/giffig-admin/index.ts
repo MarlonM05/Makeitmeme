@@ -30,7 +30,7 @@ const FILE_RE = /^up-[a-z0-9]{8}\.(webp|gif|png|jpg)$/;
 const ID_RE = /^[A-Za-z0-9._-]{1,80}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const NAME_RE = /^[A-Za-zÄÖÜäöüß0-9 _.-]{2,24}$/;
-const ORIGIN_OK = /^(https:\/\/marlonm05\.github\.io|http:\/\/localhost:\d+|http:\/\/127\.0\.0\.1:\d+)$/;
+const ORIGIN_OK = /^(https:\/\/marlonm05\.github\.io|https:\/\/([a-z0-9-]+\.)?marlongames\.com|http:\/\/localhost:\d+|http:\/\/127\.0\.0\.1:\d+)$/;
 const SELECT_MEME = "id,file,name,tags,hidden,created_at,uploaded_by,uploaded_by_name";
 const enc = new TextEncoder();
 
